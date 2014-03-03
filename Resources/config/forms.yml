@@ -1,0 +1,6 @@
+services:
+    gridcell:
+        class: Lighthart\GridBundle\FormType\GridCellType
+        arguments: [ "@doctrine.orm.entity_manager", "@security.context" ]
+        tags:
+            - { name: form.type, alias: gridcell }

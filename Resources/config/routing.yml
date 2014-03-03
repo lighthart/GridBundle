@@ -1,0 +1,3 @@
+LighthartGridBundle_grid:
+    resource: "@LighthartGridBundle/Resources/config/routing/grid.yml"
+    prefix:   /grid
