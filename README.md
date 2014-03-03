@@ -1,1 +1,1 @@
-This is a a grid bindle for the Symfony framework.
+This is a a grid bundle for the Symfony framework.
