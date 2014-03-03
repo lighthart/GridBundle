@@ -1,0 +1,15 @@
+{
+    "name": "lighthart/grid-bundle",
+    "bin": ["bin/wkhtmltopdf-amd64"],
+    "license": "MIT",
+    "type": "symfony-bundle",
+    "description": "Grid Bundle for use with Symfony",
+    "require": {
+        "knplabs/knp-paginator-bundle": "dev-master",
+        "knplabs/knp-snappy-bundle": "dev-master"
+    },
+    "autoload": {
+        "psr-0": { "MESD\\Lighthart\\GridBundle": "" }
+    },
+    "target-dir": "MESD/Lighthart/GridBundle"
+}
