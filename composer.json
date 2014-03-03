@@ -8,7 +8,7 @@
         "knplabs/knp-snappy-bundle": "dev-master"
     },
     "autoload": {
-        "psr-0": { "MESD\\Lighthart\\GridBundle": "" }
+        "psr-0": { "Lighthart\\GridBundle": "" }
     },
-    "target-dir": "MESD/Lighthart/GridBundle"
+    "target-dir": "Lighthart/GridBundle"
 }
