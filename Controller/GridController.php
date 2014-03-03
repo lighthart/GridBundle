@@ -8,17 +8,18 @@ use Lighthart\GridBundle\FormType\GridCellType;
 
 class GridController extends Controller
 {
-    public function indexAction( Request $request, $class = 'AcctKey' ) {
-        $em = $this->getDoctrine()->getManager();
-        $entities = $em->getRepository( 'LighthartSnapshotBundle:'.$class )->findAll();
+    // example
+    // public function indexAction( Request $request, $class = 'AcctKey' ) {
+    //     $em = $this->getDoctrine()->getManager();
+    //     $entities = $em->getRepository( 'LighthartSnapshotBundle:'.$class )->findAll();
 
-        return $this->render(
-            'LighthartGridBundle:Grid:grid.html.twig'
-            , array(
-                'entities' => $entities,
-            )
-        );
-    }
+    //     return $this->render(
+    //         'LighthartGridBundle:Grid:grid.html.twig'
+    //         , array(
+    //             'entities' => $entities,
+    //         )
+    //     );
+    // }
 
     public function verifyCellAction( $class = null, $field = null, $id = null, $action = '' ) {
         $em = $this->getDoctrine()->getManager();
@@ -55,6 +56,9 @@ class GridController extends Controller
 
     public function cellEditAction( Request $request, $class = null, $field = null, $id = null ) {
 
+        // $logger = $this->get( 'logger' );
+        // $logger->error( 'Gridcell Edit: '.$class.' / '.$field.' / '.$id );
+
         $error = $this->verifyCellAction( $class, $field, $id, 'editAction' );
         $class = str_replace( '_', '\\', $class );
         if ( $error ) {
@@ -90,6 +94,9 @@ class GridController extends Controller
     }
 
     public function cellUpdateAction( Request $request, $class = null, $field = null, $id = null ) {
+
+        // $logger = $this->get( 'logger' );
+        // $logger->error( 'Gridcell Update: '.$class.' / '.$field.' / '.$id );
 
         $error = $this->verifyCellAction( $class, $field, $id , 'updateAction' );
         $class = str_replace( '_', '\\', $class );

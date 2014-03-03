@@ -1,6 +1,6 @@
-grid_index :
-    pattern      : /
-    defaults     : { _controller: "LighthartGridBundle:Grid:index" }
+# grid_index :
+#     pattern      : /
+#     defaults     : { _controller: "LighthartGridBundle:Grid:index" }
 
 gridcell_edit :
     pattern      : /celledit/{class}/{field}/{id}
