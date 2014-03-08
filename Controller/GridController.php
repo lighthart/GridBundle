@@ -51,8 +51,15 @@ class GridController extends Controller
 
 
     public function gridAction( Request $request, $class = 'AcctKey' ) {
+        // basic entity grid
+
         $em = $this->getDoctrine()->getManager();
         $entities = $em->getRepository( $this->verifyAction( $class ) )->findAll();
+
+
+        // get meta data to dump columns
+        // write new twig to handle
+        // configuration
 
         return $this->render(
             'LighthartGridBundle:Grid:grid.html.twig'
