@@ -1,7 +1,7 @@
 LighthartGridBundle_cell:
     resource: "@LighthartGridBundle/Resources/config/routing/cell.yml"
-    prefix:   /
+    prefix:   /cell
 
 LighthartGridBundle_grid:
     resource: "@LighthartGridBundle/Resources/config/routing/grid.yml"
-    prefix:   /
+    prefix:   /grid

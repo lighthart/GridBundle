@@ -21,7 +21,7 @@ function makeEditable($object) {
     // contain an ide to accomodate multiple entities on a grid
     var $tr = $object.closest('tr');
     $url =
-        '../grid/celledit/' +
+        '../cell/edit/' +
         $th.attr('data-role-class') + '/' +
         $th.attr('data-role-field') + '/' +
         $object.attr('data-role-entity-id');
@@ -32,8 +32,8 @@ function makeEditable($object) {
             if ('GRID_CONFIG_ERROR' == responseText) {
                 $object.text($original);
             } else {
-                $('input#gridcell').on('keydown', function(event) {
-                    //console.log(event.which)
+                $('input#cell').on('keydown', function(event) {
+                    console.log(event.which)
                     // this tells us which key is pressed
                     // keep in commentsif more functionality
                     // becomes required

@@ -8,20 +8,11 @@ use Lighthart\GridBundle\FormType\cellType;
 
 class CellController extends Controller
 {
-    // example
-    // public function indexAction( Request $request, $class = 'AcctKey' ) {
-    //     $em = $this->getDoctrine()->getManager();
-    //     $entities = $em->getRepository( 'LighthartSnapshotBundle:'.$class )->findAll();
-
-    //     return $this->render(
-    //         'LighthartGridBundle:Grid:grid.html.twig'
-    //         , array(
-    //             'entities' => $entities,
-    //         )
-    //     );
-    // }
 
     public function verifyAction( $class = null, $field = null, $id = null, $action = '' ) {
+        // This is a helper acton to make sure the
+        // grid cell is configured properly
+
         $em = $this->getDoctrine()->getManager();
         $metadataFactory = $em->getMetadataFactory();
 
@@ -55,11 +46,11 @@ class CellController extends Controller
     }
 
     public function editAction( Request $request, $class = null, $field = null, $id = null ) {
+        // This returns the input control for the cell
+        // it is responsible for setting the data roles
+        // that update reads
 
-        // $logger = $this->get( 'logger' );
-        // $logger->error( 'Gridcell Edit: '.$class.' / '.$field.' / '.$id );
-
-        $error = $this->verifyCellAction( $class, $field, $id, 'editAction' );
+        $error = $this->verifyAction( $class, $field, $id, 'editAction' );
         $class = str_replace( '_', '\\', $class );
         if ( $error ) {
             return $this->render(
@@ -94,11 +85,13 @@ class CellController extends Controller
     }
 
     public function updateAction( Request $request, $class = null, $field = null, $id = null ) {
+        // This function, post only, reads data roles
+        // and persists the data
 
         // $logger = $this->get( 'logger' );
         // $logger->error( 'Gridcell Update: '.$class.' / '.$field.' / '.$id );
 
-        $error = $this->verifyCellAction( $class, $field, $id , 'updateAction' );
+        $error = $this->verifyAction( $class, $field, $id , 'updateAction' );
         $class = str_replace( '_', '\\', $class );
         if ( $error ) {
             return $this->render(

@@ -8,10 +8,11 @@ use Lighthart\GridBundle\FormType\cellType;
 
 class GridController extends Controller
 {
-    example
+    // example
+    // have to be able toparse bundle name as well
     public function indexAction( Request $request, $class = 'AcctKey' ) {
         $em = $this->getDoctrine()->getManager();
-        $entities = $em->getRepository( 'LighthartSnapshotBundle:'.$class )->findAll();
+        $entities = $em->getRepository( 'BlackfishBudgetSnapshotBundle:'.$class )->findAll();
 
         return $this->render(
             'LighthartGridBundle:Grid:grid.html.twig'

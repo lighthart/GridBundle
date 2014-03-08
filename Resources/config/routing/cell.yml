@@ -1,6 +1,6 @@
 cell_edit :
     pattern      : /edit/{class}/{field}/{id}
-    defaults     : { _controller: "LighthartGridBundle:Cell:cellEdit" }
+    defaults     : { _controller: "LighthartGridBundle:Cell:edit" }
     requirements :
         class : \w+
         field : \w+
@@ -8,7 +8,7 @@ cell_edit :
 
 cell_value :
     pattern      : /value/{class}/{field}/{id}
-    defaults     : { _controller: "LighthartGridBundle:Cell:cellValue" }
+    defaults     : { _controller: "LighthartGridBundle:Cell:value" }
     requirements :
         class : \w+
         field : \w+
@@ -16,7 +16,7 @@ cell_value :
 
 cell_update :
     pattern      : /update/{class}/{field}/{id}
-    defaults     : { _controller: "LighthartGridBundle:Cell:cellUpdate" }
+    defaults     : { _controller: "LighthartGridBundle:Cell:update" }
     requirements :
         class   : \w+
         field   : \w+

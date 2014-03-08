@@ -54,6 +54,4 @@ class CellType extends AbstractType
     public function getName() {
         return 'cell';
     }
-
-
 }
