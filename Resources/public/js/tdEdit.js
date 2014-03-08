@@ -21,7 +21,7 @@ function makeEditable($object) {
     // contain an ide to accomodate multiple entities on a grid
     var $tr = $object.closest('tr');
     $url =
-        '../cell/edit/' +
+        '../../cell/edit/' +
         $th.attr('data-role-class') + '/' +
         $th.attr('data-role-field') + '/' +
         $object.attr('data-role-entity-id');
@@ -33,9 +33,8 @@ function makeEditable($object) {
                 $object.text($original);
             } else {
                 $('input#cell').on('keydown', function(event) {
-                    console.log(event.which)
                     // this tells us which key is pressed
-                    // keep in commentsif more functionality
+                    // keep in comments if more functionality
                     // becomes required
                     // console.log(event.which);
                     var tab = 9;
@@ -50,17 +49,17 @@ function makeEditable($object) {
                         event.which == enter
                     ) {
                         var $val = $(this).val();
-                        if ( $object.val() == $original ) {
-                            $object.text($original);
+                        if ( $val == $original ) {
+                            $object.text($val);
                         } else {
                             // This over writes the input field
                             $object.text($val);
                             $url =
-                            '../cell/update/' +
+                            '../../cell/update/' +
                                     $th.attr('data-role-class') + '/' +
                                     $th.attr('data-role-field') + '/' +
                                     $object.attr('data-role-entity-id');
-                                    console.log('post: '+$url);
+                                    // console.log('post: '+$url);
                             $.ajax({
                                 type: 'POST',
                                 url: $url,
@@ -69,7 +68,7 @@ function makeEditable($object) {
                                 },
                                 success: function(responseText, textStatus, XMLHttpRequest) {
                                     $object.load(
-                                        '../cell/value/' +
+                                        '../../cell/value/' +
                                         $th.attr('data-role-class') + '/' +
                                         $th.attr('data-role-field') + '/' +
                                         $object.attr('data-role-entity-id'),
@@ -78,9 +77,10 @@ function makeEditable($object) {
                                 }
                                 // dataType : dataType
                             });
-                            makeClickable($object);
                         }
-                        // also do the post here
+
+                        // reenable clickyness
+                        makeClickable($object);
 
                     }
 

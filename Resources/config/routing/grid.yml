@@ -1,3 +1,10 @@
 grid_index :
     pattern      : /
     defaults     : { _controller: "LighthartGridBundle:Grid:index" }
+
+grid :
+    pattern      : /{class}/
+    defaults     : { _controller: "LighthartGridBundle:Grid:grid" }
+    requirements :
+        class : \w+
+        field : \w+

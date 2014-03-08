@@ -8,8 +8,7 @@ use Lighthart\GridBundle\FormType\cellType;
 
 class CellController extends Controller
 {
-
-    public function verifyAction( $class = null, $field = null, $id = null, $action = '' ) {
+    public function verifyAction( $class = null, $field = null, $id = null, $action = 'unspecified' ) {
         // This is a helper acton to make sure the
         // grid cell is configured properly
 
