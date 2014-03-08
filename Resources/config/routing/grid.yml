@@ -1,28 +1,3 @@
-# grid_index :
-#     pattern      : /
-#     defaults     : { _controller: "LighthartGridBundle:Grid:index" }
-
-gridcell_edit :
-    pattern      : /celledit/{class}/{field}/{id}
-    defaults     : { _controller: "LighthartGridBundle:Grid:cellEdit" }
-    requirements :
-        class : \w+
-        field : \w+
-        id    : \d+
-
-gridcell_value :
-    pattern      : /cellvalue/{class}/{field}/{id}
-    defaults     : { _controller: "LighthartGridBundle:Grid:cellValue" }
-    requirements :
-        class : \w+
-        field : \w+
-        id    : \d+
-
-gridcell_update :
-    pattern      : /cellupdate/{class}/{field}/{id}
-    defaults     : { _controller: "LighthartGridBundle:Grid:cellUpdate" }
-    requirements :
-        class   : \w+
-        field   : \w+
-        id      : \d+
-        _method : post
+grid_index :
+    pattern      : /
+    defaults     : { _controller: "LighthartGridBundle:Cell:index" }

@@ -1,0 +1,24 @@
+cell_edit :
+    pattern      : /edit/{class}/{field}/{id}
+    defaults     : { _controller: "LighthartGridBundle:Cell:cellEdit" }
+    requirements :
+        class : \w+
+        field : \w+
+        id    : \d+
+
+cell_value :
+    pattern      : /value/{class}/{field}/{id}
+    defaults     : { _controller: "LighthartGridBundle:Cell:cellValue" }
+    requirements :
+        class : \w+
+        field : \w+
+        id    : \d+
+
+cell_update :
+    pattern      : /update/{class}/{field}/{id}
+    defaults     : { _controller: "LighthartGridBundle:Cell:cellUpdate" }
+    requirements :
+        class   : \w+
+        field   : \w+
+        id      : \d+
+        _method : post

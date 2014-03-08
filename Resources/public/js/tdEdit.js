@@ -56,7 +56,7 @@ function makeEditable($object) {
                             // This over writes the input field
                             $object.text($val);
                             $url =
-                            '../grid/cellupdate/' +
+                            '../cell/update/' +
                                     $th.attr('data-role-class') + '/' +
                                     $th.attr('data-role-field') + '/' +
                                     $object.attr('data-role-entity-id');
@@ -69,7 +69,7 @@ function makeEditable($object) {
                                 },
                                 success: function(responseText, textStatus, XMLHttpRequest) {
                                     $object.load(
-                                        '../grid/cellvalue/' +
+                                        '../cell/value/' +
                                         $th.attr('data-role-class') + '/' +
                                         $th.attr('data-role-field') + '/' +
                                         $object.attr('data-role-entity-id'),

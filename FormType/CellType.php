@@ -2,12 +2,11 @@
 
 namespace Lighthart\GridBundle\FormType;
 
-use MESD\ORMed\ORMedBundle\Entity\Log;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
-class GridCellType extends AbstractType
+class CellType extends AbstractType
 {
 
     private $class;
@@ -53,7 +52,7 @@ class GridCellType extends AbstractType
     }
 
     public function getName() {
-        return 'gridcell';
+        return 'cell';
     }
 
 
