@@ -6,17 +6,25 @@
             <thead>
                 <tr>
                     {% for field in fields %}
-                        <th class="editable" data-role-class="{{class}}" data-role-field="{{field}}">
-                            {{field}}
-                        </th>
+                        {% if 'id' == field %}
+                            {# DO NOT EVER EDIT IDs #}
+                            {# Entity should not have a setID method anyhows #}
+                            <th data-role-class="{{class}}" data-role-lg-field="{{field}}" style="width:{{1/(loop.length)*100}}%;">
+                                {{field}}
+                            </th>
+                        {% else %}
+                            <th class="lg-editable" data-role-lg-class="{{class}}" data-role-lg-field="{{field}}" style="width:{{1/(loop.length)*100}}%;">
+                                {{field}}
+                            </th>
+                        {% endif %}
                     {% endfor %}
                 </tr>
             </thead>
             <tbody>
                 {% for entity in entities %}
-                    <tr data-role-parent-entity-id="{{entity.id}}">
+                    <tr data-role-lg-parent-entity-id="{{entity.id}}">
                         {% for field in fields %}
-                            <td class="editable">
+                            <td data-lg-role-entity-id="{{entity.id}}">
                                 {{attribute(entity, field)}}
                             </td>
                         {% endfor %}
