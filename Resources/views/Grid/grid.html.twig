@@ -9,24 +9,31 @@
                         {% if 'id' == field %}
                             {# DO NOT EVER EDIT IDs #}
                             {# Entity should not have a setID method anyhows #}
-                            <th data-role-class="{{class}}" data-role-lg-field="{{field}}" style="width:{{1/(loop.length)*100}}%;">
-                                {{field}}
-                            </th>
+                            <th data-role-class="{{class}}" data-role-lg-field="{{field}}" style="width:{{1/(loop.length)*100}}%;">{{field}}</th>
                         {% else %}
-                            <th class="lg-editable" data-role-lg-class="{{class}}" data-role-lg-field="{{field}}" style="width:{{1/(loop.length)*100}}%;">
-                                {{field}}
-                            </th>
+                            <th class="lg-editable" data-role-lg-class="{{class}}" data-role-lg-field="{{field}}" style="width:{{1/(loop.length)*100}}%;">{{field}}</th>
                         {% endif %}
                     {% endfor %}
+                    {% for date in dates %}
+                        <th class="lg-editable" data-role-lg-class="{{class}}" data-role-lg-field="{{date}}" style="width:{{1/(loop.length)*100}}%;">{{date}}</th>
+                    {% endfor %}
+
                 </tr>
             </thead>
             <tbody>
                 {% for entity in entities %}
                     <tr data-role-lg-parent-entity-id="{{entity.id}}">
                         {% for field in fields %}
-                            <td data-lg-role-entity-id="{{entity.id}}">
-                                {{attribute(entity, field)}}
-                            </td>
+                            <td data-lg-role-entity-id="{{entity.id}}" date-role-lg-edittype="field">{{attribute(entity, field)}}</td>
+                        {% endfor %}
+                        {% for date in dates %}
+                            <td data-lg-role-entity-id="{{entity.id}}" date-role-lg-edittype="date">{{attribute(entity, date)|date('m/d/Y')}}</td>
+                        {% endfor %}
+                        {% for date in dates %}
+                            <td data-lg-role-entity-id="{{entity.id}}" date-role-lg-edittype="single">{{attribute(entity, date)|date('m/d/Y')}}</td>
+                        {% endfor %}
+                        {% for date in dates %}
+                            <td data-lg-role-entity-id="{{entity.id}}" date-role-lg-edittype="multi">{{attribute(entity, date)|date('m/d/Y')}}</td>
                         {% endfor %}
                     </tr>
                 {% endfor %}

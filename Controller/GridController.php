@@ -40,15 +40,16 @@ class GridController extends Controller
         try {
             $metadata = $metadataFactory->getMetadataFor( $backslash );
         } catch ( \Exception $ex ) {
+            $metadata=null;
             $error .= 'No metadata for class: '.$backslash;
         }
 
-        if ($class) {
+        if ( $metadata ) {
             return
-                array(
-                      'class'    => $class    ,
-                      'metadata' => $metadata ,
-                      );
+            array(
+                'class'    => $class    ,
+                'metadata' => $metadata ,
+            );
         } else {
             $logger = $this->get( 'logger' );
             $logger->error( 'Grid error: '.$error );
@@ -63,22 +64,109 @@ class GridController extends Controller
 
         $em        = $this->getDoctrine()->getManager();
         $verity = $this->verifyAction( $class );
-        if ($verity) {
-            $class = $verity['class'];
-            $backslash = str_replace( '_', '\\', $class );
-            $metadata = $verity['metadata'];
-            $entities        = $em->getRepository( $backslash )->findAll();
-            $fields          = $metadata->getFieldNames();
+        if ( $verity ) {
+            $class      = $verity['class'];
+            $backslash  = str_replace( '_', '\\', $class );
+            $metadata   = $verity['metadata'];
+            $entities   = $em->getRepository( $backslash )->findAll();
+            $fields     = array_filter( $metadata->getFieldNames(),
+                function( $mapping ) use ( $metadata ) {
+                    return 'datetime' != $metadata->getTypeOfColumn( $mapping );
+                } );
+            $dates      = array_filter( $metadata->getFieldNames(),
+                function( $mapping ) use ( $metadata ) {
+                    return 'datetime' == $metadata->getTypeOfColumn( $mapping );
+                } );
 
-            return $this->render(
-                'LighthartGridBundle:Grid:grid.html.twig'
-                , array(
-                    'entities' => $entities ,
-                    'fields'   => $fields   ,
-                    'class'    => $class    ,
-                )
+            $dates      = array_filter( $metadata->getFieldNames(),
+                function( $mapping ) use ( $metadata ) {
+                    return 'datetime' == $metadata->getTypeOfColumn( $mapping );
+                } );
+
+            $oneToOne = array_filter(
+                $metadata->getAssociationMappings() ,
+                function( $mapping ) use ( $metadata ) {
+                    return
+                    $metadata::ONE_TO_ONE ==
+                    $metadata->getAssociationMapping( $mapping['fieldName'] )['type'];
+                }
             );
 
+            $oneToMany  = array_filter(
+                $metadata->getAssociationMappings() ,
+                function( $mapping ) use ( $metadata ) {
+                    return
+                    $metadata::ONE_TO_MANY ==
+                    $metadata->getAssociationMapping( $mapping['fieldName'] )['type'];
+                }
+            );
+
+            $manyToOne  = array_filter(
+                $metadata->getAssociationMappings() ,
+                function( $mapping ) use ( $metadata ) {
+                    return
+                    $metadata::MANY_TO_ONE ==
+                    $metadata->getAssociationMapping( $mapping['fieldName'] )['type'];
+                }
+            );
+
+            $manyToMany  = array_filter(
+                $metadata->getAssociationMappings() ,
+                function( $mapping ) use ( $metadata ) {
+                    return
+                    $metadata::MANY_TO_MANY ==
+                    $metadata->getAssociationMapping( $mapping['fieldName'] )['type'];
+                }
+            );
+
+            // print_r( "<pre>" );
+
+            // // var_dump($fields);
+
+            // // array_map(
+            // //     function( $mapping ) use ( $metadata ) {
+            // //         // var_dump( $metadata->getTypeOfColumn( $mapping ) );
+            // //         var_dump( $metadata->getFieldMapping( $mapping ) );
+            // //     }
+            // //     , $fields
+            // // );
+            // var_dump( '12M' );
+            // var_dump( $oneToMany );
+            // var_dump( 'M21' );
+            // var_dump( $manyToOne );
+            // die;
+
+            // array_map(
+            //     function( $mapping ) use ( $metadata ) {
+            //         try {
+
+            //             var_dump( $mapping );
+            //             var_dump( $metadata->getAssociationMapping( $mapping['fieldName'] ) );
+            //             print_r( "<br><br>" );
+            //         } catch ( \Exception $ex ) {
+            //             var_dump( 'Failed for: '.$mapping );
+            //         }
+            //     }
+            //     , $assoc
+            // );
+
+            // die;
+
+            return $this->render(
+                'LighthartGridBundle:Grid:grid.html.twig' ,
+                array(
+                    'class'      => $class      ,
+                    'fields'     => $fields     ,
+                    'dates'      => $dates      ,
+                    'oneToOne'   => $oneToOne   ,
+                    'oneToMany'  => $oneToMany  ,
+                    'manyToOne'  => $manyToOne  ,
+                    'manyToMany' => $manyToMany ,
+                    'entities'   => $entities   ,
+                )
+            );
+        } else {
+            return $this->render( 'LighthartGridBundle:Grid:nogrid.html.twig' );
         }
 
     }
