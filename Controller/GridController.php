@@ -9,7 +9,7 @@ use Lighthart\GridBundle\FormType\cellType;
 class GridController extends Controller
 {
     // example
-    // have to be able toparse bundle name as well
+    // have to be able to parse bundle name as well
     public function indexAction( Request $request, $class = 'AcctKey' ) {
         $em = $this->getDoctrine()->getManager();
         $entities = $em->getRepository( 'BlackfishBudgetSnapshotBundle:'.$class )->findAll();
@@ -35,38 +35,52 @@ class GridController extends Controller
             $error .= 'Data class for grid cell not specified';
         }
 
-        $class = str_replace( '_', '\\', $class );
+        $backslash = str_replace( '_', '\\', $class );
 
         try {
-            $metadata = $metadataFactory->getMetadataFor( $class );
+            $metadata = $metadataFactory->getMetadataFor( $backslash );
         } catch ( \Exception $ex ) {
-            $error .= 'No metadata for class: '.$class;
+            $error .= 'No metadata for class: '.$backslash;
         }
 
-        $logger = $this->get( 'logger' );
-        $logger->error( 'Grid error: '.$error );
+        if ($class) {
+            return
+                array(
+                      'class'    => $class    ,
+                      'metadata' => $metadata ,
+                      );
+        } else {
+            $logger = $this->get( 'logger' );
+            $logger->error( 'Grid error: '.$error );
+            return array();
+        }
 
-        return $class;
     }
 
 
     public function gridAction( Request $request, $class = 'AcctKey' ) {
         // basic entity grid
 
-        $em = $this->getDoctrine()->getManager();
-        $entities = $em->getRepository( $this->verifyAction( $class ) )->findAll();
+        $em        = $this->getDoctrine()->getManager();
+        $verity = $this->verifyAction( $class );
+        if ($verity) {
+            $class = $verity['class'];
+            $backslash = str_replace( '_', '\\', $class );
+            $metadata = $verity['metadata'];
+            $entities        = $em->getRepository( $backslash )->findAll();
+            $fields          = $metadata->getFieldNames();
 
+            return $this->render(
+                'LighthartGridBundle:Grid:grid.html.twig'
+                , array(
+                    'entities' => $entities ,
+                    'fields'   => $fields   ,
+                    'class'    => $class    ,
+                )
+            );
 
-        // get meta data to dump columns
-        // write new twig to handle
-        // configuration
+        }
 
-        return $this->render(
-            'LighthartGridBundle:Grid:grid.html.twig'
-            , array(
-                'entities' => $entities,
-            )
-        );
     }
 
 }

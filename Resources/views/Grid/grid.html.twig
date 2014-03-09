@@ -1,24 +1,30 @@
 {% extends 'BlackfishBudgetCoreBundle::layout.html.twig' %}
 {# Sample Grid #}
 {% block content %}
-    <table class="table table-bordered table-condensed table-hover table-striped">
-        <thead>
-            <tr>
-                <th class="editable" data-role-class="Blackfish_Budget_SnapshotBundle_Entity_AcctKey" data-role-field="key">Key</th>
-                <th class="editable" data-role-class="Blackfish_Budget_SnapshotBundle_Entity_AcctKey" data-role-field="name">Name</th>
-                <th data-role-class="Blackfish_Budget_SnapshotBundle_Entity_AcctKey" data-role-field="description">Description</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for entity in entities %}
-                <tr data-role-parent-entity-id="{{entity.id}}">
-                    <td data-role-entity-id="{{entity.id}}">{{entity.key}}</td>
-                    <td data-role-entity-id="{{entity.id}}">{{entity.name}}</td>
-                    <td data-role-entity-id="{{entity.id}}">{{entity.description}}</td>
+    {% spaceless %}
+        <table class="table table-bordered table-condensed table-hover table-striped">
+            <thead>
+                <tr>
+                    {% for field in fields %}
+                        <th class="editable" data-role-class="{{class}}" data-role-field="{{field}}">
+                            {{field}}
+                        </th>
+                    {% endfor %}
                 </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+                {% for entity in entities %}
+                    <tr data-role-parent-entity-id="{{entity.id}}">
+                        {% for field in fields %}
+                            <td class="editable">
+                                {{attribute(entity, field)}}
+                            </td>
+                        {% endfor %}
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% endspaceless %}
 {% endblock content %}
 
 {% block javascripts %}

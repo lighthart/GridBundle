@@ -123,7 +123,6 @@ class CellController extends Controller
     }
 
     public function valueAction( Request $request, $class = null, $field = null, $id = null ) {
-
         // This function just returns the cell value
 
         $error = $this->verifyAction( $class, $field, $id, 'valueAction' );
