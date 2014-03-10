@@ -174,16 +174,18 @@ function makeURLfromTD($object, $action) {
     // the second case should be used for grid that expose
     // a single entity only
 
+    // the ../../../ is based on bundle config
+
     var $tr = $object.closest('tr');
     if ($object.attr('data-role-entity-id')) {
         $url =
-            '../../cell/' + $action + '/' +
+            '../../../cell/' + $action + '/' +
             $th.attr('data-role-lg-class') + '/' +
             $th.attr('data-role-lg-field') + '/' +
             $object.attr('data-role-lg-entity-id');
     } else {
         $url =
-            '../../cell/' + $action + '/' +
+            '../../../cell/' + $action + '/' +
             $th.attr('data-role-lg-class') + '/' +
             $th.attr('data-role-lg-field') + '/' +
             $tr.attr('data-role-lg-parent-entity-id');

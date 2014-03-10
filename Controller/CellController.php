@@ -38,10 +38,18 @@ class CellController extends Controller
             $error .= 'No metadata for class: '.$class;
         }
 
-        $logger = $this->get( 'logger' );
-        $logger->error( 'Grid Cell error: '.$error.' in '.$action );
+        if ( $metadata ) {
+            return
+            array(
+                'class'    => $class    ,
+                'metadata' => $metadata ,
+            );
+        } else {
+            $logger = $this->get( 'logger' );
+            $logger->error( 'Grid Cell error: '.$error.' in '.$action );
+            return array();
+        }
 
-        return $error;
     }
 
     public function editAction( Request $request, $class = null, $field = null, $id = null ) {
@@ -49,37 +57,50 @@ class CellController extends Controller
         // it is responsible for setting the data roles
         // that update reads
 
-        $error = $this->verifyAction( $class, $field, $id, 'editAction' );
-        $class = str_replace( '_', '\\', $class );
-        if ( $error ) {
-            return $this->render(
-                'LighthartGridBundle:Cell:configerror.html.twig'
-                , array(
-                )
+        $verity = $this->verifyAction( $class );
+        if ( $verity ) {
+            $class    = str_replace( '_', '\\', $class );
+            $em       = $this->getDoctrine()->getManager();
+            $metadata = $verity['metadata'];
+            $assoc    = array_filter(
+                $metadata->getAssociationMappings() ,
+                function( $mapping ) use ( $metadata ) {
+                    $mapping['fieldName'] ;
+                }
             );
-        } else {
-            $em = $this->getDoctrine()->getManager();
-            $entity = $em->getRepository( $class )->findOneById( $id );
-            $method = 'get'.ucfirst( $field );
-            $form = $this->createForm(
-                'cell',
-                $entity->{$method}(),
-                array(
-                    'attr'  =>
-                    array(
-                        'data-role-class'     => $class,
-                        'data-role-field'     => $field,
-                        'data-role-entity-id' => $id,
-                    )
-                )
-            )->createView();
 
-            return $this->render(
-                'LighthartGridBundle:Cell:edit.html.twig'
-                , array(
-                    'form' => $form
-                )
-            );
+            if ( in_array($field, $assoc) ) {
+                var_dump('Entity Selector');die;
+
+                // for selectors here
+
+            } else {
+
+                $em = $this->getDoctrine()->getManager();
+                $entity = $em->getRepository( $class )->findOneById( $id );
+                $method = 'get'.ucfirst( $field );
+                $form = $this->createForm(
+                    'cell',
+                    $entity->{$method}(),
+                    array(
+                        'attr'  =>
+                        array(
+                            'data-role-class'     => $class,
+                            'data-role-field'     => $field,
+                            'data-role-entity-id' => $id,
+                        )
+                    )
+                )->createView();
+
+                return $this->render(
+                    'LighthartGridBundle:Cell:edit.html.twig'
+                    , array(
+                        'form' => $form
+                    )
+                );
+            }
+        } else {
+            return $this->render( 'LighthartGridBundle:Cell:configerror.html.twig' );
         }
     }
 
@@ -90,15 +111,9 @@ class CellController extends Controller
         // $logger = $this->get( 'logger' );
         // $logger->error( 'Gridcell Update: '.$class.' / '.$field.' / '.$id );
 
-        $error = $this->verifyAction( $class, $field, $id , 'updateAction' );
-        $class = str_replace( '_', '\\', $class );
-        if ( $error ) {
-            return $this->render(
-                'LighthartGridBundle:Cell:configerror.html.twig'
-                , array(
-                )
-            );
-        } else {
+        $verity = $this->verifyAction( $class );
+        if ( $verity ) {
+            $class = str_replace( '_', '\\', $class );
             $em = $this->getDoctrine()->getManager();
             $entity = $em->getRepository( $class )->findOneById( $id );
             if ( !$entity ) {
@@ -108,32 +123,28 @@ class CellController extends Controller
             $method = 'set'.ucfirst( $field );
             $data = $request->request->get( 'data' );
             $entity->{$method}( $data );
-            $em->flush($entity);
+            $em->flush( $entity );
             // Switch to get for rendering
             $method = 'get'.ucfirst( $field );
             $value  = $entity->{$method}();
-        }
 
-        return $this->render(
-            'LighthartGridBundle:Cell:value.html.twig'
-            , array(
+            return $this->render(
+                'LighthartGridBundle:Cell:value.html.twig'
+                , array(
                     'value'  => $value
-            )
-        );
+                )
+            );
+        } else {
+            return $this->render( 'LighthartGridBundle:Cell:configerror.html.twig' );
+        }
     }
 
     public function valueAction( Request $request, $class = null, $field = null, $id = null ) {
         // This function just returns the cell value
 
-        $error = $this->verifyAction( $class, $field, $id, 'valueAction' );
-        $class =str_replace( '_', '\\', $class );
-        if ( $error ) {
-            return $this->render(
-                'LighthartGridBundle:Cell:configerror.html.twig'
-                , array(
-                )
-            );
-        } else {
+        $verity = $this->verifyAction( $class );
+        if ( $verity ) {
+            $class =str_replace( '_', '\\', $class );
             $em = $this->getDoctrine()->getManager();
             $entity = $em->getRepository( $class )->findOneById( $id );
 
@@ -151,7 +162,8 @@ class CellController extends Controller
                     'value'  => $value
                 )
             );
+        } else {
+            return $this->render( 'LighthartGridBundle:Cell:configerror.html.twig' );
         }
     }
-
 }

@@ -3,7 +3,7 @@ grid_index :
     defaults     : { _controller: "LighthartGridBundle:Grid:index" }
 
 grid :
-    pattern      : /{class}/
+    pattern      : /entity/{class}/
     defaults     : { _controller: "LighthartGridBundle:Grid:grid" }
     requirements :
         class : \w+

@@ -168,7 +168,5 @@ class GridController extends Controller
         } else {
             return $this->render( 'LighthartGridBundle:Grid:nogrid.html.twig' );
         }
-
     }
-
 }
