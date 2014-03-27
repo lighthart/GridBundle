@@ -6,6 +6,8 @@ $(document).ready(function() {
 
 function makeClickable($object) {
     $object.on('click', function() {
+        console.log($object);
+        console.log('click');
         var $th = $object.closest('table').find('th').eq($object.index());
         if ($th.hasClass('lg-editable')) {
             makeEditable($object);
@@ -177,7 +179,7 @@ function makeURLfromTD($object, $action) {
     // the ../../../ is based on bundle config
 
     var $tr = $object.closest('tr');
-    if ($object.attr('data-role-entity-id')) {
+    if ($object.attr('data-role-lg-entity-id')) {
         $url =
             '../../../cell/' + $action + '/' +
             $th.attr('data-role-lg-class') + '/' +

@@ -4,17 +4,17 @@
     <table class="table table-bordered table-condensed table-hover table-striped">
         <thead>
             <tr>
-                <th class="editable" data-role-class="Awesome_NiftyBundle_Entity_Meeting" data-role-field="groupsize11">Group Size</th>
-                <th class="editable" data-role-class="Awesome_NiftyBundle_Entity_Meeting" data-role-field="duration">Duration</th>
-                <th data-role-class="Awesome_NiftyBundle_Entity_Meeting" data-role-field="log">Log</th>
+                <th class="editable" data-role-lg-class="Awesome_NiftyBundle_Entity_Meeting" data-role-lg-field="groupsize11">Group Size</th>
+                <th class="editable" data-role-lg-class="Awesome_NiftyBundle_Entity_Meeting" data-role-lg-field="duration">Duration</th>
+                <th data-role-lg-class="Awesome_NiftyBundle_Entity_Meeting" data-role-field="log">Log</th>
             </tr>
         </thead>
         <tbody>
             {% for entity in entities %}
                 <tr data-role-parent-entity-id="{{entity.id}}">
-                    <td data-role-entity-id="{{entity.id}}">{{entity.key}}</td>
-                    <td data-role-entity-id="{{entity.id}}">{{entity.name}}</td>
-                    <td data-role-entity-id="{{entity.id}}">{{entity.description}}</td>
+                    <td data-role-lg-entity-id="{{entity.id}}">{{entity.key}}</td>
+                    <td data-role-lg-entity-id="{{entity.id}}">{{entity.name}}</td>
+                    <td data-role-lg-entity-id="{{entity.id}}">{{entity.description}}</td>
                 </tr>
             {% endfor %}
         </tbody>
