@@ -6,8 +6,6 @@ $(document).ready(function() {
 
 function makeClickable($object) {
     $object.on('click', function() {
-        console.log($object);
-        console.log('click');
         var $th = $object.closest('table').find('th').eq($object.index());
         if ($th.hasClass('lg-editable')) {
             makeEditable($object);
