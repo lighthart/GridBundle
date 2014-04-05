@@ -23,7 +23,7 @@ class GridController extends Controller
     }
 
     public function verifyAction( $class = null ) {
-        // This is a helper acton to make sure the
+        // This is a helper action to make sure the
         // grid cell is configured properly
 
         $em = $this->getDoctrine()->getManager();
@@ -59,29 +59,35 @@ class GridController extends Controller
     }
 
 
-    public function gridAction( Request $request, $class = 'AcctKey' ) {
+    public function gridAction( Request $request, $class = null ) {
         // basic entity grid
 
-        $em        = $this->getDoctrine()->getManager();
+        $em     = $this->getDoctrine()->getManager();
         $verity = $this->verifyAction( $class );
-        if ( $verity ) {
+        if ( $verity != array() ) {
             $class      = $verity['class'];
             $backslash  = str_replace( '_', '\\', $class );
             $metadata   = $verity['metadata'];
-            $entities   = $em->getRepository( $backslash )->findAll();
+            $entities   = $em->getRepository( $backslash )
+            ->findBy(
+                    array() , // $where
+                    array() , // $orderBy
+                    10    // $limit
+                    // 0    , // $offset
+            );
+
             $fields     = array_filter( $metadata->getFieldNames(),
                 function( $mapping ) use ( $metadata ) {
                     return 'datetime' != $metadata->getTypeOfColumn( $mapping );
-                } );
-            $dates      = array_filter( $metadata->getFieldNames(),
-                function( $mapping ) use ( $metadata ) {
-                    return 'datetime' == $metadata->getTypeOfColumn( $mapping );
-                } );
+                }
+            );
 
             $dates      = array_filter( $metadata->getFieldNames(),
                 function( $mapping ) use ( $metadata ) {
                     return 'datetime' == $metadata->getTypeOfColumn( $mapping );
-                } );
+                }
+            );
+
 
             $oneToOne = array_filter(
                 $metadata->getAssociationMappings() ,
@@ -166,7 +172,12 @@ class GridController extends Controller
                 )
             );
         } else {
-            return $this->render( 'LighthartGridBundle:Grid:nogrid.html.twig' );
+            return $this->render(
+                'LighthartGridBundle:Grid:nogrid.html.twig' ,
+                array(
+                    'class'      => $class      ,
+                )
+            );
         }
     }
 }

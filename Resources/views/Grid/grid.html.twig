@@ -1,6 +1,4 @@
-{% extends 'BlackfishBudgetCoreBundle::layout.html.twig' %}
-{# Sample Grid #}
-{% block content %}
+{% block grid %}
     {% spaceless %}
         <table class="table table-bordered table-condensed table-hover table-striped">
             <thead>
@@ -29,21 +27,21 @@
                         {% for date in dates %}
                             <td data-lg-role-entity-id="{{entity.id}}" date-role-lg-edittype="date">{{attribute(entity, date)|date('m/d/Y')}}</td>
                         {% endfor %}
-                        {% for date in dates %}
+{#                         {% for date in dates %}
                             <td data-lg-role-entity-id="{{entity.id}}" date-role-lg-edittype="single">{{attribute(entity, date)|date('m/d/Y')}}</td>
                         {% endfor %}
                         {% for date in dates %}
                             <td data-lg-role-entity-id="{{entity.id}}" date-role-lg-edittype="multi">{{attribute(entity, date)|date('m/d/Y')}}</td>
-                        {% endfor %}
+                        {% endfor %} #}
                     </tr>
                 {% endfor %}
             </tbody>
         </table>
     {% endspaceless %}
-{% endblock content %}
+{% endblock grid %}
 
 {% block javascripts %}
-    {{parent()}}
+{#     {{parent()}} #}
     {% javascripts
         '@LighthartGridBundle/Resources/public/js/tdEdit.js'
         %}
