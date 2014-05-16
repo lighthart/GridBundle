@@ -12,7 +12,7 @@ class GridController extends Controller
     // have to be able to parse bundle name as well
     public function indexAction( Request $request, $class = 'AcctKey' ) {
         $em = $this->getDoctrine()->getManager();
-        $entities = $em->getRepository( 'BlackfishBudgetSnapshotBundle:'.$class )->findAll();
+        $entities = $em->getRepository( 'LighthartAwesomeBundle:'.$class )->findAll();
 
         return $this->render(
             'LighthartGridBundle:Grid:grid.html.twig'
