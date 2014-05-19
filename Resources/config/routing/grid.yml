@@ -2,9 +2,9 @@ grid_index :
     pattern      : /
     defaults     : { _controller: "LighthartGridBundle:Grid:index" }
 
-grid :
-    pattern      : /entity/{class}/
-    defaults     : { _controller: "LighthartGridBundle:Grid:grid" }
+entity_grid :
+    pattern      : /entityGrid/{class}/
+    defaults     : { _controller: "LighthartGridBundle:Grid:entityGrid" }
     requirements :
         class : \w+
         field : \w+

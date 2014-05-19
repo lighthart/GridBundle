@@ -12,27 +12,28 @@
                             <th class="lg-editable" data-role-lg-class="{{class}}" data-role-lg-field="{{field}}" style="width:{{1/(loop.length)*100}}%;">{{field}}</th>
                         {% endif %}
                     {% endfor %}
-                    {% for date in dates %}
-                        <th class="lg-editable" data-role-lg-class="{{class}}" data-role-lg-field="{{date}}" style="width:{{1/(loop.length)*100}}%;">{{date}}</th>
-                    {% endfor %}
-
                 </tr>
             </thead>
             <tbody>
                 {% for entity in entities %}
                     <tr data-role-lg-parent-entity-id="{{entity.id}}">
                         {% for field in fields %}
-                            <td data-lg-role-entity-id="{{entity.id}}" date-role-lg-edittype="field">{{attribute(entity, field)}}</td>
+                            <td data-lg-role-entity-id="{{entity.id}}" date-role-lg-edittype="field">
+                                {% if attribute(entity, field).timestamp is defined %}
+                                    {{ attribute(entity, field)|date('M d, Y') }}
+                                {% else %}
+                                    {{ attribute(entity, field) }}
+                                {% endif %}
+                            </td>
                         {% endfor %}
-                        {% for date in dates %}
-                            <td data-lg-role-entity-id="{{entity.id}}" date-role-lg-edittype="date">{{attribute(entity, date)|date('m/d/Y')}}</td>
-                        {% endfor %}
+
 {#                         {% for date in dates %}
                             <td data-lg-role-entity-id="{{entity.id}}" date-role-lg-edittype="single">{{attribute(entity, date)|date('m/d/Y')}}</td>
                         {% endfor %}
                         {% for date in dates %}
                             <td data-lg-role-entity-id="{{entity.id}}" date-role-lg-edittype="multi">{{attribute(entity, date)|date('m/d/Y')}}</td>
                             {% endfor %} #}
+
                         </tr>
                     {% endfor %}
                 </tbody>
@@ -43,21 +44,21 @@
     {% block javascripts %}
         {% javascripts '@LighthartGridBundle/Resources/public/js/tdEdit.js' %}
             <script type="text/javascript">
-                //Check that the script is not currently in DOM
-                if (document.getElementById("{{ asset_url }}") === null) {
-                    //Set the class name of the folders to that given from the config
+            //Check that the script is not currently in DOM
+            if (document.getElementById("{{ asset_url }}") === null) {
+                //Set the class name of the folders to that given from the config
 
-                    //Append the script to the end of the dom
-                    window.onload = (function() {
-                        var resourceListScript = document.createElement( "script" );
-                        resourceListScript.type = "text/javascript";
-                        resourceListScript.src = "{{ asset_url }}";
-                        //Give the script the asset url as id also
-                        resourceListScript.id = "{{ asset_url }}";
-                            //Add the script to the DOM at the end of the body tag
-                            document.getElementsByTagName("body")[0].appendChild(resourceListScript);
-                        });
-                }
+                //Append the script to the end of the dom
+                window.onload = (function() {
+                    var resourceListScript = document.createElement( "script" );
+                    resourceListScript.type = "text/javascript";
+                    resourceListScript.src = "{{ asset_url }}";
+                    //Give the script the asset url as id also
+                    resourceListScript.id = "{{ asset_url }}";
+                        //Add the script to the DOM at the end of the body tag
+                        document.getElementsByTagName("body")[0].appendChild(resourceListScript);
+                    });
+            }
             </script>
-    {% endjavascripts %}
-{% endblock javascripts %}
+        {% endjavascripts %}
+    {% endblock javascripts %}

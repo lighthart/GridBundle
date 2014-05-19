@@ -59,8 +59,9 @@ class GridController extends Controller
     }
 
 
-    public function gridAction( Request $request, $class = null ) {
+    public function entityGridAction( Request $request, $class = null ) {
         // basic entity grid
+        // reads metadata, and spits something out
 
         $em     = $this->getDoctrine()->getManager();
         $verity = $this->verifyAction( $class );
@@ -70,24 +71,13 @@ class GridController extends Controller
             $metadata   = $verity['metadata'];
             $entities   = $em->getRepository( $backslash )
             ->findBy(
-                    array() , // $where
-                    array() , // $orderBy
-                    10    // $limit
-                    // 0    , // $offset
+                array() , // $where
+                array() , // $orderBy
+                10        // $limit
+                // 0    , // $offset
             );
 
-            $fields     = array_filter( $metadata->getFieldNames(),
-                function( $mapping ) use ( $metadata ) {
-                    return 'datetime' != $metadata->getTypeOfColumn( $mapping );
-                }
-            );
-
-            $dates      = array_filter( $metadata->getFieldNames(),
-                function( $mapping ) use ( $metadata ) {
-                    return 'datetime' == $metadata->getTypeOfColumn( $mapping );
-                }
-            );
-
+            $fields = $metadata->getFieldNames();
 
             $oneToOne = array_filter(
                 $metadata->getAssociationMappings() ,
@@ -125,45 +115,11 @@ class GridController extends Controller
                 }
             );
 
-            // print_r( "<pre>" );
-
-            // // var_dump($fields);
-
-            // // array_map(
-            // //     function( $mapping ) use ( $metadata ) {
-            // //         // var_dump( $metadata->getTypeOfColumn( $mapping ) );
-            // //         var_dump( $metadata->getFieldMapping( $mapping ) );
-            // //     }
-            // //     , $fields
-            // // );
-            // var_dump( '12M' );
-            // var_dump( $oneToMany );
-            // var_dump( 'M21' );
-            // var_dump( $manyToOne );
-            // die;
-
-            // array_map(
-            //     function( $mapping ) use ( $metadata ) {
-            //         try {
-
-            //             var_dump( $mapping );
-            //             var_dump( $metadata->getAssociationMapping( $mapping['fieldName'] ) );
-            //             print_r( "<br><br>" );
-            //         } catch ( \Exception $ex ) {
-            //             var_dump( 'Failed for: '.$mapping );
-            //         }
-            //     }
-            //     , $assoc
-            // );
-
-            // die;
-
             return $this->render(
                 'LighthartGridBundle:Grid:grid.html.twig' ,
                 array(
                     'class'      => $class      ,
                     'fields'     => $fields     ,
-                    'dates'      => $dates      ,
                     'oneToOne'   => $oneToOne   ,
                     'oneToMany'  => $oneToMany  ,
                     'manyToOne'  => $manyToOne  ,
@@ -175,9 +131,20 @@ class GridController extends Controller
             return $this->render(
                 'LighthartGridBundle:Grid:nogrid.html.twig' ,
                 array(
-                    'class'      => $class      ,
+                    'class' => $class ,
                 )
             );
         }
     }
+
+    public function qbGridAction( Request $request, $qb ) {
+        if ( !'Doctrine\ORM\QueryBuilder' != get_class( $qb ) ) {
+            throw new \Exception('QueryBuilder object is required for qbGrid action');
+        }
+
+        $gm = $this->get('gridmaker');
+        var_dump($gm->__toString());
+        die;
+    }
+
 }
