@@ -15,7 +15,8 @@ class GridMaker {
     private $doctrine;
     private $request;
     private $query;
-    private $table;
+    private $queryBuilder;
+    private $grid;
 
     public function __toString() {
         return "Grid Maker -- Don't print this";
@@ -24,6 +25,32 @@ class GridMaker {
     public function __construct( $doctrine ) {
         $this->doctrine = $doctrine;
         $this->em = $doctrine->getManager();
+        $this->grid = new Grid();
+    }
+
+
+
+    public function getRequest() {
+        return $this->request;
+    }
+
+    public function setRequest( Request $request ) {
+        $this->request = $request;
+        return $this;
+    }
+
+    public function getGrid() {
+        return $this->grid;
+    }
+
+    public function setGrid( Grid $grid ) {
+        $this->grid = $grid;
+        return $this;
+    }
+
+    public function newGrid( ) {
+        $this->grid = new Grid();
+        return $this;
     }
 
     public function verifyClass( String $class, $slash = null ) {
@@ -73,31 +100,41 @@ class GridMaker {
         return $this->query;
     }
 
-    public function setQuery( Query $query ) {
+    public function setQuery( $query ) {
         $this->query = $query ;
         return $this;
     }
 
-    public function getRequest() {
-        return $this->request;
+    public function getQ() {
+        return $this->getQuery();
     }
 
-    public function setRequest( Request $request ) {
-        $this->request = $request;
+    public function setQ( $query ) {
+        return $this->setQuery( $query );
+    }
+
+
+    public function getQueryBuilder() {
+        return $this->queryBuilder ;
+    }
+
+    public function setQueryBuilder( $queryBuilder ) {
+        $this->queryBuilder = $queryBuilder ;
         return $this;
     }
 
-    public function getTable() {
-        return $this->table;
+    public function getQB() {
+        return $this->getQueryBuilder() ;
     }
 
-    public function setTable( $table ) {
-        $this->table = $table;
-        return $this;
+    public function setQB( $queryBuilder ) {
+        return $this->setQueryBuilder( $queryBuilder ) ;
     }
 
-    public function newTable( ) {
-        $this->table = new Table();
-        return $this;
+    public function hydrateGridFromQB(){
+        $results = $this->getQueryBuilder()->getQuery()->getResult(Query::HYDRATE_SCALAR );
+        $this->getGrid()->fillTh( $results[0] ) ;
+        $this->getGrid()->fillTr( $results ) ;
     }
+
 }

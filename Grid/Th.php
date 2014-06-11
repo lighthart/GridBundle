@@ -8,46 +8,20 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Doctrine\ORM\Query;
 
-class Th {
+class Th extends Cell {
 
-    private $title;     // column heading
-    private $attr;      // html attributes on <th>
+    protected $type;
 
-    public function __construct( ) {
-    }
+    public function __construct( $prop = array() ) {
+        parent::__construct( $prop );
+        foreach ( $prop as $k => $p ) {
+            $this->$k = $p;
+        }
 
-    public function getTitle() {
-        return $this->title;
-    }
-
-    public function setTitle( $title ) {
-        $this->title = $title;
-        return $this;
-    }
-
-    public function getAttr() {
-        return $this->attr;
-    }
-
-    public function setAttr( $attr ) {
-        $this->attr = $attr;
-        return $this;
-    }
-
-    public function getValue() {
-        return $this->value;
-    }
-
-    public function setValue( $value ) {
-        $this->value = $value;
-        return $this;
-    }
-
-    public function th() {
-        return "<th class=\"".($this->attr?:"")."\">"
-            .$this->value
-            ."</th>";
+        if ( !$this->value ) {
+            $this->value = $this->title;
+        }
+        $this->type = 'th';
     }
 }

@@ -8,12 +8,10 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Doctrine\ORM\Query;
 
 class Tr {
-
     private $attr; // html attributes on <thead>
-    private $cell;   // tr <cell>
+    private $cell; // array of th or td
 
     public function __construct( ) {
         $this->cell = array();
@@ -32,14 +30,41 @@ class Tr {
         return $this->cell;
     }
 
-    public function setCell( $cell ) {
+    public function addCell( $cell ) {
+        $this->cell[] = $cell;
+        $cell->setTr($this);
+        return $this;
+    }
+
+    public function addTh( $cell ) {
+        $this->addCell($cell);
+    }
+
+    public function addTd( $cell ) {
+        $this->addCell($cell);
+    }
+
+    public function removeCell( $cell ) {
+        // not sure how to implement yet
+        // $this->cell[] = $cell;
+        // return $this;
+    }
+
+    public function setCell( array $cell ) {
         $this->cell = $cell;
         return $this;
     }
 
     public function tr() {
-        return "<tr class=\"".($this->attr?:"")."\">"
-            .array_map( function( $field ) return {$field->cell();}, $this->cell );
+        return "".
+            "<tr class=\"".( $this->attr?:"" )."\">"
+            .implode( "",
+            array_map(
+                function( $field ) {
+                    return $field->td();
+                },
+                $this->cell )
+            )
             ."</tr>";
     }
 }

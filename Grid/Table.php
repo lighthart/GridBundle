@@ -13,12 +13,27 @@ class Table {
     private $attr;   // html attributes on <table>
     private $thead;  // table <thead>
     private $tbody;  // table <tbody>
+    private $grid;  // table <tbody>
 
-    public function __construct( ) {
+    public function __construct( $prop = array() ) {
+        foreach ($prop as $k => $p) {
+            $this->$k = $p;
+        }
+
         $this->thead = new Thead();
+        $this->thead->setTable($this);
         $this->tbody = new Tbody();
+        $this->tbody->setTable($this);
     }
 
+    public function getGrid() {
+        return $this->grid;
+    }
+
+    public function setGrid( $grid ) {
+        $this->grid = $grid;
+        return $this;
+    }
 
     public function getAttr() {
         return $this->attr;
@@ -33,7 +48,7 @@ class Table {
         return $this->thead;
     }
 
-    public function setThead( $thead ) {
+    public function setThead( Thead $thead ) {
         $this->thead = $thead;
         return $this;
     }
@@ -47,7 +62,7 @@ class Table {
         return $this->tbody;
     }
 
-    public function setTbody( $tbody ) {
+    public function setTbody( Tbody $tbody ) {
         $this->tbody = $tbody;
         return $this;
     }
@@ -56,7 +71,6 @@ class Table {
         $this->tbody = new Tbody();
         return $this;
     }
-
 
     public function table() {
         return "<table class=\"".($this->attr?:"")."\">"
