@@ -20,7 +20,7 @@ class Grid {
     }
 
     public function __construct( ) {
-        $this->columns = new Columns();
+        $this->columns = array();
         $this->table = new Table( array( 'attr' => 'table table-bordered table-condensed table-hover table-striped grid' ) );
         $this->table->setGrid( $this );
     }
@@ -82,13 +82,30 @@ class Grid {
         return $this;
     }
 
-    public function getColumns() {
+    public function addColumn( Column $column ) {
+        $this->columns[$column->getEntity()] = $column->getValue();
+        return $this;
+    }
+
+    public function removeColumn( Column $column ) {
+        // not sure how to implement yet
+        // $this->columns[] = $columns;
+        // return $this;
+    }
+
+    public function setColumns( array $columns ) {
+        foreach ($columns as $column) {
+            $this->addColumn($column);
+        }
+        return $this;
+    }
+
+    public function getColumns(){
         return $this->columns;
     }
 
-    public function setColumns( Columns $columns ) {
-        $this->columns = $columns;
-        return $this;
+    public function getOrder(){
+        return array_keys($this->columns);
     }
 
     public function newColumns( ) {

@@ -28,8 +28,6 @@ class GridMaker {
         $this->grid = new Grid();
     }
 
-
-
     public function getRequest() {
         return $this->request;
     }
@@ -131,10 +129,27 @@ class GridMaker {
         return $this->setQueryBuilder( $queryBuilder ) ;
     }
 
+    public function addColumn($entity, $value='id'){
+        $this->getGrid()->addColumn(new Column($entity, $value));
+    }
+
     public function hydrateGridFromQB(){
+        $this->mapColumnsFromQB();die;
         $results = $this->getQueryBuilder()->getQuery()->getResult(Query::HYDRATE_SCALAR );
         $this->getGrid()->fillTh( $results[0] ) ;
-        $this->getGrid()->fillTr( $results ) ;
+        $this->getGrid()->fillTr( $resulsts ) ;
+    }
+
+    public function mapColumnsFromQB(){
+        var_dump('map');
+        // var_dump($this->getGrid());
+        var_dump($this->getGrid()->getColumns());
+        foreach ($this->getGrid()->getColumns() as $entity => $value){
+            var_dump('hmm');
+            var_dump($entity);
+            var_dump($entity." => ".$value);
+        }
+        die;
     }
 
 }
