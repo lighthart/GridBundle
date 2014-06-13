@@ -127,9 +127,8 @@ class Grid {
     }
 
     public function fillTh( array $result = array() ) {
-        $columns = $this->getColumns();
         $thead = $this->getTable()->getThead();
-        // $columns = $this->getColumns()->getOrder();
+        $columns = $this->getColumns();
         $tr = new Tr();
         foreach ( $result as $key => $value ) {
             $th = new Th(
@@ -138,14 +137,14 @@ class Grid {
                 )
             );
             $tr->addCell( $th );
-            $columns->addColumn( $key );
+            $this->addColumn( new Column($key) );
         }
         $thead->addTr( $tr );
     }
 
     public function fillTr( array $results = array() ) {
         $tbody = $this->getTable()->getTbody();
-        $columns = $this->getColumns()->getOrder();
+        $columns = $this->getColumns();
         foreach ( $results as $row => $result ) {
             $tr = new Tr();
             foreach ( $result as $key => $value ) {

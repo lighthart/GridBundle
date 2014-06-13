@@ -134,16 +134,22 @@ class GridMaker {
     }
 
     public function hydrateGridFromQB(){
-        $this->mapColumnsFromQB();die;
+        // $this->mapColumnsFromQB();die;
         $results = $this->getQueryBuilder()->getQuery()->getResult(Query::HYDRATE_SCALAR );
         $this->getGrid()->fillTh( $results[0] ) ;
-        $this->getGrid()->fillTr( $resulsts ) ;
+        $this->getGrid()->fillTr( $results ) ;
     }
 
     public function mapColumnsFromQB(){
         var_dump('map');
         // var_dump($this->getGrid());
         var_dump($this->getGrid()->getColumns());
+        $qb = $this->getQB();
+        foreach($qb->getDQLParts()['select'] as $select) {
+            var_dump($select->getParts());
+
+        }
+        var_dump($qb->getDQLParts()['select']);
         foreach ($this->getGrid()->getColumns() as $entity => $value){
             var_dump('hmm');
             var_dump($entity);
