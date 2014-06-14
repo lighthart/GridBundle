@@ -129,32 +129,44 @@ class GridMaker {
         return $this->setQueryBuilder( $queryBuilder ) ;
     }
 
-    public function addColumn($entity, $value='id'){
-        $this->getGrid()->addColumn(new Column($entity, $value));
+    public function addColumn( $entity, $value='id' ) {
+        $this->getGrid()->addColumn( new Column( $entity, $value ) );
     }
 
-    public function hydrateGridFromQB(){
-        // $this->mapColumnsFromQB();die;
-        $results = $this->getQueryBuilder()->getQuery()->getResult(Query::HYDRATE_SCALAR );
+    public function hydrateGridFromQB() {
+        $this->mapColumnsFromQB();die;
+        $results = $this->getQueryBuilder()->getQuery()->getResult( Query::HYDRATE_SCALAR );
         $this->getGrid()->fillTh( $results[0] ) ;
         $this->getGrid()->fillTr( $results ) ;
     }
 
-    public function mapColumnsFromQB(){
-        var_dump('map');
-        // var_dump($this->getGrid());
-        var_dump($this->getGrid()->getColumns());
+    public function mapColumnsFromQB() {
         $qb = $this->getQB();
-        foreach($qb->getDQLParts()['select'] as $select) {
-            var_dump($select->getParts());
+        foreach ( $qb->getDQLParts()['select'] as $select ) {
+            $qb->select( 'partial '.$select->getParts()[0].'.{id}' );
+        }
 
+
+        $entities = array_merge(
+            array_map( function( $f ) {
+                    return $f->getAlias();
+                }, $qb->getDQLPart('from')),
+            array_map( function( $f ) {
+                    return $f->getAlias();
+                }, $qb->getDQLPart('join')[$qb->getDQLParts()['from'][0]->getAlias()] )
+        );
+
+        foreach ( $this->getGrid()->getColumns() as $entity => $value ) {
+            if ( in_array( $entity, $entities ) ) {
+                $partial = 'partial '.$entity.'.{'.$value.'}';
+                $partials = array_map(function($s) { return $s->getParts()[0]; }, $qb->getDQLPart('select') );
+                if (!in_array($partial, $partials)) {
+                    $qb->addSelect($partial);
+                }
+
+            }
         }
-        var_dump($qb->getDQLParts()['select']);
-        foreach ($this->getGrid()->getColumns() as $entity => $value){
-            var_dump('hmm');
-            var_dump($entity);
-            var_dump($entity." => ".$value);
-        }
+        var_dump( $qb->getQuery()->getDQL() );
         die;
     }
 
