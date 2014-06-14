@@ -156,11 +156,17 @@ class GridMaker {
                 }, $qb->getDQLPart('join')[$qb->getDQLParts()['from'][0]->getAlias()] )
         );
 
-        foreach ( $this->getGrid()->getColumns() as $entity => $value ) {
+        foreach ( $this->getGrid()->getColumns() as $entity => $field ) {
             if ( in_array( $entity, $entities ) ) {
-                $partial = 'partial '.$entity.'.{'.$value.'}';
+                $partial = 'partial '.$entity.'.{'.$field.'}';
                 $partials = array_map(function($s) { return $s->getParts()[0]; }, $qb->getDQLPart('select') );
-                if (!in_array($partial, $partials)) {
+                    var_dump('|partial '.$entity.'.{(.*?,)?'.$field.'(,.*?)?}|');
+                    var_dump($partial);
+                if (!preg_match('|partial '.$entity.'.{(.*?,)?'.$field.'(,.*?)?}|',$partial, $partials)) {
+                    var_dump('no match');
+                    // this needs to be adjusted to add fields to partial, instead of another entity reference
+                    // pregmatch
+
                     $qb->addSelect($partial);
                 }
 
