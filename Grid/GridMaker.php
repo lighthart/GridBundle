@@ -142,10 +142,15 @@ class GridMaker {
 
     public function mapColumnsFromQB() {
         $qb = $this->getQB();
+
+        $partials = [];
         foreach ( $qb->getDQLParts()['select'] as $select ) {
-            $qb->select( 'partial '.$select->getParts()[0].'.{id}' );
+            if (preg_match('|partial (.*?)\.\{(.*?)\}|', $select->getParts()[0], $matches) ){
+                $partials[$matches[1]][]=$matches[2];
+            }
         }
 
+var_dump($partials);
 
         $entities = array_merge(
             array_map( function( $f ) {
@@ -157,20 +162,28 @@ class GridMaker {
         );
 
         foreach ( $this->getGrid()->getColumns() as $entity => $field ) {
-            if ( in_array( $entity, $entities ) ) {
-                $partial = 'partial '.$entity.'.{'.$field.'}';
-                $partials = array_map(function($s) { return $s->getParts()[0]; }, $qb->getDQLPart('select') );
-                    var_dump('|partial '.$entity.'.{(.*?,)?'.$field.'(,.*?)?}|');
-                    var_dump($partial);
-                if (!preg_match('|partial '.$entity.'.{(.*?,)?'.$field.'(,.*?)?}|',$partial, $partials)) {
-                    var_dump('no match');
-                    // this needs to be adjusted to add fields to partial, instead of another entity reference
-                    // pregmatch
-
-                    $qb->addSelect($partial);
-                }
-
+            var_dump($entity);
+            var_dump($field);
+            var_dump(!isset($partials[$entity]));
+            if (!isset($partials[$entity])) {
+                $partials[$entity]=array('id');
             }
+
+            if (in_array($field, $partials[$entity])) {
+            } else {
+                $partials[$entity][]=$field;
+                // should probably add some stuff here to verify versus ORM data
+                // in the mean time developers can be careful
+            }
+        }
+
+        foreach ($partials as $entity => $fields){
+            if ($qb->getRootAlias() == $entity){
+                $qb->select( 'partial '.$entity.'.{'.implode(',', $fields).'}' );
+            } else {
+                $qb->addSelect( 'partial '.$entity.'.{'.implode(',', $fields).'}' );
+            }
+
         }
         var_dump( $qb->getQuery()->getDQL() );
         die;
