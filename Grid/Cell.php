@@ -64,7 +64,10 @@ class Cell {
             "\" data-role-lg-header=\"".
             ( $this->title?:"" )
             ."\">"
-            .$this->value
+            .( ( is_object($this->value) &&  'DateTime' == get_class($this->value) )
+                ? $this->value->format('Y-m-d')
+                : $this->value
+                )
             ."</".$this->type.">";
     }
 

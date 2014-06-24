@@ -95,7 +95,11 @@ class GridMaker {
     }
 
     public function getQuery() {
-        return $this->query;
+        if ($this->query) {
+            return $this->query;
+        } else {
+            return $this->queryBuilder->getQuery();
+        }
     }
 
     public function setQuery( $query ) {
@@ -129,28 +133,35 @@ class GridMaker {
         return $this->setQueryBuilder( $queryBuilder ) ;
     }
 
-    public function addColumn( $entity, $value='id' ) {
+    public function addField( $entity, $value='id' ) {
         $this->getGrid()->addColumn( new Column( $entity, $value ) );
     }
 
+    public function addMethod($entity, $method=null) {
+        if (method_exists($entity, $method)){
+
+        }
+    }
+
     public function hydrateGridFromQB() {
-        $this->mapColumnsFromQB();die;
+        // $this->mapFieldsFromQB();
+        $this->mapMethodsFromQB();
         $results = $this->getQueryBuilder()->getQuery()->getResult( Query::HYDRATE_SCALAR );
         $this->getGrid()->fillTh( $results[0] ) ;
         $this->getGrid()->fillTr( $results ) ;
     }
 
-    public function mapColumnsFromQB() {
+    public function mapFieldsFromQB() {
         $qb = $this->getQB();
 
         $partials = [];
         foreach ( $qb->getDQLParts()['select'] as $select ) {
             if (preg_match('|partial (.*?)\.\{(.*?)\}|', $select->getParts()[0], $matches) ){
                 $partials[$matches[1]][]=$matches[2];
+            } else {
+                $partials[$select->getParts()[0]] =array('id');
             }
         }
-
-var_dump($partials);
 
         $entities = array_merge(
             array_map( function( $f ) {
@@ -162,9 +173,6 @@ var_dump($partials);
         );
 
         foreach ( $this->getGrid()->getColumns() as $entity => $field ) {
-            var_dump($entity);
-            var_dump($field);
-            var_dump(!isset($partials[$entity]));
             if (!isset($partials[$entity])) {
                 $partials[$entity]=array('id');
             }
@@ -183,10 +191,10 @@ var_dump($partials);
             } else {
                 $qb->addSelect( 'partial '.$entity.'.{'.implode(',', $fields).'}' );
             }
-
         }
-        var_dump( $qb->getQuery()->getDQL() );
-        die;
+    }
+
+    public function mapMethodsFromQB() {
     }
 
 }
