@@ -83,7 +83,7 @@ class Grid {
     }
 
     public function addColumn( Column $column ) {
-        $this->columns[$column->getEntity()] = $column->getValue();
+        $this->columns[$column->getAlias()] = $column;
         return $this;
     }
 
@@ -94,22 +94,24 @@ class Grid {
     }
 
     public function setColumns( array $columns ) {
-        foreach ($columns as $column) {
-            $this->addColumn($column);
+        // columns should obviously be of type Column
+        foreach ( $columns as $column ) {
+            $this->addColumn( $column );
         }
         return $this;
     }
 
-    public function getColumns(){
+    public function getColumns() {
         return $this->columns;
     }
 
-    public function getOrder(){
-        return array_keys($this->columns);
+    public function getOrder() {
+        return array_keys( $this->columns );
     }
 
     public function newColumns( ) {
-        $this->columns = new Columns();
+        // clear them out to rerun
+        $this->columns = [];
         return $this;
     }
 
@@ -126,10 +128,15 @@ class Grid {
         $thead->addTr( $tr );
     }
 
+    public function columnOptions(Column $column) {
+
+    }
+
     public function fillTh( array $result = array() ) {
         $thead = $this->getTable()->getThead();
         $columns = $this->getColumns();
-        $tr = new Tr();
+        $tr = new Tr( );
+        $result = array_merge($columns, $result);
         foreach ( $result as $key => $value ) {
             $th = new Th(
                 array(
@@ -137,7 +144,8 @@ class Grid {
                 )
             );
             $tr->addCell( $th );
-            $this->addColumn( new Column($key) );
+            $this->addColumn( new Column( $key ) );
+            $this->columnOptions($columns[$key]);
         }
         $thead->addTr( $tr );
     }
@@ -145,16 +153,18 @@ class Grid {
     public function fillTr( array $results = array() ) {
         $tbody = $this->getTable()->getTbody();
         $columns = $this->getColumns();
-        foreach ( $results as $row => $result ) {
+        foreach($results as $row => $result ) {
+            $result = array_merge($columns, $result);
             $tr = new Tr();
             foreach ( $result as $key => $value ) {
                 $td = new Td(
                     array(
                         'value' => $value,
-                        'title' => $columns[$key]
+                        'title' => $columns[$key]->getValue()
                     )
                 );
                 $tr->addCell( $td );
+                $this->columnOptions($columns[$key]);
             }
             $tbody->addTr( $tr );
         }

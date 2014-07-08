@@ -10,22 +10,29 @@ use Doctrine\ORM\Query;
 
 class Column {
 
-    private $entity; // from the query
+    private $alias; // from the query
     private $value; // from the query
+    private $options;
 
-    public function __construct( $entity, $value ='id') {
-        $this->entity = $entity;
-        $this->value  = $value;
 
+
+    public function __construct( $alias, $value ='id', array $options = array() ) {
+        $this->alias = $alias;
+        $this->value = $value;
+        $this->options = $options;
     }
 
-    public function setEntity( $entity ) {
-        $this->entity = $entity;
+    public function setAlias( $alias ) {
+        $this->alias = $alias;
         return $this;
     }
 
-    public function getEntity(){
-        return $this->entity;
+    public function getAlias() {
+        return $this->alias;
+    }
+
+    public function getEntity() {
+        return stristr( $this->alias, '_', true );
     }
 
     public function setValue( $value ) {
@@ -33,8 +40,16 @@ class Column {
         return $this;
     }
 
-    public function getValue(){
+    public function getValue() {
         return $this->value;
     }
 
+    public function getOptions() {
+        return $this->options;
+    }
+
+    public function setOptions( $options ) {
+        $this->options = $options;
+        return $this;
+    }
 }

@@ -95,7 +95,7 @@ class GridMaker {
     }
 
     public function getQuery() {
-        if ($this->query) {
+        if ( $this->query ) {
             return $this->query;
         } else {
             return $this->queryBuilder->getQuery();
@@ -133,18 +133,22 @@ class GridMaker {
         return $this->setQueryBuilder( $queryBuilder ) ;
     }
 
-    public function addField( $entity, $value='id' ) {
-        $this->getGrid()->addColumn( new Column( $entity, $value ) );
+    public function addField( $entity, $value = 'id', array $options = array() ) {
+        $this->getGrid()->addColumn( new Column( $entity.'_'.$value, $value, $options ) );
     }
 
-    public function addMethod($entity, $method=null) {
-        if (method_exists($entity, $method)){
-
+    public function addMethod( $entity, $method, $fields = array() ) {
+        if ( method_exists( $entity, $method ) ) {
+            $this->getGrid()->addColumn( new Column( $entity, $value ) );
         }
     }
 
-    public function hydrateGridFromQB() {
-        // $this->mapFieldsFromQB();
+    public function hydrateGrid( $fromQB = false ) {
+        if ( $fromQB ) {
+            $this->mapFieldsFromQB();
+        } else {
+            $this->mapFieldsFromColumns();
+        }
         $this->mapMethodsFromQB();
         $results = $this->getQueryBuilder()->getQuery()->getResult( Query::HYDRATE_SCALAR );
         $this->getGrid()->fillTh( $results[0] ) ;
@@ -153,43 +157,91 @@ class GridMaker {
 
     public function mapFieldsFromQB() {
         $qb = $this->getQB();
-
         $partials = [];
         foreach ( $qb->getDQLParts()['select'] as $select ) {
-            if (preg_match('|partial (.*?)\.\{(.*?)\}|', $select->getParts()[0], $matches) ){
-                $partials[$matches[1]][]=$matches[2];
+            if ( preg_match( '|partial (.*?)\.\{(.*?)\}|', $select->getParts()[0], $matches ) ) {
+                $partials[$matches[1]][] = $matches[2];
             } else {
-                $partials[$select->getParts()[0]] =array('id');
+                $partials[$select->getParts()[0]] = array( 'id' );
             }
         }
 
         $entities = array_merge(
             array_map( function( $f ) {
                     return $f->getAlias();
-                }, $qb->getDQLPart('from')),
+                }, $qb->getDQLPart( 'from' ) ),
             array_map( function( $f ) {
                     return $f->getAlias();
-                }, $qb->getDQLPart('join')[$qb->getDQLParts()['from'][0]->getAlias()] )
+                }, $qb->getDQLPart( 'join' )[$qb->getDQLParts()['from'][0]->getAlias()] )
         );
 
-        foreach ( $this->getGrid()->getColumns() as $entity => $field ) {
-            if (!isset($partials[$entity])) {
-                $partials[$entity]=array('id');
-            }
-
-            if (in_array($field, $partials[$entity])) {
+        // While addSelect just adds more
+        foreach ( $partials as $entity => $fields ) {
+            if ( $qb->getRootAlias() == $entity ) {
+                $qb->select( 'partial '.$entity.'.{'.implode( ',', array_merge( array_values( $fields ) ) ).'}' );
             } else {
-                $partials[$entity][]=$field;
-                // should probably add some stuff here to verify versus ORM data
-                // in the mean time developers can be careful
             }
         }
 
-        foreach ($partials as $entity => $fields){
-            if ($qb->getRootAlias() == $entity){
-                $qb->select( 'partial '.$entity.'.{'.implode(',', $fields).'}' );
+        foreach ( $partials as $entity => $fields ) {
+            if ( $qb->getRootAlias() == $entity ) {
             } else {
-                $qb->addSelect( 'partial '.$entity.'.{'.implode(',', $fields).'}' );
+                $qb->addSelect( 'partial '.$entity.'.{'.implode( ',', $fields ).'}' );
+            }
+        }
+
+        $this->getGrid()->newColumns();
+        foreach( $partials as $entity => $fields ) {
+            foreach( explode(',', $fields[0]) as $k => $field ) {
+                $field = trim($field);
+                $this->getGrid()->addColumn( new Column( $entity."_".$field, $field ) );
+            }
+        }
+    }
+
+    public function mapFieldsFromColumns() {
+        $qb = $this->getQB();
+
+        $partials = [];
+        // var_dump($this->getGrid()->getColumns());die;
+        $columns=$this->getGrid()->getColumns();
+        // var_dump($partials);
+
+        foreach ( $columns as $key => $column ) {
+            // var_dump($entity);
+
+                $partials[$column->getEntity()][] = $column->getValue();
+            // if ( !isset( $partials[$entity] ) ) {
+            // }
+
+            // if ( in_array( $entity."_".$field, array_keys( $partials ) ) ) {
+            // } else {
+            //     $partials[$entity]=$field;
+            //     // should probably add some stuff here to verify versus ORM data
+            //     // in the mean time developers can be careful
+            // }
+        }
+
+        // Need to do the following loops twice because select removes all fields
+        // While addSelect just adds more
+        foreach ( $partials as $entity => $field ) {
+            if ( $qb->getRootAlias() == $entity ) {
+                $qb->select( 'partial '.$entity.'.{'.implode( ',', $field ).'}' );
+            } else {
+            }
+        }
+        foreach ( $partials as $entity => $field ) {
+            if ( $qb->getRootAlias() == $entity ) {
+            } else {
+                $qb->addSelect( 'partial '.$entity.'.{'.implode( ',', $field ).'}' );
+            }
+        }
+
+        $this->getGrid()->newColumns();
+        foreach( $partials as $entity => $fields ) {
+            foreach( $fields as $k => $field ) {
+                $field = trim($field);
+                $this->getGrid()->addColumn( new Column( $entity."_".$field, $field ) );
             }
         }
     }

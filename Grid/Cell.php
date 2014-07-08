@@ -60,15 +60,17 @@ class Cell {
 
     public function td() {
         return "".
-            "<".$this->type." class=\"".( $this->attr?:"" ).
-            "\" data-role-lg-header=\"".
-            ( $this->title?:"" )
+            "<".$this->type." class=\""
+            .( $this->attr?:"" )
+            ."\" data-role-lg-header=\""
+            .( $this->title?:"" )
             ."\">"
-            .( ( is_object($this->value) &&  'DateTime' == get_class($this->value) )
+            .( ( is_object($this->value) && 'DateTime' == get_class($this->value) )
                 ? $this->value->format('Y-m-d')
                 : $this->value
                 )
-            ."</".$this->type.">";
+            ."</".$this->type.">"
+            ;
     }
 
     public function th(){
