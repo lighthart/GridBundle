@@ -1,49 +1,14 @@
-{% block grid %}
-    {% spaceless %}
-        <table class="table table-bordered table-condensed table-hover table-striped">
-            <thead>
-                <tr>
-                    {% for field in fields %}
-                        {% if 'id' == field %}
-                            {# DO NOT EVER EDIT IDs #}
-                            {# Entity should not have a setID method anyhows #}
-                            <th data-role-class="{{class}}" data-role-lg-field="{{field}}" style="width:{{1/(loop.length)*100}}%;">{{field}}</th>
-                        {% else %}
-                            <th class="lg-editable" data-role-lg-class="{{class}}" data-role-lg-field="{{field}}" style="width:{{1/(loop.length)*100}}%;">{{field}}</th>
-                        {% endif %}
-                    {% endfor %}
-                </tr>
-            </thead>
-            <tbody>
-                {% for entity in entities %}
-                    <tr data-role-lg-parent-entity-id="{{entity.id}}">
-                        {% for field in fields %}
-                            <td data-lg-role-entity-id="{{entity.id}}" date-role-lg-edittype="field">
-                                {% if attribute(entity, field).timestamp is defined %}
-                                    {{ attribute(entity, field)|date('M d, Y') }}
-                                {% else %}
-                                    {{ attribute(entity, field) }}
-                                {% endif %}
-                            </td>
-                        {% endfor %}
+{% block grid %}{% spaceless %}
+    <{{ table.type }}{%- for flavor, attribs in table.attr %}{{-' '-}}{{ flavor }}="{{ attribs }}"{%- endfor -%}>
+        {% for section in table.section %}
+            {% include 'LighthartGridBundle:Section:section.html.twig' with {'section' : section } %}
+        {% endfor %}
+    </{{ table.type }}>
+{% endspaceless %}{% endblock grid %}
 
-{#                         {% for date in dates %}
-                            <td data-lg-role-entity-id="{{entity.id}}" date-role-lg-edittype="single">{{attribute(entity, date)|date('m/d/Y')}}</td>
-                        {% endfor %}
-                        {% for date in dates %}
-                            <td data-lg-role-entity-id="{{entity.id}}" date-role-lg-edittype="multi">{{attribute(entity, date)|date('m/d/Y')}}</td>
-                            {% endfor %} #}
-
-                        </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        {% endspaceless %}
-    {% endblock grid %}
-
-    {% block javascripts %}
-        {% javascripts '@LighthartGridBundle/Resources/public/js/tdEdit.js' %}
-            <script type="text/javascript">
+{% block javascripts %}
+    {% javascripts '@LighthartGridBundle/Resources/public/js/tdEdit.js' %}
+        <script type="text/javascript">
             //Check that the script is not currently in DOM
             if (document.getElementById("{{ asset_url }}") === null) {
                 //Set the class name of the folders to that given from the config

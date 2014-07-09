@@ -14,12 +14,22 @@ class Cell {
     protected $attr;  // html attributes on <td>
     protected $title; // column reference
     protected $value; // the contents of the cell
-    protected $tr; // which row we belong in
+    protected $row; // which row we belong in
+    private   $type;
 
     public function __construct( $prop = array() ) {
         foreach ($prop as $k => $p) {
             $this->$k = $p;
         }
+    }
+
+    public function getType() {
+         return $this->type;
+    }
+
+    public function setType( $type ) {
+        $this->type = $type;
+        return $this;
     }
 
     public function getAttr() {
@@ -49,14 +59,16 @@ class Cell {
         return $this;
     }
 
-    public function getTr() {
+    public function getRow() {
         return $this->tr;
     }
 
-    public function setTr( $tr ) {
-        $this->tr = $tr;
+    public function setRow( $row ) {
+        $this->tr = $row;
         return $this;
     }
+
+    // move this to view portion
 
     public function td() {
         return "".

@@ -12,13 +12,23 @@ use Symfony\Component\HttpFoundation\Response;
 class Section {
 
     private $attr; // html attributes on <thead>
-    private $tr;   // the tr's in the section
+    private $row;   // the tr's in the section
     private $table;
+    protected $type;
 
     public function __construct( ) {
         $this->tr = array();
+        $this->attr = array();
     }
 
+    public function getType() {
+         return $this->type;
+    }
+
+    public function setType( $type ) {
+        $this->type = $type;
+        return $this;
+    }
 
     public function getAttr() {
         return $this->attr;
@@ -29,17 +39,17 @@ class Section {
         return $this;
     }
 
-    public function getTr() {
-        return $this->tr;
+    public function getRow() {
+        return $this->row;
     }
 
-    public function setTr( $tr ) {
-        $this->tr = $tr;
+    public function setRow( $row ) {
+        $this->row = $row;
         return $this;
     }
 
-    public function addTr( $tr ) {
-        $this->tr[] = $tr;
+    public function addRow( $row ) {
+        $this->row[] = $row;
         return $this;
     }
 
@@ -51,21 +61,5 @@ class Section {
     public function setTable( $table ) {
         $this->table = $table;
         return $this;
-    }
-
-    public function tbody() {
-        return "".
-            "<".$this->type.
-            " class=\""
-            .( $this->attr?:"" )
-            ."\">"
-            .implode( "\n", array_map( function( $tr ) { return $tr->tr(); }, $this->tr ) )
-            ."</"
-            .$this->type
-            .">";
-    }
-
-    public function thead() {
-        return $this->tbody();
     }
 }

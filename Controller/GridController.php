@@ -116,7 +116,7 @@ class GridController extends Controller
             );
 
             return $this->render(
-                'LighthartGridBundle:Grid:grid.html.twig' ,
+                'LighthartGridBundle:Grid:crudgrid.html.twig' ,
                 array(
                     'class'      => $class      ,
                     'fields'     => $fields     ,

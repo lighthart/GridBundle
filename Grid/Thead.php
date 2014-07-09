@@ -10,9 +10,6 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 class Thead extends Section {
-
-    protected $type;   // thead
-
     public function __construct( ) {
         parent::__construct();
         $this->type = 'thead';

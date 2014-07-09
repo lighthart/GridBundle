@@ -1,0 +1,11 @@
+{
+"{{- row.type -}}" : {
+"attrib" : [ "{%- for attrib, value in row.attr|keys -%}{"{{- attrib -}}" : "{{- attribs -}}"{% if not loop.last %} , {% endif %}}{%- endfor -%}" ] ,
+"cell" :
+[
+{% for cell in row.cell %}
+    {% include 'LighthartGridBundle:Cell:cell.json.twig' with {'cell': cell} %}{% if not loop.last %} , {% endif %}
+{% endfor %}
+]
+}
+}

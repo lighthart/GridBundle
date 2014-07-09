@@ -10,20 +10,33 @@ use Doctrine\ORM\Query;
 
 class Table {
 
-    private $attr;   // html attributes on <table>
-    private $thead;  // table <thead>
-    private $tbody;  // table <tbody>
-    private $grid;  // table <tbody>
+    private $attr;    // html attributes on <table>
+    private $section; // table <thead> or table <tbody>
+    private $grid;    // table <tbody>
+    private $type;
 
-    public function __construct( $prop = array() ) {
-        foreach ($prop as $k => $p) {
+    public function __construct( $attr = array() ) {
+        foreach ( $attr as $k => $p ) {
             $this->$k = $p;
         }
 
-        $this->thead = new Thead();
-        $this->thead->setTable($this);
-        $this->tbody = new Tbody();
-        $this->tbody->setTable($this);
+        var_dump($this->attr);
+
+        $this->section = array();
+        if (isset($this->attr['html']) && $this->attr['html'] ) {
+            $this->type='table';
+            $this->section[]=new Thead();
+            $this->section[]=new Tbody();
+        }
+    }
+
+    public function getType() {
+        return $this->type;
+    }
+
+    public function setType( $type ) {
+        $this->type = $type;
+        return $this;
     }
 
     public function getGrid() {
@@ -44,38 +57,27 @@ class Table {
         return $this;
     }
 
-    public function getThead() {
-        return $this->thead;
+    public function getSection() {
+        return $this->section;
     }
 
-    public function setThead( Thead $thead ) {
-        $this->thead = $thead;
+    public function setSection( Section $section ) {
+        $this->section = $section;
         return $this;
     }
 
-    public function newThead( ) {
-        $this->thead = new Thead();
+    public function addSection( ) {
+        $this->section = new Section();
         return $this;
     }
 
     public function getTbody() {
-        return $this->tbody;
+        $arr = array_filter($this->section, function($s){ return 'tbody' == $s->getType(); });
+        return array_pop($arr);
     }
 
-    public function setTbody( Tbody $tbody ) {
-        $this->tbody = $tbody;
-        return $this;
-    }
-
-    public function newTbody( ) {
-        $this->tbody = new Tbody();
-        return $this;
-    }
-
-    public function table() {
-        return "<table class=\"".($this->attr?:"")."\">"
-            .($this->getThead()?$this->getThead()->thead():"")
-            .($this->getTbody()?$this->getTbody()->tbody():"")
-            ."</table>";
+    public function getThead() {
+        $arr = array_filter($this->section, function($s){ return 'thead' == $s->getType(); });
+        return array_pop($arr);
     }
 }

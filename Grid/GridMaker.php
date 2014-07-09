@@ -25,7 +25,11 @@ class GridMaker {
     public function __construct( $doctrine ) {
         $this->doctrine = $doctrine;
         $this->em = $doctrine->getManager();
-        $this->grid = new Grid();
+    }
+
+    public function initialize( $attr = array() ){
+        var_dump($attr);
+        $this->grid = new Grid( array( 'attr' => $attr ) );
     }
 
     public function getRequest() {
@@ -125,6 +129,10 @@ class GridMaker {
         return $this;
     }
 
+    public function QB() {
+        return $this->getQueryBuilder() ;
+    }
+
     public function getQB() {
         return $this->getQueryBuilder() ;
     }
@@ -137,9 +145,11 @@ class GridMaker {
         $this->getGrid()->addColumn( new Column( $entity.'_'.$value, $value, $options ) );
     }
 
-    public function addMethod( $entity, $method, $fields = array() ) {
+    public function addMethod( $entity, $method, array $options =array() ) {
+        // var_dump($this->qb()->getDQLParts()['join']);
+        // var_dump($entity);
         if ( method_exists( $entity, $method ) ) {
-            $this->getGrid()->addColumn( new Column( $entity, $value ) );
+            $this->getGrid()->addMethod( new Column( $entity, $method, $options ) );
         }
     }
 
@@ -151,8 +161,11 @@ class GridMaker {
         }
         $this->mapMethodsFromQB();
         $results = $this->getQueryBuilder()->getQuery()->getResult( Query::HYDRATE_SCALAR );
-        $this->getGrid()->fillTh( $results[0] ) ;
-        $this->getGrid()->fillTr( $results ) ;
+        $attr = $this->getGrid()->getTable()->getAttr();
+        if ( isset( $attr['html'] ) && $attr['html'] ) {
+            $this->getGrid()->fillTh( $results[0] ) ;
+            $this->getGrid()->fillTr( $results ) ;
+        }
     }
 
     public function mapFieldsFromQB() {
@@ -191,9 +204,9 @@ class GridMaker {
         }
 
         $this->getGrid()->newColumns();
-        foreach( $partials as $entity => $fields ) {
-            foreach( explode(',', $fields[0]) as $k => $field ) {
-                $field = trim($field);
+        foreach ( $partials as $entity => $fields ) {
+            foreach ( explode( ',', $fields[0] ) as $k => $field ) {
+                $field = trim( $field );
                 $this->getGrid()->addColumn( new Column( $entity."_".$field, $field ) );
             }
         }
@@ -203,50 +216,62 @@ class GridMaker {
         $qb = $this->getQB();
 
         $partials = [];
-        // var_dump($this->getGrid()->getColumns());die;
-        $columns=$this->getGrid()->getColumns();
-        // var_dump($partials);
+        $columns = $this->getGrid()->getColumns();
 
         foreach ( $columns as $key => $column ) {
-            // var_dump($entity);
-
-                $partials[$column->getEntity()][] = $column->getValue();
-            // if ( !isset( $partials[$entity] ) ) {
-            // }
-
-            // if ( in_array( $entity."_".$field, array_keys( $partials ) ) ) {
-            // } else {
-            //     $partials[$entity]=$field;
-            //     // should probably add some stuff here to verify versus ORM data
-            //     // in the mean time developers can be careful
-            // }
+            $partials[$column->getEntity()][] = $column->getValue();
         }
 
         // Need to do the following loops twice because select removes all fields
         // While addSelect just adds more
+
+        // This bit is to make sure added columns are added to teh query as partials
         foreach ( $partials as $entity => $field ) {
             if ( $qb->getRootAlias() == $entity ) {
                 $qb->select( 'partial '.$entity.'.{'.implode( ',', $field ).'}' );
             } else {
             }
         }
+
         foreach ( $partials as $entity => $field ) {
             if ( $qb->getRootAlias() == $entity ) {
             } else {
                 $qb->addSelect( 'partial '.$entity.'.{'.implode( ',', $field ).'}' );
             }
         }
-
-        $this->getGrid()->newColumns();
-        foreach( $partials as $entity => $fields ) {
-            foreach( $fields as $k => $field ) {
-                $field = trim($field);
-                $this->getGrid()->addColumn( new Column( $entity."_".$field, $field ) );
-            }
-        }
     }
 
     public function mapMethodsFromQB() {
+        // $qb = $this->getQB();
+
+        // $partials = [];
+        // $methods = array_filter( $this->getGrid()->getColumns(),
+        //     function( $c ) {
+        //         return isset( $c->getOptions()['method'] ) && $c->getOptions()['method'];
+        //     }
+        // );
+
+        // foreach ( $columns as $key => $column ) {
+        //     $partials[$column->getEntity()][] = $column->getValue();
+        // }
+
+        // // Need to do the following loops twice because select removes all fields
+        // // While addSelect just adds more
+
+        // // This bit is to make sure added columns are added to teh query as partials
+        // foreach ( $partials as $entity => $field ) {
+        //     if ( $qb->getRootAlias() == $entity ) {
+        //         $qb->select( 'partial '.$entity.'.{'.implode( ',', $field ).'}' );
+        //     } else {
+        //     }
+        // }
+
+        // foreach ( $partials as $entity => $field ) {
+        //     if ( $qb->getRootAlias() == $entity ) {
+        //     } else {
+        //         $qb->addSelect( 'partial '.$entity.'.{'.implode( ',', $field ).'}' );
+        //     }
+        // }
     }
 
 }

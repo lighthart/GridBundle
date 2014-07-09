@@ -10,9 +10,6 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 class Tbody extends Section {
-
-    protected $type;   // tbody
-
     public function __construct( ) {
         parent::__construct();
         $this->type = 'tbody';

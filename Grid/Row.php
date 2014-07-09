@@ -9,12 +9,25 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-class Tr {
+class Row {
     private $attr; // html attributes on <thead>
     private $cell; // array of th or td
+    private $type;
 
-    public function __construct( ) {
+    public function __construct( $prop = array() ) {
+        foreach ( $prop as $k => $p ) {
+            $this->$k = $p;
+        }
         $this->cell = array();
+    }
+
+    public function gettype() {
+        return $this->type;
+    }
+
+    public function settype( $type ) {
+        $this->type = $type;
+        return $this;
     }
 
     public function getAttr() {
@@ -32,16 +45,8 @@ class Tr {
 
     public function addCell( $cell ) {
         $this->cell[] = $cell;
-        $cell->setTr($this);
+        $cell->setRow( $this );
         return $this;
-    }
-
-    public function addTh( $cell ) {
-        $this->addCell($cell);
-    }
-
-    public function addTd( $cell ) {
-        $this->addCell($cell);
     }
 
     public function removeCell( $cell ) {
@@ -53,18 +58,5 @@ class Tr {
     public function setCell( array $cell ) {
         $this->cell = $cell;
         return $this;
-    }
-
-    public function tr() {
-        return "".
-            "<tr class=\"".( $this->attr?:"" )."\">"
-            .implode( "",
-            array_map(
-                function( $field ) {
-                    return $field->td();
-                },
-                $this->cell )
-            )
-            ."</tr>";
     }
 }

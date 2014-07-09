@@ -1,0 +1,10 @@
+{
+"{{- section.type -}}" : {
+"attrib" : [ "{%- for attrib, value in section.attr|keys -%}{"{{- attrib -}}" : "{{- attribs -}}"{% if not loop.last %} , {% endif %}}{%- endfor -%}" ] ,
+"row" : [
+{% for row in section.row %}
+    {%- include 'LighthartGridBundle:Row:row.json.twig' with {'row': row} %}{% if not loop.last %} , {% endif -%}
+{% endfor %}
+]
+}
+}

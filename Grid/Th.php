@@ -11,8 +11,6 @@ use Symfony\Component\HttpFoundation\Response;
 
 class Th extends Cell {
 
-    protected $type;
-
     public function __construct( $prop = array() ) {
         parent::__construct( $prop );
         foreach ( $prop as $k => $p ) {

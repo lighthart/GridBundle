@@ -1,0 +1,5 @@
+<{{- section.type -}}{%- for attrib, value in section.attr|keys -%}{{- attrib -}}="{{- attribs -}}"{%- endfor -%}>
+{% for row in section.row %}
+    {% include 'LighthartGridBundle:Row:row.html.twig' with {'row': row} %}
+{% endfor %}
+</{{- section.type -}}>

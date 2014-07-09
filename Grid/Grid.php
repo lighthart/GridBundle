@@ -19,9 +19,9 @@ class Grid {
         return "Grid -- Don't print this -- print the table instead";
     }
 
-    public function __construct( ) {
+    public function __construct( array $options = array() ) {
         $this->columns = array();
-        $this->table = new Table( array( 'attr' => 'table table-bordered table-condensed table-hover table-striped grid' ) );
+        $this->table = new Table( $options );
         $this->table->setGrid( $this );
     }
 
@@ -77,7 +77,7 @@ class Grid {
         return $this;
     }
 
-    public function newTable( ) {
+    public function newTable() {
         $this->table = new Table();
         return $this;
     }
@@ -128,45 +128,58 @@ class Grid {
         $thead->addTr( $tr );
     }
 
-    public function columnOptions(Column $column) {
+    public function columnOptions( Column $column ) {
 
+    }
+
+    public function addMethod( Column $column ) {
+        $column->setOptions( array_merge( $column->getOptions(), array( 'method' => true ) ) );
+        $this->columns[$column->getAlias()] = $column;
+        return $this;
     }
 
     public function fillTh( array $result = array() ) {
         $thead = $this->getTable()->getThead();
         $columns = $this->getColumns();
-        $tr = new Tr( );
-        $result = array_merge($columns, $result);
+        $row = new Row( array( 'type' => 'tr' ) );
+        $result = array_merge( $columns, $result );
         foreach ( $result as $key => $value ) {
-            $th = new Th(
+            $cell = new Cell(
                 array(
-                    'title' => $key
+                    'title' => (
+                        isset( $columns[$key]->getOptions()['title'] )
+                        ? $columns[$key]->getOptions()['title']
+                        : $key
+                    ) ,
+                    'type'  => 'th' ,
                 )
             );
-            $tr->addCell( $th );
+            $row->addCell( $cell );
             $this->addColumn( new Column( $key ) );
-            $this->columnOptions($columns[$key]);
+            $this->columnOptions( $columns[$key] );
         }
-        $thead->addTr( $tr );
+
+        $thead->addRow( $row );
     }
 
     public function fillTr( array $results = array() ) {
         $tbody = $this->getTable()->getTbody();
         $columns = $this->getColumns();
-        foreach($results as $row => $result ) {
-            $result = array_merge($columns, $result);
-            $tr = new Tr();
+        foreach ( $results as $row => $result ) {
+            $result = array_merge( $columns, $result );
+            $row = new Row( array( 'type' => 'tr' ) );
             foreach ( $result as $key => $value ) {
-                $td = new Td(
+                $cell = new Cell(
                     array(
-                        'value' => $value,
-                        'title' => $columns[$key]->getValue()
+                        'value' => $value                     ,
+                        'title' => $columns[$key]->getValue() ,
+                        'type'  => 'td'                       ,
                     )
                 );
-                $tr->addCell( $td );
-                $this->columnOptions($columns[$key]);
+                $row->addCell( $cell );
+                $this->columnOptions( $columns[$key] );
             }
-            $tbody->addTr( $tr );
+            $tbody->addRow( $row );
         }
     }
 }

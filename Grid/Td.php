@@ -10,7 +10,6 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 class Td extends Cell {
-    protected  $type;
 
     public function __construct( $prop = array() ) {
         parent::__construct( $prop );

@@ -1,0 +1,11 @@
+<{{- cell.type -}}{%- for attrib, value in cell.attr|keys -%}{{- attrib -}}="{{- attribs -}}" {%- endfor -%}>
+    {% if cell.value %}
+        {% if cell.value.timestamp is defined %}
+            {{- cell.value|date('Y-m-d') -}}
+        {% else %}
+            {{- cell.value -}}
+        {% endif %}
+    {% else %}
+        {{- cell.title -}}
+    {% endif %}
+</{{- cell.type -}}>
