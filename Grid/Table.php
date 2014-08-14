@@ -20,8 +20,6 @@ class Table {
             $this->$k = $p;
         }
 
-        var_dump($this->attr);
-
         $this->section = array();
         if (isset($this->attr['html']) && $this->attr['html'] ) {
             $this->type='table';

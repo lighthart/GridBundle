@@ -95,6 +95,9 @@ class Grid {
 
     public function setColumns( array $columns ) {
         // columns should obviously be of type Column
+        foreach ( $this->columns as $k => $col ) {
+            unset( $this->columns[$k] );
+        }
         foreach ( $columns as $column ) {
             $this->addColumn( $column );
         }
@@ -143,20 +146,27 @@ class Grid {
         $columns = $this->getColumns();
         $row = new Row( array( 'type' => 'tr' ) );
         $result = array_merge( $columns, $result );
+        var_dump($columns);
         foreach ( $result as $key => $value ) {
-            $cell = new Cell(
-                array(
-                    'title' => (
-                        isset( $columns[$key]->getOptions()['title'] )
-                        ? $columns[$key]->getOptions()['title']
-                        : $key
-                    ) ,
-                    'type'  => 'th' ,
-                )
-            );
-            $row->addCell( $cell );
-            $this->addColumn( new Column( $key ) );
-            $this->columnOptions( $columns[$key] );
+            if ( isset( $columns[$key] ) ) {
+                $attr = (isset($columns[$key]->getOptions()['attr'])?$columns[$key]->getOptions()['attr']:'' );
+                $attr['data-role-lg-class'] = stristr($key, '__', true);
+                $attr['data-role-lg-field'] = $columns[$key]->getValue();
+                $cell = new Cell(
+                    array(
+                        'title' => (
+                            isset( $columns[$key]->getOptions()['title'] )
+                            ? $columns[$key]->getOptions()['title']
+                            : $key
+                        ) ,
+                        'type'  => 'th' ,
+                        'attr'  => $attr
+                    )
+                );
+                $row->addCell( $cell );
+            } else {
+                // no column!
+            }
         }
 
         $thead->addRow( $row );
@@ -169,15 +179,26 @@ class Grid {
             $result = array_merge( $columns, $result );
             $row = new Row( array( 'type' => 'tr' ) );
             foreach ( $result as $key => $value ) {
-                $cell = new Cell(
-                    array(
-                        'value' => $value                     ,
-                        'title' => $columns[$key]->getValue() ,
-                        'type'  => 'td'                       ,
-                    )
-                );
-                $row->addCell( $cell );
-                $this->columnOptions( $columns[$key] );
+                if ( isset( $columns[$key] ) ) {
+                $attr = (isset($columns[$key]->getOptions()['attr'])?$columns[$key]->getOptions()['attr']:'' );
+                if (isset($attr['entity_id']) && $attr['entity_id']){
+                    unset($attr['entity_id']);
+                    $attr['data-role-lg-entity-id'] = $result[stristr($key, '__', true).'__id'];
+                }
+                $attr =
+                    $cell = new Cell(
+                        array(
+                            'value' => $value                     ,
+                            'title' => $columns[$key]->getValue() ,
+                            'type'  => 'td'                       ,
+                            'attr'  => $attr                      ,
+                        )
+                    );
+                    $row->addCell( $cell );
+                    $this->columnOptions( $columns[$key] );
+                } else {
+                    // no column!
+                }
             }
             $tbody->addRow( $row );
         }

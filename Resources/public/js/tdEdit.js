@@ -175,6 +175,7 @@ function makeURLfromTD($object, $action) {
     // a single entity only
 
     // the ../../../ is based on bundle config
+    // try to make that more extensible
 
     var $tr = $object.closest('tr');
     if ($object.attr('data-role-lg-entity-id')) {

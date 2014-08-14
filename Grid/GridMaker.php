@@ -9,11 +9,13 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Doctrine\ORM\Query;
+use Doctrine\ORM\Query\Expr;
 
 class GridMaker {
 
     private $doctrine;
     private $request;
+    private $dql;
     private $query;
     private $queryBuilder;
     private $grid;
@@ -27,8 +29,7 @@ class GridMaker {
         $this->em = $doctrine->getManager();
     }
 
-    public function initialize( $attr = array() ){
-        var_dump($attr);
+    public function initialize( $attr = array() ) {
         $this->grid = new Grid( array( 'attr' => $attr ) );
     }
 
@@ -98,12 +99,21 @@ class GridMaker {
         }
     }
 
-    public function getQuery() {
-        if ( $this->query ) {
-            return $this->query;
+    public function getDQL() {
+        if ( $this->dql ) {
+            return $this->dql;
         } else {
-            return $this->queryBuilder->getQuery();
+            return $this->queryBuilder->getQuery()->getDQL();
         }
+    }
+
+    public function setDQL( $dql ) {
+        $this->dql = $dql ;
+        return $this;
+    }
+
+    public function getQuery() {
+        return $this->query ;
     }
 
     public function setQuery( $query ) {
@@ -111,12 +121,16 @@ class GridMaker {
         return $this;
     }
 
+    public function Q() {
+        return $this->getQuery() ;
+    }
+
     public function getQ() {
-        return $this->getQuery();
+        return $this->getQuery() ;
     }
 
     public function setQ( $query ) {
-        return $this->setQuery( $query );
+        return $this->setQuery( $query ) ;
     }
 
 
@@ -143,6 +157,7 @@ class GridMaker {
 
     public function addField( $entity, $value = 'id', array $options = array() ) {
         $this->getGrid()->addColumn( new Column( $entity.'_'.$value, $value, $options ) );
+        // var_dump($options);
     }
 
     public function addMethod( $entity, $method, array $options =array() ) {
@@ -160,12 +175,153 @@ class GridMaker {
             $this->mapFieldsFromColumns();
         }
         $this->mapMethodsFromQB();
-        $results = $this->getQueryBuilder()->getQuery()->getResult( Query::HYDRATE_SCALAR );
+        $q = $this->getQueryBuilder()->getQuery()->setDql( $this->mapAliases() );
+        $results = $q->getResult( Query::HYDRATE_SCALAR );
+        // var_dump ($results);
         $attr = $this->getGrid()->getTable()->getAttr();
         if ( isset( $attr['html'] ) && $attr['html'] ) {
             $this->getGrid()->fillTh( $results[0] ) ;
             $this->getGrid()->fillTr( $results ) ;
         }
+    }
+
+    public function mapAliases( $q = null ) {
+        $qb = $this->queryBuilder;
+
+        if ( null == $q ) {
+            $dql = $this->getDQL();
+        } else {
+            $dql = $q->getDQL();
+        }
+
+        $aliases=[];
+        $from = $qb->getDqlPart( 'from' )[0];
+        $rootClassPath = $from->getFrom();
+        $oldRoot = $qb->getRootAlias();
+        $root =  str_replace( '\\', '_', $rootClassPath.'_' );
+        $aliases[$oldRoot]=$oldRoot;
+        $fields[$oldRoot]=$root;
+        $paths[$oldRoot]=$rootClassPath ;
+        $root = str_replace( '\\', '_', $rootClassPath.'_' );
+
+        $em = $qb->getEntityManager();
+        $em->getMetadataFactory()->getAllMetadata();
+
+        // realiased qb
+
+        $rqb = $em->getRepository( $rootClassPath )->createQueryBuilder( $root );
+
+        $joins = $qb->getDqlPart( 'join' )[$oldRoot];
+        foreach ( $joins as $k => $join ) {
+            $alias = stristr( $join->getJoin(), '.', true );
+            $field = substr( strrchr( $join->getJoin(), '.' ), 1 );
+            $aliases[$join->getAlias()] = $field;
+
+            if ( !isset( $paths[$field] ) ) {
+                $mappings = $em->getMetadataFactory()->getMetadataFor( $paths[$aliases[$alias]] )->getAssociationMappings();
+                $paths[$field] = $mappings[$field]['targetEntity'];
+                $fields[$field] = str_replace( '\\', '_', $mappings[$field]['targetEntity'].'_' );
+            }
+        }
+
+        // foreach ( $joins as $k => $join ) {
+        //     $alias = stristr( $join->getJoin(), '.', true );
+        //     $field = substr( strrchr( $join->getJoin(), '.' ), 1 );
+        //     if ( 'INNER' == $join->getJoinType() ) {
+        //         $rqb->innerJoin(
+        //             $fields[$aliases[$alias]].'.'.$field                                              ,
+        //             $fields[$field]                                                                   ,
+        //             $join->getConditionType()                                                         ,
+        //             $join->getCondition()                                                             ,
+        //             $join->getIndexBy()
+        //         );
+        //     } else {
+        //         $rqb->leftJoin(
+        //             $fields[$aliases[$alias]].'.'.$field                                              ,
+        //             $fields[$field]                                                                   ,
+        //             $join->getConditionType()                                                         ,
+        //             $join->getCondition()                                                             ,
+        //             $join->getIndexBy()
+        //         );
+        //     }
+        // }
+
+        foreach ( $aliases as $k => $v ) {
+            $pattern = '/ '.$k.'([,. ])/';
+            $replace = ' '.$v."$1";
+            $dql = preg_replace( $pattern, $replace, $dql );
+        }
+
+        foreach ( $fields as $k => $v ) {
+            $pattern = '/ '.$k.'([,. ])/';
+            $replace = ' '.$v."$1";
+            $dql = preg_replace( $pattern, $replace, $dql );
+        }
+
+        $g = $this->getGrid();
+        $columns = [];
+        foreach ( $g->getColumns() as $k => $v ) {
+            $oldAlias = $v->getAlias();
+            $oldValue = $v->getValue();
+            $oldOptions = $v->getOptions();
+            $newAlias = $fields[$aliases[stristr( $oldAlias, '_', true )]].'_'.$v->getValue();
+            $columns[] = new Column( $newAlias, $oldValue, $oldOptions );
+            $g->setColumns( $columns );
+        }
+
+        return $dql;
+
+        // return;
+
+        // if ($aliases) {
+        //     return $aliases;
+        // } else {
+        //     return $fields;
+        // }
+
+        // if ( false != $qb->getDqlPart( 'distinct' ) ) {
+        //     $rqb->distinct();
+        // }
+
+
+        // foreach ( $qb->getDqlPart( 'select' ) as $k => $select ) {
+        //     if ( $oldRoot == $select->getParts()[0] ) {
+        //     } else if ( false !== strpos( $select->getParts()[0], 'partial' ) ) {
+        //             preg_match( '/^partial (.*?)\.(.*?)$/', $select->getParts()[0], $parts );
+        //             $rqb->addSelect( 'partial '.$aliases[$parts[1]].'.'.$parts[2] );
+        //         } else {
+        //         $rqb->addSelect( $aliases[$select->getParts()[0]] );
+        //     }
+        // }
+        // var_dump( $rqb->getQuery()->getDql() );
+        // //Select
+        // foreach ( $qb->getDqlPart( 'orderBy' ) as $k => $orderBy ) {
+        //     var_dump($k);
+        //     var_dump($orderBy);
+        // }
+
+        // var_dump($qb->getDQLPart( 'where' )->getParts());
+        // var_dump($qb->getDQLPart( 'where' ));
+
+        // $newWheres = [];
+
+        // foreach ( $qb->getDQLPart( 'where' )->getParts() as $k => $where ) {
+        //     foreach ($where->getParts() as $exp ){
+        //         $newWhere = new Expr(
+        //             $where->getParts()->getLeftExpr(),
+        //             $where->getParts()->getOperator(),
+        //             $where->getParts()->getRightExpr()
+        //             );
+        //         $newWheres[]=$newWhere;
+        //     }
+        // }
+
+        //set
+        //groupBy
+        //orderby
+        //having
+
+
     }
 
     public function mapFieldsFromQB() {
@@ -191,7 +347,11 @@ class GridMaker {
         // While addSelect just adds more
         foreach ( $partials as $entity => $fields ) {
             if ( $qb->getRootAlias() == $entity ) {
-                $qb->select( 'partial '.$entity.'.{'.implode( ',', array_merge( array_values( $fields ) ) ).'}' );
+                $fieldList = implode( ',', array_merge( array_values( $fields ) ) );
+                if ( false === strpos( $fields, 'id' ) ) {
+                    $fields .= ', id';
+                }
+                $qb->select( 'partial '.$entity.'.{'.$fields.'}' );
             } else {
             }
         }
@@ -199,6 +359,10 @@ class GridMaker {
         foreach ( $partials as $entity => $fields ) {
             if ( $qb->getRootAlias() == $entity ) {
             } else {
+                $fieldList = implode( ',', $fields );
+                if ( false === strpos( $fields, 'id' ) ) {
+                    $fields .= ', id';
+                }
                 $qb->addSelect( 'partial '.$entity.'.{'.implode( ',', $fields ).'}' );
             }
         }
@@ -228,7 +392,11 @@ class GridMaker {
         // This bit is to make sure added columns are added to teh query as partials
         foreach ( $partials as $entity => $field ) {
             if ( $qb->getRootAlias() == $entity ) {
-                $qb->select( 'partial '.$entity.'.{'.implode( ',', $field ).'}' );
+                $fields = implode( ',', $field );
+                if ( false === strpos( $fields, 'id' ) ) {
+                    $fields .= ', id';
+                }
+                $qb->select( 'partial '.$entity.'.{'.$fields.'}' );
             } else {
             }
         }
@@ -236,7 +404,11 @@ class GridMaker {
         foreach ( $partials as $entity => $field ) {
             if ( $qb->getRootAlias() == $entity ) {
             } else {
-                $qb->addSelect( 'partial '.$entity.'.{'.implode( ',', $field ).'}' );
+                $fields = implode( ',', $field );
+                if ( false === strpos( $fields, 'id' ) ) {
+                    $fields .= ', id';
+                }
+                $qb->addSelect( 'partial '.$entity.'.{'.$fields.'}' );
             }
         }
     }
