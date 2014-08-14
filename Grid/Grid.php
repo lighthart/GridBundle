@@ -146,7 +146,6 @@ class Grid {
         $columns = $this->getColumns();
         $row = new Row( array( 'type' => 'tr' ) );
         $result = array_merge( $columns, $result );
-        var_dump($columns);
         foreach ( $result as $key => $value ) {
             if ( isset( $columns[$key] ) ) {
                 $attr = (isset($columns[$key]->getOptions()['attr'])?$columns[$key]->getOptions()['attr']:'' );

@@ -27,5 +27,7 @@
         '@LighthartGridBundle/Resources/public/js/tdEdit.js'
         %}
         <script type="text/javascript" src="{{ asset_url }}"></script>
+        <script type="text/javascript">function getLgAppRoot() {return "{{app.request.getBasePath}}/";}</script>
+
     {% endjavascripts %}
 {% endblock javascripts %}

@@ -176,17 +176,16 @@ function makeURLfromTD($object, $action) {
 
     // the ../../../ is based on bundle config
     // try to make that more extensible
-
     var $tr = $object.closest('tr');
     if ($object.attr('data-role-lg-entity-id')) {
         $url =
-            '../../../cell/' + $action + '/' +
+            getLgAppRoot() + 'cell/' + $action + '/' +
             $th.attr('data-role-lg-class') + '/' +
             $th.attr('data-role-lg-field') + '/' +
             $object.attr('data-role-lg-entity-id');
     } else {
         $url =
-            '../../../cell/' + $action + '/' +
+            getLgAppRoot() + 'cell/' + $action + '/' +
             $th.attr('data-role-lg-class') + '/' +
             $th.attr('data-role-lg-field') + '/' +
             $tr.attr('data-role-lg-parent-entity-id');
