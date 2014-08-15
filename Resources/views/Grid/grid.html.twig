@@ -1,10 +1,24 @@
-{% block grid %}{% spaceless %}
-    <{{ table.type }}{%- for flavor, attribs in table.attr %}{{-' '-}}{{ flavor }}="{{ attribs }}"{%- endfor -%}>
-        {% for section in table.section %}
-            {% include 'LighthartGridBundle:Section:section.html.twig' with {'section' : section } %}
-        {% endfor %}
-    </{{ table.type }}>
-{% endspaceless %}{% endblock grid %}
+{% block lgGrid %}
+    {% spaceless %}
+        <div class="lg-grid">
+            {% block header %}
+                {% include 'LighthartGridBundle:Grid:header.html.twig' %}
+            {% endblock header %}
+            {% block lgGridTable %}
+                <table class="{% include 'LighthartGridBundle:Grid:tableClasses.html.twig' %}" {%- for flavor, attribs in table.attr %}{{-' '-}}{{ flavor }}="{{ attribs }}"{%- endfor -%}>
+            {% block sections %}
+                    {% for section in table.section %}
+                        {% include 'LighthartGridBundle:Section:section.html.twig' with {'section' : section } %}
+                    {% endfor %}
+                </{{ table.type }}>
+            {% endblock sections %}
+            {% endblock lgGridTable %}
+            {% block footer %}
+                {% include 'LighthartGridBundle:Grid:footer.html.twig' %}
+            {% endblock footer %}
+        </div>
+    {% endspaceless %}
+{% endblock lgGrid %}
 
 {% block javascripts %}
     {% javascripts '@LighthartGridBundle/Resources/public/js/tdEdit.js' %}
@@ -24,7 +38,10 @@
                         document.getElementsByTagName("body")[0].appendChild(resourceListScript);
                     });
             }
-        </script>
-    {% endjavascripts %}
-    <script type="text/javascript">function getLgAppRoot() {return "{{app.request.getBasePath}}/";}</script>
-{% endblock javascripts %}
+            </script>
+        {% endjavascripts %}
+        <script type="text/javascript">function getLgAppRoot() {return "{{app.request.getBasePath}}/";}</script>
+    {% endblock javascripts %}
+{% block stylesheets %}
+    {% include 'LighthartGridBundle:Grid:stylesheets.html.twig' %}
+{% endblock stylesheets %}
