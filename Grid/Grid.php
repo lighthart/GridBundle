@@ -149,7 +149,10 @@ class Grid {
         foreach ( $result as $key => $value ) {
             if ( isset( $columns[$key] ) ) {
                 $attr = (isset($columns[$key]->getOptions()['attr'])?$columns[$key]->getOptions()['attr']:'' );
-                $attr['data-role-lg-class'] = stristr($key, '__', true);
+
+                $pattern= '/(\w+)\_\_\_(\w+)\_\_(\w+)/';
+                preg_match($pattern, $key, $match);
+                $attr['data-role-lg-class'] = $match[2];
                 $attr['data-role-lg-field'] = $columns[$key]->getValue();
                 $cell = new Cell(
                     array(
@@ -188,6 +191,7 @@ class Grid {
 
                     $rootId = $match[1].'__id';
                     $attr['data-role-lg-entity-id'] = $result[$rootId];
+
                 }
                 $attr =
                     $cell = new Cell(

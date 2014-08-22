@@ -228,11 +228,10 @@ class GridMaker
         $from = $qb->getDqlPart('from') [0];
         $rootClassPath = $from->getFrom();
         $oldRoot = $qb->getRootAlias();
-        $root = str_replace('\\', '_', $rootClassPath . '_');
-        $aliases[$oldRoot] = 'root';
-        $fields[$aliases[$oldRoot]] = $aliases[$oldRoot].'___'.$root;
-        $paths[$aliases[$oldRoot]] = $rootClassPath;
-        $root = str_replace('\\', '_', $rootClassPath . '_');
+        $root = 'root___'.str_replace('\\', '_', $rootClassPath . '_');
+        $aliases[$oldRoot] = $root;
+        $entities[$oldRoot] = $rootClassPath;
+
 
         $em = $qb->getEntityManager();
         $em->getMetadataFactory()->getAllMetadata();
@@ -243,15 +242,15 @@ class GridMaker
 
         $joins = $qb->getDqlPart('join') [$oldRoot];
         foreach ($joins as $k => $join) {
-            $alias = stristr($join->getJoin() , '.', true);
-            $field = $join->getAlias().'___'.substr(strrchr($join->getJoin() , '.') , 1);
-            $field = substr(strrchr($join->getJoin() , '.') , 1);
-            $aliases[ $join->getAlias() ] = $field;
 
-            if (!isset($paths[$field])) {
-                $mappings = $em->getMetadataFactory()->getMetadataFor($paths[$aliases[$alias]])->getAssociationMappings();
-                $paths[$field] = $mappings[$field]['targetEntity'];
-                $fields[$field] = $field.'___'.str_replace('\\', '_', $mappings[$field]['targetEntity'] . '_');
+            $entity = stristr($join->getJoin() , '.', true);
+            $field = substr(stristr($join->getJoin() , '.', false),1);
+
+            if (!in_array($join->getAlias(), array_keys($aliases))) {
+                $mappings = $em->getMetadataFactory()->getMetadataFor($entities[$entity])->getAssociationMappings();
+                $aliases[$join->getAlias()] = $field.'___'.str_replace('\\', '_', $mappings[$field]['targetEntity'] . '_');
+                $entities[$join->getAlias()] = $mappings[$field]['targetEntity'];
+
             }
         }
 
@@ -261,19 +260,14 @@ class GridMaker
             $dql = preg_replace($pattern, $replace, $dql);
         }
 
-        foreach ($fields as $k => $v) {
-            $pattern = '/ ' . $k . '([,. ])/';
-            $replace = ' ' . $v . "$1";
-            $dql = preg_replace($pattern, $replace, $dql);
-        }
-
         $g = $this->getGrid();
         $columns = [];
+
         foreach ($g->getColumns() as $k => $v) {
             $oldAlias = $v->getAlias();
             $oldValue = $v->getValue();
             $oldOptions = $v->getOptions();
-            $newAlias = $fields[$aliases[stristr($oldAlias, '_', true) ]] . '_' . $v->getValue();
+            $newAlias = $aliases[stristr($oldAlias,'_',true)] . '_' . $v->getValue();
             $columns[] = new Column($newAlias, $oldValue, $oldOptions);
             $g->setColumns($columns);
         }
