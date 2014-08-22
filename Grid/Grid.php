@@ -182,7 +182,12 @@ class Grid {
                 $attr = (isset($columns[$key]->getOptions()['attr'])?$columns[$key]->getOptions()['attr']:'' );
                 if (isset($attr['entity_id']) && $attr['entity_id']){
                     unset($attr['entity_id']);
-                    $attr['data-role-lg-entity-id'] = $result[stristr($key, '__', true).'__id'];
+
+                    $pattern= '/(\w+\_\_\_\w+)\_\_/';
+                    preg_match($pattern, $key, $match);
+
+                    $rootId = $match[1].'__id';
+                    $attr['data-role-lg-entity-id'] = $result[$rootId];
                 }
                 $attr =
                     $cell = new Cell(
