@@ -187,9 +187,6 @@ class GridMaker
 
     public function addMethod($entity, $method, array $options = array())
     {
-
-        // var_dump($this->qb()->getDQLParts()['join']);
-        // var_dump($entity);
         if (method_exists($entity, $method)) {
             $this->getGrid()->addMethod(new Column($entity, $method, $options));
         }
@@ -197,11 +194,13 @@ class GridMaker
 
     public function hydrateGrid($fromQB = false)
     {
+
         if ($fromQB) {
             $this->mapFieldsFromQB();
         } else {
             $this->mapFieldsFromColumns();
         }
+
         $this->mapMethodsFromQB();
         $q = $this->getQueryBuilder()->getQuery()->setDql($this->mapAliases());
         $results = $q->getResult(Query::HYDRATE_SCALAR);
