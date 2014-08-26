@@ -56,6 +56,12 @@ input.lg-grid-search-input {
 
 div.lg-grid-left {
     padding-left:0px;
+    text-align:left;
+}
+
+div.lg-grid-right {
+    padding-right:0px;
+    text-align:right;
 }
 
 span.lg-grid-btn-top {

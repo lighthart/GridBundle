@@ -1,6 +1,6 @@
 {% block pagingControls %}
     <div class="row">
-        <div class="col-sm-3-12 col-sm-offset-4-12 text-center">
+        <div class="col-sm-3-12 col-sm-offset-4-12 text-left">
             {% block resultCount -%}
                 <span class="lg-grid-control-text">Results 10-20 of 1398</span>
             {%- endblock resultCount %}
@@ -10,7 +10,7 @@
                 {% include 'LighthartGridBundle:Grid:pagingSizeSelector.html.twig' %}
             {% endblock pageSizeSelector %}
         </div>
-        <div class="col-sm-4-12">
+        <div class="col-sm-4-12 text-right">
             {% include 'LighthartGridBundle:Grid:pagingButtons.html.twig' %}
         </div>
     </div>

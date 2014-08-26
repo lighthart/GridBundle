@@ -1,7 +1,11 @@
-{% block footer %}
-<div class="lg-grid-footer debug-grid">
-    <div class="col-sm-2-6">Actions</div>
-    <div class="col-sm-2-6">Summary</div>
-    <div class="col-sm-2-6">Pager</div>
-</div>
-{% endblock footer %}
+{% block header %}
+    <div class="lg-grid-header row">
+        <div class="col-sm-6-12 lg-grid-left">
+            {% include 'LighthartGridBundle:Grid:exportControl.html.twig' %}
+        </div>
+        <div class="col-sm-6-12 lg-grid-right">
+            {% set place = 'footer' %}
+            {% include 'LighthartGridBundle:Grid:pagingControls.html.twig' %}
+        </div>
+    </div>
+{% endblock header %}
