@@ -1,5 +1,7 @@
 <{{- cell.type }} {% for attrib, value in cell.attr -%}{{- attrib -}}="{{- value -}}" {%- endfor -%}>
-    {%- if cell.value -%}
+    {%- if cell.attr.checkbox is defined %}
+        <input type="checkbox"/>
+    {%- elseif cell.value -%}
         {%- if cell.value.timestamp is defined -%}
             {{- cell.value|date('Y-m-d') -}}
         {%- else -%}
