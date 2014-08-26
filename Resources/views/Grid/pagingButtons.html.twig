@@ -1,0 +1,32 @@
+{% block pageBackControls %}
+    <span class="btn-group">
+        {% block pageBack %}
+            <span class="btn btn-xs btn-default lg-grid-btn-top">
+                <span class="fa fa-step-backward lg-grid-control-icon"></span>
+            </span>
+        {% endblock pageBack %}
+        {% block multipageBack %}
+            <span class="btn btn-xs btn-default lg-grid-btn-top">
+                <span class="fa fa-play fa-rotate-180 lg-grid-control-icon"></span>
+            </span>
+        {% endblock multipageBack %}
+    </span>
+{% endblock pageBackControls %}
+{% block pageCounter %}
+    <input type="text" maxlength="4" id="lg-grid-page-input" class="lg-grid-page-input btn btn-xs lg-grid-btn-top" value="100"/>
+    <span class="lg-grid-control-text">of 1000</span>
+{% endblock pageCounter %}
+{% block pageForwardControls %}
+    <span class="btn-group">
+        {% block pageForward %}
+            <span class="btn btn-xs btn-default lg-grid-btn-top">
+                <span class="fa fa-play lg-grid-control-icon"></span>
+            </span>
+        {% endblock pageForward %}
+        {% block multipageForward %}
+            <span class="btn btn-xs btn-default lg-grid-btn-top">
+                <span class="fa fa-step-forward lg-grid-control-icon"></span>
+            </span>
+        {% endblock multipageForward %}
+    </span>
+{% endblock pageForwardControls %}
