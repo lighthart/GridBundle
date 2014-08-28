@@ -205,10 +205,10 @@ class GridMaker
         $q = $this->getQueryBuilder()->getQuery()->setDql($this->mapAliases());
         $results = $q->getResult(Query::HYDRATE_SCALAR);
 
-        // var_dump ($results);
         $attr = $this->getGrid()->getTable()->getAttr();
+// If no results we gag at the $results [0]
         if (isset($attr['html']) && $attr['html']) {
-            $this->getGrid()->fillTh($results[0]);
+            $this->getGrid()->fillTh($results);
             $this->getGrid()->fillTr($results);
         }
     }
@@ -241,13 +241,13 @@ class GridMaker
 
         $joins = $qb->getDqlPart('join') [$oldRoot];
         foreach ($joins as $k => $join) {
-
             $entity = stristr($join->getJoin() , '.', true);
             $field = substr(stristr($join->getJoin() , '.', false),1);
+            $alias = $join->getAlias();
 
             if (!in_array($join->getAlias(), array_keys($aliases))) {
                 $mappings = $em->getMetadataFactory()->getMetadataFor($entities[$entity])->getAssociationMappings();
-                $aliases[$join->getAlias()] = $field.'___'.str_replace('\\', '_', $mappings[$field]['targetEntity'] . '_');
+                $aliases[$join->getAlias()] = $alias.'___'.str_replace('\\', '_', $mappings[$field]['targetEntity'] . '_');
                 $entities[$join->getAlias()] = $mappings[$field]['targetEntity'];
 
             }

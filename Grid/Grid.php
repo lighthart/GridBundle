@@ -101,6 +101,7 @@ class Grid
         // $this->columns[] = $columns;
         // return $this;
 
+
     }
 
     public function setColumns(array $columns)
@@ -164,6 +165,9 @@ class Grid
 
     public function fillTh(array $result = array())
     {
+        if (array() != $result) {
+            $result = $result[0];
+        }
         $thead = $this->getTable()->getThead();
         $columns = $this->getColumns();
         $row = new Row(array(
@@ -172,7 +176,9 @@ class Grid
         $row->addCell(new Cell(array(
             'title' => '',
             'type' => 'th',
-            'attr' => array('checkbox' => true)
+            'attr' => array(
+                'checkbox' => true
+            )
         )));
         $result = array_merge($columns, $result);
         foreach ($result as $key => $value) {
@@ -193,6 +199,7 @@ class Grid
 
                 // no column!
 
+
             }
         }
 
@@ -208,11 +215,13 @@ class Grid
             $row = new Row(array(
                 'type' => 'tr'
             ));
-                $row->addCell(new Cell(array(
-                    'title' => '',
-                    'type' => 'td',
-                    'attr' => array('checkbox' => true)
-                )));
+            $row->addCell(new Cell(array(
+                'title' => '',
+                'type' => 'td',
+                'attr' => array(
+                    'checkbox' => true
+                )
+            )));
             foreach ($result as $key => $value) {
                 if (isset($columns[$key])) {
                     $attr = (isset($columns[$key]->getOptions() ['attr']) ? $columns[$key]->getOptions() ['attr'] : '');
@@ -236,6 +245,7 @@ class Grid
                 } else {
 
                     // no column!
+
 
                 }
             }
