@@ -206,7 +206,6 @@ class GridMaker
         $results = $q->getResult(Query::HYDRATE_SCALAR);
 
         $attr = $this->getGrid()->getTable()->getAttr();
-// If no results we gag at the $results [0]
         if (isset($attr['html']) && $attr['html']) {
             $this->getGrid()->fillTh($results);
             $this->getGrid()->fillTr($results);
