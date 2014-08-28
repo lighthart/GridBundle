@@ -189,12 +189,24 @@ class Grid
                 preg_match($pattern, $key, $match);
                 $attr['data-role-lg-class'] = $match[2];
                 $attr['data-role-lg-field'] = $columns[$key]->getValue();
-                $cell = new Cell(array(
-                    'title' => (isset($columns[$key]->getOptions() ['title']) ? $columns[$key]->getOptions() ['title'] : $key) ,
-                    'type' => 'th',
-                    'attr' => $attr
-                ));
-                $row->addCell($cell);
+                $title = (isset($columns[$key]->getOptions() ['title']) ? $columns[$key]->getOptions() ['title'] : $key);
+
+                if (isset($columns[$key]->getOptions() ['hidden'])) {
+                } else {
+
+                    // putting a tilde in front of the title causes grid to interpret this as
+                    // a result from another column in the query
+
+                    if (false !== strpos($title, '~')) {
+                        $title = $result[substr($title, 1) ];
+                    }
+                    $cell = new Cell(array(
+                        'title' => $title,
+                        'type' => 'th',
+                        'attr' => $attr
+                    ));
+                    $row->addCell($cell);
+                }
             } else {
 
                 // no column!
@@ -234,14 +246,18 @@ class Grid
                         $rootId = $match[1] . '__id';
                         $attr['data-role-lg-entity-id'] = $result[$rootId];
                     }
-                    $cell = new Cell(array(
-                        'value' => $value,
-                        'title' => $columns[$key]->getValue() ,
-                        'type' => 'td',
-                        'attr' => $attr,
-                    ));
-                    $row->addCell($cell);
-                    $this->columnOptions($columns[$key]);
+
+                    if (isset($columns[$key]->getOptions() ['hidden'])) {
+                    } else {
+                        $cell = new Cell(array(
+                            'value' => $value,
+                            'title' => $columns[$key]->getValue() ,
+                            'type' => 'td',
+                            'attr' => $attr,
+                        ));
+                        $row->addCell($cell);
+                        $this->columnOptions($columns[$key]);
+                    }
                 } else {
 
                     // no column!
@@ -249,6 +265,7 @@ class Grid
 
                 }
             }
+
             $tbody->addRow($row);
         }
     }

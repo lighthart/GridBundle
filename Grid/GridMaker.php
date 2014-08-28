@@ -266,6 +266,13 @@ class GridMaker
             $oldValue = $v->getValue();
             $oldOptions = $v->getOptions();
             $newAlias = $aliases[stristr($oldAlias,'_',true)] . '_' . $v->getValue();
+
+            if (isset($oldOptions['title']) && false !==  strpos($oldOptions['title'], '~')) {
+                $oldField = substr(stristr($oldOptions['title'], '.'),1);
+                $oldSubAlias = substr(stristr($oldOptions['title'], '.', true),1);
+                $newTitle = '~'.$aliases[$oldSubAlias] . '_' . $oldField;
+                $oldOptions['title'] = $newTitle;
+            }
             $columns[] = new Column($newAlias, $oldValue, $oldOptions);
             $g->setColumns($columns);
         }

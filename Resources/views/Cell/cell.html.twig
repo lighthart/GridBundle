@@ -7,7 +7,7 @@
         {%- else -%}
             {{- cell.value -}}
         {%- endif -%}
-    {%- else -%}
+    {%- elseif 'th' == cell.type -%}
         {{- cell.title -}}
     {%- endif -%}
 </{{- cell.type -}}>
