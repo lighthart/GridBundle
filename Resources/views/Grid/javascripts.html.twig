@@ -1,24 +1,31 @@
-{% javascripts
-    '@LighthartGridBundle/Resources/public/js/resultsPerPage.js'
-%}
-<script type="text/javascript">
-        function getLgAppRoot() { return "{{app.request.getBasePath}}/"; }
-        function getLgCurrentURI() { return "{{app.request.requesturi}}"; }
-        //Check that the script is not currently in DOM
-        if (document.getElementById("{{ asset_url }}") === null) {
-            //Set the class name of the folders to that given from the config
+{% block javascripts %}
+    {% include 'LighthartGridBundle:Grid:grid.js.twig' %}
+    <script type="text/javascript">
+    var assets = [];
+    {%  javascripts
+        '@LighthartGridBundle/Resources/public/js/tdEdit.js'
+        '@LighthartGridBundle/Resources/public/js/resultsPerPage.js'
+    %}
+    assets.push("{{ asset_url }}");
+    {% endjavascripts %}
+    window.onload = (function() {
+        assets.forEach(
+            function(asset) {
+                if (document.getElementById(asset) === null) {
+                // Append the script to the end of the dom
+                // Set the class name of the folders to that given from the config
 
-            //Append the script to the end of the dom
-            window.onload = (function() {
                 var resourceListScript = document.createElement( "script" );
                 resourceListScript.type = "text/javascript";
-                resourceListScript.src = "{{ asset_url }}";
-                //Give the script the asset url as id also
-                resourceListScript.id = "{{ asset_url }}";
-                    //Add the script to the DOM at the end of the body tag
-                    document.getElementsByTagName("body")[0].appendChild(resourceListScript);
-                });
-        }
-    </script>
-{% endjavascripts %}
+                resourceListScript.src = asset;
+                    //Give the script the asset url as id also
+                    resourceListScript.id = asset;
+                        //Add the script to the DOM at the end of the body tag
+                        document.getElementsByTagName("body")[0].appendChild(resourceListScript);
+                    }
+                }
+                )
+    });
 
+    </script>
+{% endblock javascripts %}

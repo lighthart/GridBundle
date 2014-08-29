@@ -33,6 +33,16 @@
     border: 1px;
 }
 
+.lg-grid-pagesize-input {
+    width: 3em !important;
+    max-width: 3em;
+    margin-left: 2px;
+    margin-right: 1px;
+    padding: 0px;
+    border: 1px;
+    background: inherit;
+}
+
 input.lg-grid-input-non-field {
     padding:0px;
     border: 0px;

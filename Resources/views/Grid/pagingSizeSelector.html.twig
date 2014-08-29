@@ -1,5 +1,18 @@
 {% block pageSizeSelector %}
-    <span class="btn-group">
-        <span class="btn btn-xs btn-default lg-grid-btn-top"><input type="button" class="lg-grid-input-non-field" value="10" id="lg-grid-{{place}}-results-per-page"/> per page <span class="fa fa-caret-down"></span></span>
-    </span>
+    {% set pageSize = (app.request.cookies.get('lg-grid-'~app.request.attributes.get("_route")~'-results-per-page'))?:10 %}
+    <div class={% if place == "footer" %}"dropup btn-group"{% else %}"btn-group"{% endif %}>
+        <button class="btn btn-xs btn-default lg-grid-btn-top lg-grid-results-per-page dropdown-toggle" id="lg-grid-{{place}}-results-per-page" data-toggle="dropdown">
+            <span class="lg-grid-pagesize-button">{{pageSize}} per page</span>
+            {% if place == "footer" %}
+                <input type = "hidden" id="lg-grid-results-per-page" value="{{pageSize}}"/>
+            {% endif %}
+            &nbsp;<span class={% if place == "footer" %}"fa fa-caret-up"{% else %}"fa fa-caret-down"{% endif %}></span>
+        </button>
+        <ul class="dropdown-menu" role="menu">
+            <li><a href="#" class="text-left lg-grid-pagesize" data-role-lg-pagesize="10">10 per page</a></li>
+            <li><a href="#" class="text-left lg-grid-pagesize" data-role-lg-pagesize="25">25 per page</a></li>
+            <li><a href="#" class="text-left lg-grid-pagesize" data-role-lg-pagesize="50">50 per page</a></li>
+            <li><a href="#" class="text-left lg-grid-pagesize" data-role-lg-pagesize="100">100 per page</a></li>
+        </ul>
+    </div>
 {% endblock pageSizeSelector %}

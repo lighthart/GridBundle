@@ -6,12 +6,12 @@
             {% endblock header %}
             {% block lgGridTable %}
                 <table class="{% include 'LighthartGridBundle:Grid:tableClasses.html.twig' %}" {%- for flavor, attribs in table.attr %}{{-' '-}}{{ flavor }}="{{ attribs }}"{%- endfor -%}>
-            {% block sections %}
-                    {% for section in table.section %}
-                        {% include 'LighthartGridBundle:Section:section.html.twig' with {'section' : section } %}
-                    {% endfor %}
-                </{{ table.type }}>
-            {% endblock sections %}
+                    {% block sections %}
+                        {% for section in table.section %}
+                            {% include 'LighthartGridBundle:Section:section.html.twig' with {'section' : section } %}
+                        {% endfor %}
+                    </{{ table.type }}>
+                {% endblock sections %}
             {% endblock lgGridTable %}
             {% block footer %}
                 {% include 'LighthartGridBundle:Grid:footer.html.twig' %}
@@ -21,27 +21,8 @@
 {% endblock lgGrid %}
 
 {% block javascripts %}
-    {% javascripts '@LighthartGridBundle/Resources/public/js/tdEdit.js' %}
-        <script type="text/javascript">
-            //Check that the script is not currently in DOM
-            if (document.getElementById("{{ asset_url }}") === null) {
-                //Set the class name of the folders to that given from the config
-
-                //Append the script to the end of the dom
-                window.onload = (function() {
-                    var resourceListScript = document.createElement( "script" );
-                    resourceListScript.type = "text/javascript";
-                    resourceListScript.src = "{{ asset_url }}";
-                    //Give the script the asset url as id also
-                    resourceListScript.id = "{{ asset_url }}";
-                        //Add the script to the DOM at the end of the body tag
-                        document.getElementsByTagName("body")[0].appendChild(resourceListScript);
-                    });
-            }
-            </script>
-        {% endjavascripts %}
-        <script type="text/javascript">function getLgAppRoot() {return "{{app.request.getBasePath}}/";}</script>
-    {% endblock javascripts %}
+    {% include 'LighthartGridBundle:Grid:javascripts.html.twig' %}
+{% endblock javascripts %}
 {% block stylesheets %}
     {% include 'LighthartGridBundle:Grid:stylesheets.html.twig' %}
 {% endblock stylesheets %}

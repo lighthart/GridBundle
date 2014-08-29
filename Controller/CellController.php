@@ -85,9 +85,9 @@ class CellController extends Controller
                     array(
                         'attr'  =>
                         array(
-                            'data-role-class'     => $class ,
-                            'data-role-field'     => $field ,
-                            'data-role-entity-id' => $id    ,
+                            'data-role-lg-class'     => $class ,
+                            'data-role-lg-field'     => $field ,
+                            'data-role-lg-entity-id' => $id    ,
                         )
                     )
                 )->createView();

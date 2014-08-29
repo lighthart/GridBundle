@@ -192,8 +192,10 @@ class GridMaker
         }
     }
 
-    public function hydrateGrid($fromQB = false)
+    public function hydrateGrid(Request $request, $fromQB = false)
     {
+
+        var_dump($request);die;
 
         if ($fromQB) {
             $this->mapFieldsFromQB();
