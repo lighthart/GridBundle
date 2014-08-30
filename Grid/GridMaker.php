@@ -197,8 +197,6 @@ class GridMaker
 
         $pageSize = $request->query->get( 'pageSize' );
 
-        // var_dump($request);die;
-
         if ($fromQB) {
             $this->mapFieldsFromQB();
         } else {
