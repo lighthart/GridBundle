@@ -195,6 +195,8 @@ class GridMaker
     public function hydrateGrid(Request $request, $fromQB = false)
     {
 
+
+        // working here
         $pageSize = $request->query->get( 'pageSize' );
 
         if ($fromQB) {
