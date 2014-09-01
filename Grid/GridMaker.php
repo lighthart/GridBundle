@@ -215,13 +215,21 @@ class GridMaker
 
         $cookies = $request->cookies;
         $pageSize = $request->cookies->get('lg-grid-results-per-page');
+
+        $pageOffset = $request->cookies->get("lg-grid-" . $request->attributes->get('_route') . "-offset");
+
+
         // print_r("<pre>");
         // var_dump($cookies);
         // var_dump($request->cookies->get('lg-grid-results-per-page'));
         // var_dump($request->query->get('pageSize'));
         // die;
         $maxResults = ($request->query->get('pageSize') ? : ($pageSize ? : 10));
+        $offset = ($request->query->get('pageOffset') ? : ($pageOffset ? : 0));
+        $this->getGrid()->setOffset($offset);
+
         $this->QB()->setMaxResults($maxResults);
+        // $this->QB()->setFirstResult($offset);
 
         $q = $this->getQueryBuilder()->getQuery()->setDql($this->mapAliases());
         $results = $q->getResult(Query::HYDRATE_SCALAR);

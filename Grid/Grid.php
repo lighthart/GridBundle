@@ -11,8 +11,10 @@ use Doctrine\ORM\Query;
 class Grid
 {
 
+     // what result we are on. 0-based
+    private $offset;
+     // how many for this query
     private $total;
-
     private $table;
     private $columns;
 
@@ -26,6 +28,17 @@ class Grid
         $this->columns = array();
         $this->table = new Table($options);
         $this->table->setGrid($this);
+    }
+
+    public function getOffset()
+    {
+        return $this->offset;
+    }
+
+    public function setOffset($offset)
+    {
+        $this->offset = $offset;
+        return $this;
     }
 
     public function getTotal()

@@ -1,6 +1,9 @@
 {% block pagingControls %}
             {% block resultCount -%}
-                <span class="lg-grid-control-text">Results 10-20 of {{grid.total}}</span>
+                <span id="lg-grid-{{ place }}-result-counts" class="lg-grid-control-text lg-grid-result-counts">Results&nbsp;
+                {{-grid.offset + 1-}}-
+                {{-((grid.offset + pageSize)> grid.total )? grid.total : grid.offset + pageSize-}}
+                &nbsp; of {{grid.total}}</span>
                 &nbsp;
             {%- endblock resultCount %}
             {% block pageSizeSelector %}
