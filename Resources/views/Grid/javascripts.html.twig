@@ -3,8 +3,10 @@
     <script type="text/javascript">
     var assets = [];
     {%  javascripts
+        '@LighthartGridBundle/Resources/public/js/grid.js'
         '@LighthartGridBundle/Resources/public/js/tdEdit.js'
         '@LighthartGridBundle/Resources/public/js/resultsPerPage.js'
+        '@LighthartGridBundle/Resources/public/js/gridPaging.js'
     %}
     assets.push("{{ asset_url }}");
     {% endjavascripts %}

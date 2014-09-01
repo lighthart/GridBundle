@@ -4,7 +4,7 @@
             <span class="lg-grid-pagesize-button">{{pageSize}} per page</span>
             {% if place == "footer" %}
                 <input type = "hidden" id="lg-grid-results-per-page" value="{{pageSize}}"/>
-            {% endif %}
+            {% endif -%}
             &nbsp;<span class={% if place == "footer" %}"fa fa-caret-up"{% else %}"fa fa-caret-down"{% endif %}></span>
         </button>
         <ul class="dropdown-menu" role="menu">
@@ -14,4 +14,5 @@
             <li><a href="#" class="text-left lg-grid-pagesize" data-role-lg-pagesize="100">100 per page</a></li>
         </ul>
     </div>
+    &nbsp;
 {% endblock pageSizeSelector %}

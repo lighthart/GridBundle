@@ -22,6 +22,10 @@ class Column {
         $this->options = $options;
     }
 
+    public function __toString (){
+        return "Column ".$this->alias." printed.";
+    }
+
     public function setAlias( $alias ) {
         $this->alias = $alias;
         return $this;

@@ -228,6 +228,7 @@ class GridMaker
         $offset = ($request->query->get('pageOffset') ? : ($pageOffset ? : 0));
         $this->getGrid()->setOffset($offset);
 
+        $this->QB()->setFirstResult($offset);
         $this->QB()->setMaxResults($maxResults);
         // $this->QB()->setFirstResult($offset);
 
@@ -304,6 +305,8 @@ class GridMaker
             // $gm->addField('g' . $k, 'value', array('title' => '~b' . $k . '.fiscalYear'));
             // in this case gridmaker would grab the value of b0.fiscalYear when it hydrated
             // the grid, making the column heading for g0.value column be the value b0.fiscalYear
+
+            // the column must be specified as a hidden column in your grid.
 
             if (isset($oldOptions['title']) && false !== strpos($oldOptions['title'], '~')) {
                 $oldField = substr(stristr($oldOptions['title'], '.') , 1);
@@ -446,9 +449,4 @@ class GridMaker
         //     }
         // }
     }
-
-    public function totalResults(){
-
-    }
-
 }

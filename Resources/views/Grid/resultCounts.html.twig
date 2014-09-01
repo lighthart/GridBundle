@@ -1,0 +1,7 @@
+{% block resultCount -%}
+    <span id="lg-grid-{{ place }}-result-counts" class="lg-grid-control-text lg-grid-result-counts">Results&nbsp;
+    {{-grid.offset + 1-}}-
+    {{-((grid.offset + pageSize)> grid.total )? grid.total : grid.offset + pageSize-}}
+    &nbsp; of {{grid.total}}</span>
+    &nbsp;
+{%- endblock resultCount %}

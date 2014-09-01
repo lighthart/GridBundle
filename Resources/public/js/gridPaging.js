@@ -1,24 +1,20 @@
 $(document).ready(function() {
-    pageSizeControl();
+    pagingInputControl();
 });
 
-function pageSizeControl() {
-    $('.lg-grid-pagesize').on('click', function() {
-        pageSizeReload($(this));
+function pagingInputControl() {
+    $('input.lg-grid-page-input').on('change', function() {
+        delay(function() {
+            pagingInputReload();
+        }, quiet)
     });
 }
 
-function pageSizeReload(control) {
-    var cookie = 'lg-grid-results-per-page';
-    var numPerPage = control.attr('data-role-lg-pagesize');
+function pagingInputReload() {
+    var cookie = "lg-grid-" + getLgCurrentRoute() + "-offset"
     offset = getOffset;
-    // map to the bottom control
-    $('.lg-grid-pagesize-button').html(control.html());
-    // put the data into our javascript, for next time this is called
-    $('#lg-grid-results-per-page').val(control.attr('data-role-lg-pagesize'));
-    $.cookie(cookie, control.attr('data-role-lg-pagesize'));
-
-
+    numPerPage = getNumPerPage;
+    $.cookie(cookie, offset);
     $.ajax({
         url: getLgCurrentURI(),
         data: {
@@ -29,12 +25,13 @@ function pageSizeReload(control) {
         dataType: 'html',
         type: 'GET',
         complete: function() {
-            pageSizeControl();
+            pagingInputControl();
         },
         success: function(data) {
             $('table.lg-grid-table').html($(data).find('table.lg-grid-table').html());
             $('span.lg-grid-result-counts').html($(data).find('span#lg-grid-header-result-counts').html());
             $('span.lg-grid-total-pages').html($(data).find('span#lg-grid-header-total-pages').html());
+            $('input.lg-grid-page-input').val(getOffsetVal);
         }
     });
 }
