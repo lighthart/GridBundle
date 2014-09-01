@@ -1,17 +1,34 @@
 $(document).ready(function() {
-    $('.lg-grid-pagesize').on("click", function() {
-        // alert($(this).attr('data-role-lg-pagesize'));
-        var cookie = 'lg-grid-' + getLgCurrentRoute() + '-results-per-page';
-        var numPerPage = $(this).attr('data-role-lg-pagesize');
-        console.log(cookie);
-        console.log(numPerPage);
-        $('.lg-grid-pagesize-button').html($(this).html());
-        $('#lg-grid-results-per-page').val($(this).attr('data-role-lg-pagesize'));
-        $.cookie(cookie, $(this).attr('data-role-lg-pagesize'));
-        // load ajax stuff here
-        $('.lg-grid').load(
-                           getLgCurrentURI(),
-                           { pageSize: numPerPage}
-                           );
-    });
+    pageSizeControl();
 });
+
+function pageSizeControl() {
+    console.log('PageSizeContrl');
+    $('.lg-grid-pagesize').on('click', function() {
+        pageSizeReload($(this));
+    });
+}
+
+function pageSizeReload(control) {
+    var cookie = 'lg-grid-' + getLgCurrentRoute() + '-results-per-page';
+    var numPerPage = control.attr('data-role-lg-pagesize');
+    $('.lg-grid-pagesize-button').html(control.html());
+    $('#lg-grid-results-per-page').val(control.attr('data-role-lg-pagesize'));
+    $.cookie(cookie, control.attr('data-role-lg-pagesize'));
+
+    $.ajax({
+        url: getLgCurrentURI(),
+        data: {
+            pageSize: numPerPage,
+            tableOnly: true
+        },
+        dataType: 'html',
+        type: 'GET',
+        complete: function() {
+            pageSizeControl();
+        },
+        success: function(data) {
+            $('.lg-grid-table').html(data);
+        }
+    });
+}

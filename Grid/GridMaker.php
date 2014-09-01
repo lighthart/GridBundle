@@ -206,6 +206,12 @@ class GridMaker
         }
 
         $this->mapMethodsFromQB();
+
+        $cookies = $request->cookies;
+        $pageSize = $request->cookies->get("lg-grid-" . $request->attributes->get('_route') . "-results-per-page");
+        $maxResults = ($request->query->get('pageSize') ? : ($pageSize ? : 10));
+        $this->QB()->setMaxResults($maxResults);
+
         $q = $this->getQueryBuilder()->getQuery()->setDql($this->mapAliases());
         $results = $q->getResult(Query::HYDRATE_SCALAR);
 
