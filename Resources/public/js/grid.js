@@ -1,50 +1,36 @@
 // inhibits recurring callback for duration of quiet before executing
 var quiet = 200; // 100 ms
-
-var delay = (function(){
+var delay = (function() {
     var timer = 0;
-    return function(callback, ms){
-        clearTimeout (timer);
+    return function(callback, ms) {
+        clearTimeout(timer);
         timer = setTimeout(callback, ms);
     };
 })();
-
 // eg:
-
 // var quiet = 100; // 100 ms
 // delay(function(){ sidebar.finishMove();}, quiet)
-
-var getNumPerPage = (function(){
+function getNumPerPage() {
     var numPerPage = $.cookie('lg-grid-results-per-page');
     if (numPerPage === undefined || numPerPage === null) {
         numPerPage = 10;
     }
     return numPerPage;
-})();
+}
 
-var getOffsetVal = (function(){
-    var offsetVal = $('input.lg-grid-page-input').val();
-    console.log('getOffsetVal');
-    console.log(offsetVal);
-    if (offsetVal < 1) {
-        offsetVal = 1;
+function getOffset() {
+    var pageVal = $('input.lg-grid-page-input').val();
+    var maxPages = $('#lg-grid-max-pages').val();
+    if (pageVal > maxPages) {
+        pageVal = maxPages;
     }
-
-    console.log(offsetVal);
-
-    maxPages = 3;
-    if (offsetVal > maxPages) {
-        offsetVal = maxPages;
-    }
-    console.log(offsetVal);
-    return offsetVal;
-})();
-
-var getOffset = (function(){
-    var offsetVal = getOffsetVal;
-    var numPerPage = getNumPerPage;
-
-    offset = (offsetVal - 1) * numPerPage;
-    offset = offset < 0 ? 0 : offset;
+    var numPerPage = getNumPerPage();
+    var offset = (pageVal - 1) * numPerPage;
+    offset = (offset < 0) ? 0 : offset;
+    offset = ((offset / numPerPage) > maxPages) ? maxPages - (maxPages % numPerPage) : offset
     return offset;
-})();
+}
+
+function getMaxPages() {
+    $('#lg-grid-max-pages').val()
+}

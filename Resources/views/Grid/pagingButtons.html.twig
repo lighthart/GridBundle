@@ -13,8 +13,9 @@
     </span>
 {% endblock pageBackControls %}
 {% block pageCounter %}
+    {% set maxPages = ( grid.total / pageSize ) | round(0, 'ceil') %}
     <input type="text" maxlength="4" id="lg-grid-page-input" class="lg-grid-page-input btn btn-xs lg-grid-btn-top" value="{{ ( ( grid.offset + 1 ) * pageSize / grid.total ) | round(0, 'ceil' )  }}"/>
-    <span id="lg-grid-{{place}}-total-pages" class="lg-grid-control-text lg-grid-total-pages">of {{ ( grid.total / pageSize ) | round(0, 'ceil') }}</span>
+    <span id="lg-grid-{{place}}-total-pages" class="lg-grid-control-text lg-grid-total-pages">of {{maxPages}}</span><input type="hidden" id="lg-grid-max-pages" value="{{maxPages}}"/>
 {% endblock pageCounter %}
 {% block pageForwardControls %}
     <span class="btn-group">

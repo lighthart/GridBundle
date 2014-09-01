@@ -3,7 +3,8 @@ $(document).ready(function() {
 });
 
 function pagingInputControl() {
-    $('input.lg-grid-page-input').on('change', function() {
+    $('input.lg-grid-page-input').on('change', function(e) {
+        $(this).text("Hmm");
         delay(function() {
             pagingInputReload();
         }, quiet)
@@ -12,8 +13,19 @@ function pagingInputControl() {
 
 function pagingInputReload() {
     var cookie = "lg-grid-" + getLgCurrentRoute() + "-offset"
-    offset = getOffset;
-    numPerPage = getNumPerPage;
+    offset = getOffset();
+    numPerPage = getNumPerPage();
+    var pageVal = $('input.lg-grid-page-input').val()
+    if (pageVal < 1) {
+        pageVal = 1;
+    }
+
+    var maxPages = getMaxPages();
+    if (pageVal > maxPages) {
+        pageVal = maxPages;
+    }
+
+
     $.cookie(cookie, offset);
     $.ajax({
         url: getLgCurrentURI(),
@@ -31,7 +43,7 @@ function pagingInputReload() {
             $('table.lg-grid-table').html($(data).find('table.lg-grid-table').html());
             $('span.lg-grid-result-counts').html($(data).find('span#lg-grid-header-result-counts').html());
             $('span.lg-grid-total-pages').html($(data).find('span#lg-grid-header-total-pages').html());
-            $('input.lg-grid-page-input').val(getOffsetVal);
+            $('input.lg-grid-page-input').val(pageVal);
         }
     });
 }

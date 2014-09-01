@@ -11,13 +11,17 @@ function pageSizeControl() {
 function pageSizeReload(control) {
     var cookie = 'lg-grid-results-per-page';
     var numPerPage = control.attr('data-role-lg-pagesize');
-    offset = getOffset;
+    offset = getOffset();
     // map to the bottom control
     $('.lg-grid-pagesize-button').html(control.html());
     // put the data into our javascript, for next time this is called
     $('#lg-grid-results-per-page').val(control.attr('data-role-lg-pagesize'));
     $.cookie(cookie, control.attr('data-role-lg-pagesize'));
-
+    var pageVal = $('input.lg-grid-page-input').val();
+    var maxPages = getMaxPages();
+    if (pageVal > maxPages) {
+        $('input.lg-grid-page-input').val(maxPages);
+    }
 
     $.ajax({
         url: getLgCurrentURI(),
