@@ -183,6 +183,7 @@ class GridMaker
 
         // var_dump($options);
 
+
     }
 
     public function addMethod($entity, $method, array $options = array())
@@ -195,9 +196,8 @@ class GridMaker
     public function hydrateGrid(Request $request, $fromQB = false)
     {
 
-
         // working here
-        $pageSize = $request->query->get( 'pageSize' );
+        $pageSize = $request->query->get('pageSize');
 
         if ($fromQB) {
             $this->mapFieldsFromQB();
@@ -230,10 +230,9 @@ class GridMaker
         $from = $qb->getDqlPart('from') [0];
         $rootClassPath = $from->getFrom();
         $oldRoot = $qb->getRootAlias();
-        $root = 'root___'.str_replace('\\', '_', $rootClassPath . '_');
+        $root = 'root___' . str_replace('\\', '_', $rootClassPath . '_');
         $aliases[$oldRoot] = $root;
         $entities[$oldRoot] = $rootClassPath;
-
 
         $em = $qb->getEntityManager();
         $em->getMetadataFactory()->getAllMetadata();
@@ -245,14 +244,13 @@ class GridMaker
         $joins = $qb->getDqlPart('join') [$oldRoot];
         foreach ($joins as $k => $join) {
             $entity = stristr($join->getJoin() , '.', true);
-            $field = substr(stristr($join->getJoin() , '.', false),1);
+            $field = substr(stristr($join->getJoin() , '.', false) , 1);
             $alias = $join->getAlias();
 
-            if (!in_array($join->getAlias(), array_keys($aliases))) {
+            if (!in_array($join->getAlias() , array_keys($aliases))) {
                 $mappings = $em->getMetadataFactory()->getMetadataFor($entities[$entity])->getAssociationMappings();
-                $aliases[$join->getAlias()] = $alias.'___'.str_replace('\\', '_', $mappings[$field]['targetEntity'] . '_');
-                $entities[$join->getAlias()] = $mappings[$field]['targetEntity'];
-
+                $aliases[$join->getAlias() ] = $alias . '___' . str_replace('\\', '_', $mappings[$field]['targetEntity'] . '_');
+                $entities[$join->getAlias() ] = $mappings[$field]['targetEntity'];
             }
         }
 
@@ -269,12 +267,22 @@ class GridMaker
             $oldAlias = $v->getAlias();
             $oldValue = $v->getValue();
             $oldOptions = $v->getOptions();
-            $newAlias = $aliases[stristr($oldAlias,'_',true)] . '_' . $v->getValue();
+            $newAlias = $aliases[stristr($oldAlias, '_', true) ] . '_' . $v->getValue();
 
-            if (isset($oldOptions['title']) && false !==  strpos($oldOptions['title'], '~')) {
-                $oldField = substr(stristr($oldOptions['title'], '.'),1);
-                $oldSubAlias = substr(stristr($oldOptions['title'], '.', true),1);
-                $newTitle = '~'.$aliases[$oldSubAlias] . '_' . $oldField;
+            // if the column starts with a tilde, use a value from the field specified
+            // this is when you have several objects of the same category
+            // and you want that category to be the column header
+
+            // e.g. a Fiscal Year label for a budgeting application
+
+            // $gm->addField('g' . $k, 'value', array('title' => '~b' . $k . '.fiscalYear'));
+            // in this case gridmaker would grab the value of b0.fiscalYear when it hydrated
+            // the grid, making the column heading for g0.value column be the value b0.fiscalYear
+
+            if (isset($oldOptions['title']) && false !== strpos($oldOptions['title'], '~')) {
+                $oldField = substr(stristr($oldOptions['title'], '.') , 1);
+                $oldSubAlias = substr(stristr($oldOptions['title'], '.', true) , 1);
+                $newTitle = '~' . $aliases[$oldSubAlias] . '_' . $oldField;
                 $oldOptions['title'] = $newTitle;
             }
             $columns[] = new Column($newAlias, $oldValue, $oldOptions);
@@ -411,6 +419,7 @@ class GridMaker
         //         $qb->addSelect( 'partial '.$entity.'.{'.implode( ',', $field ).'}' );
         //     }
         // }
+
 
     }
 }
