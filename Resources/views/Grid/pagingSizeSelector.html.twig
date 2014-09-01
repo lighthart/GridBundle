@@ -1,5 +1,5 @@
 {% block pageSizeSelector %}
-    {% set pageSize = (app.request.cookies.get('lg-grid-'~app.request.attributes.get("_route")~'-results-per-page'))?:10 %}
+    {% set pageSize = (app.request.cookies.get('lg-grid-results-per-page'))?:10 %}
     <div class={% if place == "footer" %}"dropup btn-group"{% else %}"btn-group"{% endif %}>
         <button class="btn btn-xs btn-default lg-grid-btn-top lg-grid-results-per-page dropdown-toggle" id="lg-grid-{{place}}-results-per-page" data-toggle="dropdown">
             <span class="lg-grid-pagesize-button">{{pageSize}} per page</span>

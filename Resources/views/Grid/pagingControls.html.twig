@@ -1,6 +1,6 @@
 {% block pagingControls %}
             {% block resultCount -%}
-                <span class="lg-grid-control-text">Results 10-20 of 1398</span>
+                <span class="lg-grid-control-text">Results 10-20 of {{grid.total}}</span>
                 &nbsp;
             {%- endblock resultCount %}
             {% block pageSizeSelector %}

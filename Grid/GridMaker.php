@@ -207,8 +207,19 @@ class GridMaker
 
         $this->mapMethodsFromQB();
 
+        $qb = clone $this->QB();
+        $root = $qb->getDQLPart('from')[0]->getAlias().".id";
+        $qb->select("COUNT(DISTINCT ".$root.")");
+        $qb->resetDQLPart( 'orderBy' );
+        $this->getGrid()->setTotal($qb->getQuery()->getSingleScalarResult());
+
         $cookies = $request->cookies;
-        $pageSize = $request->cookies->get("lg-grid-" . $request->attributes->get('_route') . "-results-per-page");
+        $pageSize = $request->cookies->get('lg-grid-results-per-page');
+        // print_r("<pre>");
+        // var_dump($cookies);
+        // var_dump($request->cookies->get('lg-grid-results-per-page'));
+        // var_dump($request->query->get('pageSize'));
+        // die;
         $maxResults = ($request->query->get('pageSize') ? : ($pageSize ? : 10));
         $this->QB()->setMaxResults($maxResults);
 
@@ -220,6 +231,7 @@ class GridMaker
             $this->getGrid()->fillTh($results);
             $this->getGrid()->fillTr($results);
         }
+
     }
 
     public function mapAliases($q = null)
@@ -425,7 +437,10 @@ class GridMaker
         //         $qb->addSelect( 'partial '.$entity.'.{'.implode( ',', $field ).'}' );
         //     }
         // }
+    }
 
+    public function totalResults(){
 
     }
+
 }

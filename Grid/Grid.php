@@ -11,8 +11,10 @@ use Doctrine\ORM\Query;
 class Grid
 {
 
-    private $columns;
+    private $total;
+
     private $table;
+    private $columns;
 
     public function __toString()
     {
@@ -26,49 +28,15 @@ class Grid
         $this->table->setGrid($this);
     }
 
-    public function verifyClass(String $class, $slash = null)
+    public function getTotal()
     {
+        return $this->total;
+    }
 
-        // Default is class name is sent with backslashes
-        // if another delimiter is used, for example '/' or '_'
-        // Send as parameter
-
-        if ($slash) {
-            $backslash = str_replace($slash, '\\', $class);
-        }
-        $metadataFactory = $em->getMetadataFactory();
-
-        $error = '';
-
-        if (!$class) {
-            $error.= 'Class for grid verify not specified';
-        }
-
-        try {
-            $metadata = $metadataFactory->getMetadataFor($backslash);
-        }
-        catch(\Exception $ex) {
-            $metadata = null;
-            $error.= 'No metadata for class: ' . $backslash;
-        }
-
-        if ($error != '') {
-            $error = 'grid.maker error: ' . $error;
-        }
-
-        if ($metadata) {
-            return array(
-                'class' => $class,
-                'metadata' => $metadata,
-                'error' => null,
-            );
-        } else {
-            array(
-                'class' => null,
-                'metadata' => null,
-                'error' => $error,
-            );
-        }
+    public function setTotal($total)
+    {
+        $this->total = $total;
+        return $this;
     }
 
     public function getTable()
@@ -161,6 +129,51 @@ class Grid
         )));
         $this->columns[$column->getAlias() ] = $column;
         return $this;
+    }
+
+    public function verifyClass(String $class, $slash = null)
+    {
+
+        // Default is class name is sent with backslashes
+        // if another delimiter is used, for example '/' or '_'
+        // Send as parameter
+
+        if ($slash) {
+            $backslash = str_replace($slash, '\\', $class);
+        }
+        $metadataFactory = $em->getMetadataFactory();
+
+        $error = '';
+
+        if (!$class) {
+            $error.= 'Class for grid verify not specified';
+        }
+
+        try {
+            $metadata = $metadataFactory->getMetadataFor($backslash);
+        }
+        catch(\Exception $ex) {
+            $metadata = null;
+            $error.= 'No metadata for class: ' . $backslash;
+        }
+
+        if ($error != '') {
+            $error = 'grid.maker error: ' . $error;
+        }
+
+        if ($metadata) {
+            return array(
+                'class' => $class,
+                'metadata' => $metadata,
+                'error' => null,
+            );
+        } else {
+            array(
+                'class' => null,
+                'metadata' => null,
+                'error' => $error,
+            );
+        }
     }
 
     public function fillTh(array $result = array())
