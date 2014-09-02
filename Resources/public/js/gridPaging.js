@@ -15,15 +15,17 @@ function pagingInputReload() {
     var cookie = "lg-grid-" + getLgCurrentRoute() + "-offset"
     offset = getOffset();
     numPerPage = getNumPerPage();
-    var pageVal = $('input.lg-grid-page-input').val()
+    var pageVal = Number($('input.lg-grid-page-input').val());
+    var maxPages = Number(getMaxPages());
+
     if (pageVal < 1) {
         pageVal = 1;
     }
 
-    var maxPages = getMaxPages();
     if (pageVal > maxPages) {
         pageVal = maxPages;
     }
+    $('input.lg-grid-page-input').val(pageVal);
 
 
     $.cookie(cookie, offset);

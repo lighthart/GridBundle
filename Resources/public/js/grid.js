@@ -19,12 +19,12 @@ function getNumPerPage() {
 }
 
 function getOffset() {
-    var pageVal = $('input.lg-grid-page-input').val();
-    var maxPages = $('#lg-grid-max-pages').val();
+    var pageVal = Number($('input.lg-grid-page-input').val());
+    var maxPages = Number($('#lg-grid-max-pages').val());
     if (pageVal > maxPages) {
         pageVal = maxPages;
     }
-    var numPerPage = getNumPerPage();
+    var numPerPage = Number(getNumPerPage());
     var offset = (pageVal - 1) * numPerPage;
     offset = (offset < 0) ? 0 : offset;
     offset = ((offset / numPerPage) > maxPages) ? maxPages - (maxPages % numPerPage) : offset
@@ -32,5 +32,6 @@ function getOffset() {
 }
 
 function getMaxPages() {
-    $('#lg-grid-max-pages').val()
+    var maxPages = $('#lg-grid-max-pages').val();;
+    return maxPages;
 }
