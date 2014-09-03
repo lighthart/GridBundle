@@ -1,33 +1,48 @@
-{% block pageBackControls %}
-    <span class="btn-group">
-        {% block pageBack %}
-            <span class="btn btn-xs btn-default lg-grid-btn-top">
-                <span class="fa fa-step-backward lg-grid-control-icon"></span>
+{% set maxPages = ( grid.total / pageSize ) | round(0, 'ceil') %}
+{% set multiPage = 10** ( ( maxPages | length) - 1 ) %}
+{% block pagingControls %}
+    <span class="lg-grid-paging-controls">
+        {% block pageBackControls %}
+            <span class="btn-group">
+                {% block firstPage %}
+                    <span class="btn btn-xs btn-default lg-grid-btn-top lg-grid-first-page">
+                        <span class="fa fa-step-backward lg-grid-control-icon"></span>
+                    </span>
+                {% endblock firstPage %}
+{#                 {% block multipageBack %}
+                    <span class="btn btn-xs btn-default lg-grid-btn-top lg-grid-multi-prev-page" data-role-lg-multipage-size="{{multiPage}}">
+                        <span class="fa fa-backward lg-grid-control-icon"></span>
+                    </span>
+                {% endblock multipageBack %} #}
+                {% block pageBack %}
+                    <span class="btn btn-xs btn-default lg-grid-btn-top lg-grid-prev-page">
+                        <span class="fa fa-play fa-rotate-180 lg-grid-control-icon"></span>
+                    </span>
+                {% endblock pageBack %}
             </span>
-        {% endblock pageBack %}
-        {% block multipageBack %}
-            <span class="btn btn-xs btn-default lg-grid-btn-top">
-                <span class="fa fa-play fa-rotate-180 lg-grid-control-icon"></span>
+        {% endblock pageBackControls %}
+        {% block pageCounter %}
+            <input type="text" maxlength="4" id="lg-grid-page-input" class="lg-grid-page-input btn btn-xs lg-grid-btn-top" value="{{ ( ( grid.offset + 1 ) / pageSize ) | round(0, 'ceil' )  }}"/>
+            <span id="lg-grid-{{place}}-total-pages" class="lg-grid-control-text lg-grid-total-pages">of {{ maxPages }}</span><input type="hidden" id="lg-grid-max-pages" value="{{maxPages}}"/>
+        {% endblock pageCounter %}
+        {% block pageForwardControls %}
+            <span class="btn-group">
+                {% block pageForward %}
+                    <span class="btn btn-xs btn-default lg-grid-btn-top lg-grid-next-page">
+                        <span class="fa fa-play lg-grid-control-icon"></span>
+                    </span>
+                {% endblock pageForward %}
+{#                 {% block multipageForward %}
+                    <span class="btn btn-xs btn-default lg-grid-btn-top lg-grid-multi-next-page" data-role-lg-multipage-size="{{multiPage}}">
+                        <span class="fa fa-forward lg-grid-control-icon"></span>
+                    </span>
+                {% endblock multipageForward %} #}
+                {% block lastPage %}
+                    <span class="btn btn-xs btn-default lg-grid-btn-top lg-grid-last-page">
+                        <span class="fa fa-step-forward lg-grid-control-icon"></span>
+                    </span>
+                {% endblock lastPage %}
             </span>
-        {% endblock multipageBack %}
+        {% endblock pageForwardControls %}
     </span>
-{% endblock pageBackControls %}
-{% block pageCounter %}
-    {% set maxPages = ( grid.total / pageSize ) | round(0, 'ceil') %}
-    <input type="text" maxlength="4" id="lg-grid-page-input" class="lg-grid-page-input btn btn-xs lg-grid-btn-top" value="{{ ( ( grid.offset + 1 ) * pageSize / grid.total ) | round(0, 'ceil' )  }}"/>
-    <span id="lg-grid-{{place}}-total-pages" class="lg-grid-control-text lg-grid-total-pages">of {{maxPages}}</span><input type="hidden" id="lg-grid-max-pages" value="{{maxPages}}"/>
-{% endblock pageCounter %}
-{% block pageForwardControls %}
-    <span class="btn-group">
-        {% block pageForward %}
-            <span class="btn btn-xs btn-default lg-grid-btn-top">
-                <span class="fa fa-play lg-grid-control-icon"></span>
-            </span>
-        {% endblock pageForward %}
-        {% block multipageForward %}
-            <span class="btn btn-xs btn-default lg-grid-btn-top">
-                <span class="fa fa-step-forward lg-grid-control-icon"></span>
-            </span>
-        {% endblock multipageForward %}
-    </span>
-{% endblock pageForwardControls %}
+{% endblock pagingControls %}

@@ -1,7 +1,7 @@
 {% block pageSizeSelector %}
-    <div class={% if place == "footer" %}"dropup btn-group"{% else %}"btn-group"{% endif %}>
+    <span class={% if place == "footer" %}"dropup btn-group"{% else %}"btn-group"{% endif %}>
         <button class="btn btn-xs btn-default lg-grid-btn-top lg-grid-results-per-page dropdown-toggle" id="lg-grid-{{place}}-results-per-page" data-toggle="dropdown">
-            <span class="lg-grid-pagesize-button">{{pageSize}} per page</span>
+            <span class="lg-grid-pagesize-button" data-role-lg-pagesize="{{pageSize}}">{{pageSize}} per page</span>
             {% if place == "footer" %}
                 <input type = "hidden" id="lg-grid-results-per-page" value="{{pageSize}}"/>
             {% endif -%}
@@ -13,6 +13,6 @@
             <li><a href="#" class="text-left lg-grid-pagesize" data-role-lg-pagesize="50">50 per page</a></li>
             <li><a href="#" class="text-left lg-grid-pagesize" data-role-lg-pagesize="100">100 per page</a></li>
         </ul>
-    </div>
+    </span>
     &nbsp;
 {% endblock pageSizeSelector %}

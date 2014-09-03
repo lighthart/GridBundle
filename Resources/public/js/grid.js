@@ -27,11 +27,16 @@ function getOffset() {
     var numPerPage = Number(getNumPerPage());
     var offset = (pageVal - 1) * numPerPage;
     offset = (offset < 0) ? 0 : offset;
-    offset = ((offset / numPerPage) > maxPages) ? maxPages - (maxPages % numPerPage) : offset
+    offset = ((offset / numPerPage) > maxPages) ? maxPages - (maxPages % numPerPage) : offset;
     return offset;
 }
 
 function getMaxPages() {
-    var maxPages = $('#lg-grid-max-pages').val();;
+    var maxPages = $('#lg-grid-max-pages').val();
     return maxPages;
+}
+
+function getFilter() {
+    var filter = $('input#lg-grid-search-input').val();
+    return filter;
 }

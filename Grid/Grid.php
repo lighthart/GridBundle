@@ -199,13 +199,13 @@ class Grid
         $row = new Row(array(
             'type' => 'tr'
         ));
-        $row->addCell(new Cell(array(
-            'title' => '',
-            'type' => 'th',
-            'attr' => array(
-                'checkbox' => true
-            )
-        )));
+        // $row->addCell(new Cell(array(
+        //     'title' => '',
+        //     'type' => 'th',
+        //     'attr' => array(
+        //         'checkbox' => true
+        //     )
+        // )));
         $result = array_merge($columns, $result);
         foreach ($result as $key => $value) {
             if (isset($columns[$key])) {
@@ -253,13 +253,14 @@ class Grid
             $row = new Row(array(
                 'type' => 'tr'
             ));
-            $row->addCell(new Cell(array(
-                'title' => '',
-                'type' => 'td',
-                'attr' => array(
-                    'checkbox' => true
-                )
-            )));
+            //Not ready to implement this
+            // $row->addCell(new Cell(array(
+            //     'title' => '',
+            //     'type' => 'td',
+            //     'attr' => array(
+            //         'checkbox' => true
+            //     )
+            // )));
             foreach ($result as $key => $value) {
                 if (isset($columns[$key])) {
                     $attr = (isset($columns[$key]->getOptions() ['attr']) ? $columns[$key]->getOptions() ['attr'] : '');
