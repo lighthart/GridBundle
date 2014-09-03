@@ -1,11 +1,15 @@
 {% block header %}
-    <div class="lg-grid-header row">
-        <div class="col-sm-6-12 lg-grid-left">
-            {% include 'LighthartGridBundle:Grid:searchControl.html.twig' %}
-        </div>
-        <div class="col-sm-6-12 lg-grid-right">
-            {% set place = 'header' %}
-            {% include 'LighthartGridBundle:Grid:pagingControls.html.twig' %}
-        </div>
+    {% set place = 'header' %}
+    <div class="container lg-grid-{{place}}">
+        <nav class="navbar navbar-default lg-grid-navbar" role="navigation">
+            <div class="container-fluid">
+                <form class="navbar-form navbar-left lg-grid-left" role="search">
+                    {% include 'LighthartGridBundle:Grid:searchControl.html.twig' %}
+                </form>
+                <form class="navbar-form navbar-right lg-grid-right" role="search">
+                    {% include 'LighthartGridBundle:Grid:pagingControls.html.twig' %}
+                </form>
+            </div>
+        </nav>
     </div>
 {% endblock header %}

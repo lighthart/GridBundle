@@ -1,15 +1,11 @@
 {% block searchControl %}
-    <div class="row">
-        <div class="col-sm-6-12">
-            <span class="btn btn-xs btn-default lg-grid-btn-top">
-                <span class="fa fa-caret-square-o-right lg-grid-control-icon"></span>
-            </span>
-            <input type="text" id="lg-grid-search-input" class="lg-grid-search-input" placeholder="Search"/>
-        </div>
-        <div class="col-sm-1-12">
-            <span class="btn btn-xs btn-default lg-grid-btn-top">
-                <span class="fa fa-plus"></span> New
-            </span>
-        </div>
+    <button class="btn btn-xs btn-default">
+        <span class="fa fa-caret-square-o-right"></span>
+    </button>
+    <div class="form-group lg-grid-search-input-margin">
+        <input type="text" id="lg-grid-search-input" class="lg-grid-search-input" placeholder="Search"/>
     </div>
+    <button class="btn btn-xs btn-default">
+        <span class="fa fa-plus"></span> New
+    </button>
 {% endblock searchControl %}

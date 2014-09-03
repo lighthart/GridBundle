@@ -3,11 +3,11 @@ $(document).ready(function() {
 });
 
 function activateControls() {
+    pageSizeControl();
     pagingInputControl();
     prevPageControl();
     nextPageControl();
     firstPageControl();
     lastPageControl();
-    pageSizeControl();
     gridFilterControl();
 }

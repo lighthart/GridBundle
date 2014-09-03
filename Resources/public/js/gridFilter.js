@@ -1,5 +1,5 @@
 function gridFilterControl() {
-    $('input#lg-grid-search-input').one('change', function(e) {
+    $('input#lg-grid-search-input').on('change', function(e) {
         delay(function() {
             gridFilter();
         }, quiet);
@@ -24,7 +24,6 @@ function gridFilter(control) {
             url: getLgCurrentURI(),
             data: {
                 pageSize: numPerPage,
-                // this needs a recalc
                 pageOffset: offset
             },
             dataType: 'html',

@@ -1,5 +1,6 @@
 function pagingInputControl() {
-    $('input.lg-grid-page-input').one('change', function(e) {
+    $('.lg-grid-last-page').unbind('change');
+    $('input.lg-grid-page-input').on('change', function(e) {
         delay(function() {
             pagingInputReload();
         }, quiet);
@@ -7,10 +8,11 @@ function pagingInputControl() {
 }
 
 function prevPageControl() {
+    $('.lg-grid-prev-page').unbind('click');
     $('.lg-grid-prev-page').on('click', function() {
         currentPage = Number($('input#lg-grid-page-input').val());
         maxPages = Number($('input#lg-grid-max-pages').val());
-        if (currentPage > 1 ) {
+        if (currentPage > 1) {
             currentPage--;
             $('input.lg-grid-page-input').val(currentPage);
         } else {
@@ -21,6 +23,7 @@ function prevPageControl() {
 }
 
 function nextPageControl() {
+    $('.lg-grid-next-page').unbind('click');
     $('.lg-grid-next-page').on('click', function() {
         currentPage = Number($('input#lg-grid-page-input').val());
         maxPages = Number($('input#lg-grid-max-pages').val());
@@ -35,14 +38,15 @@ function nextPageControl() {
 }
 
 function firstPageControl() {
+    $('.lg-grid-first-page').unbind('click');
     $('.lg-grid-first-page').on('click', function() {
         $('input.lg-grid-page-input').val(1);
         pagingInputReload();
     });
 }
 
-
 function lastPageControl() {
+    $('.lg-grid-last-page').unbind('click');
     $('.lg-grid-last-page').on('click', function() {
         maxPages = Number($('input#lg-grid-max-pages').val());
         $('input.lg-grid-page-input').val(maxPages);
@@ -51,6 +55,7 @@ function lastPageControl() {
 }
 
 function nextPageControl() {
+    $('.lg-grid-next-page').unbind('click');
     $('.lg-grid-next-page').on('click', function() {
         currentPage = Number($('input#lg-grid-page-input').val());
         maxPages = Number($('input#lg-grid-max-pages').val());
@@ -64,12 +69,14 @@ function nextPageControl() {
 
 function pagingInputReload() {
     var cookie = "lg-grid-" + getLgCurrentRoute() + "-offset";
-    offset = getOffset();
-    filter = getFilter();
     var numPerPage = getNumPerPage();
-    console.log('paging input reload offset: '+offset);
     var pageVal = Number($('input.lg-grid-page-input').val());
     var maxPages = Number(getMaxPages());
+    offset = getOffset();
+    filter = getFilter();
+    console.log(offset);
+    console.log(maxPages);
+    getNumPerPage();
     if (pageVal < 1) {
         pageVal = 1;
     }

@@ -15,6 +15,7 @@ function getNumPerPage() {
     if (numPerPage === undefined || numPerPage === null) {
         numPerPage = 10;
     }
+    console.log('numPerPage: '+ numPerPage);
     return numPerPage;
 }
 

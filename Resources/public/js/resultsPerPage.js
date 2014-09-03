@@ -1,4 +1,9 @@
 function pageSizeControl() {
+    // The unbind is necessary here because the ajax call in
+    // the reload does not replace the buttons which the
+    // events are attached to
+
+    $('.lg-grid-pagesize').unbind('click');
     $('.lg-grid-pagesize').one('click', function() {
         pageSizeReload($(this));
     });
@@ -11,7 +16,9 @@ function pageSizeReload(control) {
     var maxPages = getMaxPages();
     offset = getOffset();
     filter = getFilter();
-    console.log('page size offset: ' + offset);
+    console.log(offset);
+    console.log(maxPages);
+    getNumPerPage();
     // map to the bottom control
     $('.lg-grid-pagesize-button').html(control.html());
     // put the data into our javascript, for next time this is called
