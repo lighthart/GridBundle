@@ -235,12 +235,17 @@ class GridMaker
         $this->QB()->setFirstResult($offset);
 
         $q = $this->getQueryBuilder()->getQuery()->setDql($this->mapAliases());
-        $results = $q->getResult(Query::HYDRATE_SCALAR);
 
-        $attr = $this->getGrid()->getTable()->getAttr();
-        if (isset($attr['html']) && $attr['html']) {
-            $this->getGrid()->fillTh($results);
-            $this->getGrid()->fillTr($results);
+        if ($this->getGrid()->hasErrors()) {
+            $this->getGrid()->fillErrors();
+        } else {
+            $results = $q->getResult(Query::HYDRATE_SCALAR);
+
+            $attr = $this->getGrid()->getTable()->getAttr();
+            if (isset($attr['html']) && $attr['html']) {
+                $this->getGrid()->fillTh($results);
+                $this->getGrid()->fillTr($results);
+            }
         }
     }
 
@@ -282,11 +287,14 @@ class GridMaker
                 $aliases[$join->getAlias() ] = $alias . '___' . str_replace('\\', '_', $mappings[$field]['targetEntity'] . '_');
                 $entities[$join->getAlias() ] = $mappings[$field]['targetEntity'];
             }
-        }
+        };
 
         foreach ($aliases as $k => $v) {
-        // mark root
-            if($k == $oldRoot) {$v='=';}
+
+            // mark root
+            if ($k == $oldRoot) {
+                $v = '=';
+            }
             $pattern = '/ ' . $k . '([,. ])/';
             $replace = ' ' . $v . "$1";
             $dql = preg_replace($pattern, $replace, $dql);
@@ -296,20 +304,34 @@ class GridMaker
             $replace = 'CONCAT(' . $v . "$1";
             $dql = preg_replace($pattern, $replace, $dql);
         }
+
         // print_r($dql);print_r("<br><br>");
 
         // remark root
         $dql = str_replace('=', $root, $dql);
+
         // print_r($dql);print_r("<br><br>");die;
 
         $g = $this->getGrid();
         $columns = [];
 
-        foreach ($g->getColumns() as $k => $v) {
+        foreach ($g->getColumns() as $k => $v) {;
             $oldAlias = $v->getAlias();
             $oldValue = $v->getValue();
             $oldOptions = $v->getOptions();
-            $newAlias = $aliases[stristr($oldAlias, '_', true) ] . '_' . $v->getValue();
+
+            if (isset($aliases[stristr($oldAlias, '_', true) ])) {
+                $newAlias = $aliases[stristr($oldAlias, '_', true) ] . '_' . $v->getValue();
+                if (isset($oldOptions['title']) && false !== strpos($oldOptions['title'], '~')) {
+                    $oldField = substr(stristr($oldOptions['title'], '.') , 1);
+                    $oldSubAlias = substr(stristr($oldOptions['title'], '.', true) , 1);
+                    $newTitle = '~' . $aliases[$oldSubAlias] . '_' . $oldField;
+                    $oldOptions['title'] = $newTitle;
+                }
+                $columns[] = new Column($newAlias, $oldValue, $oldOptions);
+            } else {
+                $g->addError('Column \'' . $oldAlias . '\' maps to alias not present in query');
+            }
 
             // if the column starts with a tilde, use a value from the field specified
             // this is when you have several objects of the same category
@@ -323,16 +345,9 @@ class GridMaker
 
             // the column must be specified as a hidden column in your grid.
 
-            if (isset($oldOptions['title']) && false !== strpos($oldOptions['title'], '~')) {
-                $oldField = substr(stristr($oldOptions['title'], '.') , 1);
-                $oldSubAlias = substr(stristr($oldOptions['title'], '.', true) , 1);
-                $newTitle = '~' . $aliases[$oldSubAlias] . '_' . $oldField;
-                $oldOptions['title'] = $newTitle;
-            }
-            $columns[] = new Column($newAlias, $oldValue, $oldOptions);
-            $g->setColumns($columns);
-        }
 
+        }
+        $g->setColumns($columns);
         return $dql;
     }
 

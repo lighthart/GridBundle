@@ -4,10 +4,16 @@
     {%- elseif cell.value -%}
         {%- if cell.value.timestamp is defined -%}
             {{- cell.value|date('Y-m-d') -}}
+        {%- elseif cell.html is defined -%}
+            {{- cell.value|raw -}}
         {%- else -%}
             {{- cell.value -}}
         {%- endif -%}
     {%- elseif 'th' == cell.type -%}
-        {{- cell.title -}}
+        {%- if cell.html is defined -%}
+            {{- cell.title|raw -}}
+        {% else %}
+            {{- cell.title -}}
+        {% endif %}
     {%- endif -%}
 </{{- cell.type -}}>

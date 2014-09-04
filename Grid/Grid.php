@@ -18,6 +18,7 @@ class Grid
     private $total;
     private $pageSize;
     private $search;
+    private $errors;
     private $table;
     private $columns;
 
@@ -31,6 +32,7 @@ class Grid
         $this->columns = array();
         $this->table = new Table($options);
         $this->table->setGrid($this);
+        $this->errors = array();
     }
 
     public function getOffset()
@@ -75,6 +77,28 @@ class Grid
     {
         $this->search = $search;
         return $this;
+    }
+
+    public function getErrors()
+    {
+        return $this->errors;
+    }
+
+    public function setErrors($errors)
+    {
+        $this->errors = $errors;
+        return $this;
+    }
+
+    public function addError($error)
+    {
+        $this->errors[] = $error;
+        return $this;
+    }
+
+    public function hasErrors()
+    {
+        return array() != $this->errors;
     }
 
     public function getTable()
@@ -214,6 +238,33 @@ class Grid
         }
     }
 
+    public function fillErrors()
+    {
+        $thead = $this->getTable()->getThead();
+        $columns = $this->getColumns();
+        $row = new Row(array(
+            'type' => 'tr'
+        ));
+        $row->addCell(new Cell(array(
+            'title' => 'Grid Errors',
+            'html' => true,
+            'type' => 'th',
+            'attr' => array('class' => 'alert-danger alert')
+        )));
+        $thead->addRow($row);
+        foreach ($this->errors as $error) {
+            $row = new Row(array(
+                'type' => 'tr'
+            ));
+            $row->addCell(new Cell(array(
+                'title' => $error,
+                'type' => 'th',
+                'attr' => array()
+            )));
+            $thead->addRow($row);
+        }
+    }
+
     public function fillTh(array $result = array())
     {
         if (array() != $result) {
@@ -239,7 +290,6 @@ class Grid
 
                 $pattern = '/(\w+)\_\_\_(\w+)\_\_(\w+)/';
                 preg_match($pattern, $key, $match);
-
 
                 $attr['data-role-lg-class'] = $match[2];
                 $attr['data-role-lg-field'] = $columns[$key]->getValue();
