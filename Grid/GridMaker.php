@@ -211,6 +211,12 @@ class GridMaker
         $pageOffset = $request->cookies->get("lg-grid-" . $request->attributes->get('_route') . "-offset");
         $search = $request->cookies->get("lg-grid-" . $request->attributes->get('_route') . "-search");
         $this->addSearch($search);
+        $cqb = clone $this->QB();
+        $root = $cqb->getDQLPart('from') [0]->getAlias() . ".id";
+        $cqb->resetDQLPart('orderBy');
+        $cqb->select($cqb->expr()->count($root));
+        $cqb->distinct();
+        $this->getGrid()->setTotal($cqb->getQuery()->getSingleScalarResult());
 
         $debug = $request->query->get('debug');
 
@@ -224,25 +230,11 @@ class GridMaker
         $this->getGrid()->setOffset($offset);
         $this->getGrid()->setSearch($search);
 
-        $qb = clone $this->QB();
-        $root = $qb->getDQLPart('from') [0]->getAlias() . ".id";
-        $qb->select("COUNT(DISTINCT " . $root . ")");
-        $qb->resetDQLPart('orderBy');
-
-print_r($this->QB()->getQuery()->getSQL());
-print_r("<br><bR>");
-print_r($qb->getQuery()->getSQL());
-die;
-
         $this->QB()->setFirstResult($offset);
         $this->QB()->setMaxResults($maxResults);
-
         $this->QB()->setFirstResult($offset);
 
-        $this->getGrid()->setTotal($qb->getQuery()->getSingleScalarResult());
-
         $q = $this->getQueryBuilder()->getQuery()->setDql($this->mapAliases());
-
         $results = $q->getResult(Query::HYDRATE_SCALAR);
 
         $attr = $this->getGrid()->getTable()->getAttr();
@@ -292,7 +284,6 @@ die;
             }
         }
 
-        // print_r($dql);print_r("<br><br>");
         foreach ($aliases as $k => $v) {
         // mark root
             if($k == $oldRoot) {$v='=';}

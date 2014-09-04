@@ -1,12 +1,12 @@
 function gridSearchControl() {
     $('input#lg-grid-search-input').on('keyup', function() {
         delay(function() {
-            gridSearch();
+            gridSearchReload();
         }, quiet);
     });
 }
 
-function gridSearch(control) {
+function gridSearchReload(control) {
     var numPerPagecookie = 'lg-grid-results-per-page';
     var offsetCookie = "lg-grid-" + getLgCurrentRoute() + "-offset";
     var cookie = "lg-grid-" + getLgCurrentRoute() + "-search";
