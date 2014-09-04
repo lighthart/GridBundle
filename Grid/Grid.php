@@ -17,6 +17,7 @@ class Grid
     // how many for this query
     private $total;
     private $pageSize;
+    private $search;
     private $table;
     private $columns;
 
@@ -56,12 +57,23 @@ class Grid
 
     public function getPageSize()
     {
-        return $this->pageSize?:10;
+        return $this->pageSize ? : 10;
     }
 
     public function setPageSize($pageSize)
     {
         $this->pageSize = $pageSize;
+        return $this;
+    }
+
+    public function getSearch()
+    {
+        return $this->search;
+    }
+
+    public function setSearch($search)
+    {
+        $this->search = $search;
         return $this;
     }
 
@@ -227,6 +239,8 @@ class Grid
 
                 $pattern = '/(\w+)\_\_\_(\w+)\_\_(\w+)/';
                 preg_match($pattern, $key, $match);
+
+
                 $attr['data-role-lg-class'] = $match[2];
                 $attr['data-role-lg-field'] = $columns[$key]->getValue();
                 $title = (isset($columns[$key]->getOptions() ['title']) ? $columns[$key]->getOptions() ['title'] : $key);
@@ -276,6 +290,7 @@ class Grid
             //         'checkbox' => true
             //     )
             // )));
+
             foreach ($result as $key => $value) {
                 if (isset($columns[$key])) {
                     $attr = (isset($columns[$key]->getOptions() ['attr']) ? $columns[$key]->getOptions() ['attr'] : '');

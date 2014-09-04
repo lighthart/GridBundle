@@ -89,3 +89,7 @@ input.lg-grid-input-non-field {
     line-height: 1.5;
     vertical-align: middle;
 }
+
+.lg-grid-searched{
+    background-color: rgba(255,255,0,0.2);
+}

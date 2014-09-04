@@ -39,7 +39,11 @@ function getMaxPages() {
     return maxPages;
 }
 
-function getFilter() {
-    var filter = $('input#lg-grid-search-input').val();
-    return filter;
+function getSearch() {
+    var search = $('input#lg-grid-search-input').val();
+    return search;
+}
+
+function highlightSearches(){
+    $('td').highlight($('input#lg-grid-search-input').val().split(' '));
 }

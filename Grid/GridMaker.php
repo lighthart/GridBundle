@@ -206,36 +206,43 @@ class GridMaker
 
         $this->mapMethodsFromQB();
 
-        $qb = clone $this->QB();
-        $root = $qb->getDQLPart('from') [0]->getAlias() . ".id";
-        $qb->select("COUNT(DISTINCT " . $root . ")");
-        $qb->resetDQLPart('orderBy');
-        $this->getGrid()->setTotal($qb->getQuery()->getSingleScalarResult());
-
         $cookies = $request->cookies;
         $pageSize = $request->cookies->get('lg-grid-results-per-page');
-        $this->getGrid()->setPageSize($pageSize);
-
-        $debug=$request->query->get('debug');
-
         $pageOffset = $request->cookies->get("lg-grid-" . $request->attributes->get('_route') . "-offset");
+        $search = $request->cookies->get("lg-grid-" . $request->attributes->get('_route') . "-search");
+        $this->addSearch($search);
+
+        $debug = $request->query->get('debug');
 
         $maxResults = ($request->query->get('pageSize') ? : ($pageSize ? : 10));
         $offset = ($request->query->get('pageOffset') ? : ($pageOffset ? : 0));
         $offset = ($offset > $this->getGrid()->getTotal()) ? $offset = $this->getGrid()->getTotal() - $maxResults : $offset;
         $offset = ($offset < 0) ? 0 : $offset;
-        $offset = floor($offset/$pageSize)*$pageSize;
+        $offset = floor($offset / $pageSize) * $pageSize;
 
-
-
+        $this->getGrid()->setPageSize($pageSize);
         $this->getGrid()->setOffset($offset);
+        $this->getGrid()->setSearch($search);
+
+        $qb = clone $this->QB();
+        $root = $qb->getDQLPart('from') [0]->getAlias() . ".id";
+        $qb->select("COUNT(DISTINCT " . $root . ")");
+        $qb->resetDQLPart('orderBy');
+
+print_r($this->QB()->getQuery()->getSQL());
+print_r("<br><bR>");
+print_r($qb->getQuery()->getSQL());
+die;
 
         $this->QB()->setFirstResult($offset);
         $this->QB()->setMaxResults($maxResults);
 
         $this->QB()->setFirstResult($offset);
 
+        $this->getGrid()->setTotal($qb->getQuery()->getSingleScalarResult());
+
         $q = $this->getQueryBuilder()->getQuery()->setDql($this->mapAliases());
+
         $results = $q->getResult(Query::HYDRATE_SCALAR);
 
         $attr = $this->getGrid()->getTable()->getAttr();
@@ -259,6 +266,8 @@ class GridMaker
         $from = $qb->getDqlPart('from') [0];
         $rootClassPath = $from->getFrom();
         $oldRoot = $qb->getRootAlias();
+
+        // mark root
         $root = 'root___' . str_replace('\\', '_', $rootClassPath . '_');
         $aliases[$oldRoot] = $root;
         $entities[$oldRoot] = $rootClassPath;
@@ -283,11 +292,24 @@ class GridMaker
             }
         }
 
+        // print_r($dql);print_r("<br><br>");
         foreach ($aliases as $k => $v) {
+        // mark root
+            if($k == $oldRoot) {$v='=';}
             $pattern = '/ ' . $k . '([,. ])/';
             $replace = ' ' . $v . "$1";
             $dql = preg_replace($pattern, $replace, $dql);
+
+            // for searches
+            $pattern = '/CONCAT\(' . $k . '/';
+            $replace = 'CONCAT(' . $v . "$1";
+            $dql = preg_replace($pattern, $replace, $dql);
         }
+        // print_r($dql);print_r("<br><br>");
+
+        // remark root
+        $dql = str_replace('=', $root, $dql);
+        // print_r($dql);print_r("<br><br>");die;
 
         $g = $this->getGrid();
         $columns = [];
@@ -451,5 +473,101 @@ class GridMaker
         //     }
         // }
 
+
+    }
+
+    public function addSearch($search)
+    {
+        $qb = $this->QB();
+        $searchFields = array_map(function ($c)
+        {
+            return $c->getOption('search');
+        }
+        , array_filter($this->getGrid()->getColumns() , function ($c)
+        {
+            return $c->getOption('search');
+        }));
+
+        $searches = array();
+        foreach ($searchFields as $field => $type) {
+            $searches[$type][] = str_replace('_', '.', $field);
+        }
+
+        // $search is the explicit request from user
+        // $searches are the fields for while the filter should be searched
+
+        $numbers = (isset($searches['number']) && $searches['number']) ? $searches['number'] : array();
+        $dates = (isset($searches['date']) && $searches['date']) ? $searches['date'] : array();
+        $strings = (isset($searches['string']) && $searches['string']) ? $searches['string'] : array();
+
+        if ($numbers == array() && $dates == array() && $strings == array()) {
+
+            // just bail out if there are no fields to search in
+            return $qb;
+        }
+
+        $search = explode(' ', $search);
+
+        $search = array_filter($search, function ($e)
+        {
+            return !!$e;
+        });
+
+        if (array(
+            ''
+        ) == $search || array() == $search) {
+
+            // just bail out if there is nothing to search for
+            return $qb;
+        }
+
+        foreach ($search as $key => $value) {
+            $value = trim($value);
+            $value = str_replace("'", "''", $value);
+            $value = str_replace(",", "", $value);
+            $cqb = array();
+
+            if ($strings != array()) {
+                foreach ($strings as $stringKeys => $stringValues) {
+                    $cqb[] = $qb->expr()->like("LOWER(CONCAT($stringValues, ''))", "'%" . strtolower($value) . "%'");
+                }
+            }
+
+            if ($numbers != array()) {
+                foreach ($numbers as $numberKeys => $numberValues) {
+                    $cqb[] = $qb->expr()->like("CONCAT($numberValues, '')", "'%$value%'");
+                }
+            }
+
+            if ($dates != array()) {
+                foreach ($dates as $dateKeys => $dateValues) {
+                    $cqb[] = $qb->expr()->like("LOWER(CONCAT($dateValues, ''))", "'%" . strtolower($value) . "%'");
+                }
+            }
+
+            // below, if value is 2007, this makes a datetime object
+            // for the current day at 8:07 pm, i.e. 20:07
+            // Baffling.
+            // commenting out for now, and parsing like other strings.
+            // if ( $dates != array() ) {
+            //     foreach ($dates as $dateKeys => $dateValues) {
+            //         $value = str_replace( '-', '/', $value );
+            //         try {
+            //             $date    = new \DateTime( $value );
+            //             $dateout = $date->format( 'Y-m-d' );
+            //             $cqb[]   = $qb->expr()->like( "CONCAT($dateValues, '')", "'%$dateout%'" );
+            //         } catch ( \Exception $ex ) {
+            //             $value = preg_replace( '/^(\d\d\/\d\d).*$/', '$1', $value );
+            //             $cqb[] = $qb->expr()->like( "CONCAT($dateValues, '')", str_replace( '/', '-', "'%$value%'" ) );
+            //         }
+            //     }
+            // }
+            $qb->andWhere(call_user_func_array(array(
+                $qb->expr() ,
+                "orx"
+            ) , $cqb));
+        }
+
+        return $qb;
     }
 }

@@ -1,35 +1,44 @@
-function gridFilterControl() {
-    $('input#lg-grid-search-input').on('change', function(e) {
+function gridSearchControl() {
+    $('input#lg-grid-search-input').on('keyup', function() {
         delay(function() {
-            gridFilter();
+            gridSearch();
         }, quiet);
     });
 }
 
-function gridFilter(control) {
+function gridSearch(control) {
     var numPerPagecookie = 'lg-grid-results-per-page';
     var offsetCookie = "lg-grid-" + getLgCurrentRoute() + "-offset";
+    var cookie = "lg-grid-" + getLgCurrentRoute() + "-search";
     offset = 0;
     $.cookie(offsetCookie, offset);
-
-    if (currentPageSize != Number(control.attr('data-role-lg-pagesize'))) {
-        $.ajax({
-            url: getLgCurrentURI(),
-            data: {
-                pageSize: getNumPerPage(),
-                pageOffset: offset,
-                filter: getFilter()
-            },
-            dataType: 'html',
-            type: 'GET',
-            complete: function() {
-                activateControls();
-            },
-            success: function(data) {
-                $('table.lg-grid-table').html($(data).find('table.lg-grid-table').html());
-                $('div#lg-grid-header').html($(data).find('div#lg-grid-header').html());
-                $('div#lg-grid-footer').html($(data).find('div#lg-grid-footer').html());
-            }
-        });
+    searchString = getSearch().trim();
+    $.cookie(cookie, searchString);
+    if (!!searchString) {
+        $('input#lg-grid-search-input').addClass('lg-grid-searched');
+    } else {
+        $('input#lg-grid-search-input').removeClass('lg-grid-searched');
     }
+    numPerPage = getNumPerPage();
+    $.ajax({
+        url: getLgCurrentURI(),
+        data: {
+            pageSize: numPerPage,
+            pageOffset: offset,
+            search: searchString
+        },
+        dataType: 'html',
+        type: 'GET',
+        complete: function() {
+            activateControls();
+        },
+        success: function(data) {
+            $('table.lg-grid-table').html($(data).find('table.lg-grid-table').html());
+            $('div#lg-grid-header').html($(data).find('div#lg-grid-header').html());
+            $('div#lg-grid-footer').html($(data).find('div#lg-grid-footer').html());
+            // Get the control, replace the value, move cursor to the end
+            $('input#lg-grid-search-input').blur().focus().val(searchString);
+            $('td').highlight($('input#lg-grid-search-input').val().split(' '));
+        }
+    });
 }

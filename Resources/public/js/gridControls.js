@@ -9,5 +9,6 @@ function activateControls() {
     nextPageControl();
     firstPageControl();
     lastPageControl();
-    gridFilterControl();
+    gridSearchControl();
+    highlightSearches();
 }
