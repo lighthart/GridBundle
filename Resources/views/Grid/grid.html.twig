@@ -1,6 +1,5 @@
 {% block lgGrid %}
     {# used in blocks below #}
-    {% set pageSize = (app.request.cookies.get('lg-grid-results-per-page'))?:10 %}
     {% spaceless %}
         <div class="lg-grid">
             {% block header %}

@@ -11,10 +11,12 @@ use Doctrine\ORM\Query;
 class Grid
 {
 
-     // what result we are on. 0-based
+    // what result we are on. 0-based
     private $offset;
-     // how many for this query
+
+    // how many for this query
     private $total;
+    private $pageSize;
     private $table;
     private $columns;
 
@@ -49,6 +51,17 @@ class Grid
     public function setTotal($total)
     {
         $this->total = $total;
+        return $this;
+    }
+
+    public function getPageSize()
+    {
+        return $this->pageSize?:10;
+    }
+
+    public function setPageSize($pageSize)
+    {
+        $this->pageSize = $pageSize;
         return $this;
     }
 
@@ -199,6 +212,7 @@ class Grid
         $row = new Row(array(
             'type' => 'tr'
         ));
+
         // $row->addCell(new Cell(array(
         //     'title' => '',
         //     'type' => 'th',
@@ -253,6 +267,7 @@ class Grid
             $row = new Row(array(
                 'type' => 'tr'
             ));
+
             //Not ready to implement this
             // $row->addCell(new Cell(array(
             //     'title' => '',

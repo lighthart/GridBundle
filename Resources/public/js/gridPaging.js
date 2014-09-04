@@ -1,6 +1,6 @@
 function pagingInputControl() {
     $('.lg-grid-last-page').unbind('change');
-    $('input.lg-grid-page-input').on('change', function(e) {
+    $('input.lg-grid-page-input').on('change', function() {
         delay(function() {
             pagingInputReload();
         }, quiet);
@@ -10,15 +10,17 @@ function pagingInputControl() {
 function prevPageControl() {
     $('.lg-grid-prev-page').unbind('click');
     $('.lg-grid-prev-page').on('click', function() {
-        currentPage = Number($('input#lg-grid-page-input').val());
-        maxPages = Number($('input#lg-grid-max-pages').val());
+        var currentPage = Number($('input#lg-grid-page-input').val());
+        var maxPages = Number($('input#lg-grid-max-pages').val());
         if (currentPage > 1) {
             currentPage--;
             $('input.lg-grid-page-input').val(currentPage);
         } else {
             $('input.lg-grid-page-input').val(1);
         }
-        pagingInputReload();
+        delay(function() {
+            pagingInputReload();
+        }, quiet);
     });
 }
 
@@ -33,7 +35,9 @@ function nextPageControl() {
         } else {
             $('input.lg-grid-page-input').val(maxPages);
         }
-        pagingInputReload();
+        delay(function() {
+            pagingInputReload();
+        }, quiet);
     });
 }
 
@@ -54,19 +58,6 @@ function lastPageControl() {
     });
 }
 
-function nextPageControl() {
-    $('.lg-grid-next-page').unbind('click');
-    $('.lg-grid-next-page').on('click', function() {
-        currentPage = Number($('input#lg-grid-page-input').val());
-        maxPages = Number($('input#lg-grid-max-pages').val());
-        if (currentPage < maxPages) {
-            currentPage++;
-            $('input.lg-grid-page-input').val(currentPage);
-        }
-        pagingInputReload();
-    });
-}
-
 function pagingInputReload() {
     var cookie = "lg-grid-" + getLgCurrentRoute() + "-offset";
     var numPerPage = getNumPerPage();
@@ -74,8 +65,6 @@ function pagingInputReload() {
     var maxPages = Number(getMaxPages());
     offset = getOffset();
     filter = getFilter();
-    console.log(offset);
-    console.log(maxPages);
     getNumPerPage();
     if (pageVal < 1) {
         pageVal = 1;
@@ -98,11 +87,8 @@ function pagingInputReload() {
         },
         success: function(data) {
             $('table.lg-grid-table').html($(data).find('table.lg-grid-table').html());
-            $('span.lg-grid-result-counts').html($(data).find('span#lg-grid-header-result-counts').html());
-            $('span.lg-grid-total-pages').html($(data).find('span#lg-grid-header-total-pages').html());
-            $('span.lg-grid-paging-controls').html($(data).find('span.lg-grid-paging-controls').html());
-            $('input.lg-grid-page-input').val(pageVal);
-            $('input#lg-grid-search-input').val(filter);
+            $('div#lg-grid-header').html($(data).find('div#lg-grid-header').html());
+            $('div#lg-grid-footer').html($(data).find('div#lg-grid-footer').html());
         }
     });
 }

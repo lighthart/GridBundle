@@ -196,7 +196,6 @@ class GridMaker
     public function hydrateGrid(Request $request, $fromQB = false)
     {
 
-        // working here
         $pageSize = $request->query->get('pageSize');
 
         if ($fromQB) {
@@ -215,14 +214,19 @@ class GridMaker
 
         $cookies = $request->cookies;
         $pageSize = $request->cookies->get('lg-grid-results-per-page');
+        $this->getGrid()->setPageSize($pageSize);
+
+        $debug=$request->query->get('debug');
 
         $pageOffset = $request->cookies->get("lg-grid-" . $request->attributes->get('_route') . "-offset");
 
         $maxResults = ($request->query->get('pageSize') ? : ($pageSize ? : 10));
         $offset = ($request->query->get('pageOffset') ? : ($pageOffset ? : 0));
         $offset = ($offset > $this->getGrid()->getTotal()) ? $offset = $this->getGrid()->getTotal() - $maxResults : $offset;
-
         $offset = ($offset < 0) ? 0 : $offset;
+        $offset = floor($offset/$pageSize)*$pageSize;
+
+
 
         $this->getGrid()->setOffset($offset);
 

@@ -2,9 +2,9 @@
     <div class="form-group">
         <div class={% if place == "footer" %}"dropup btn-group"{% else %}"btn-group"{% endif %}>
             <button class="btn btn-xs btn-default lg-grid-btn-top lg-grid-results-per-page dropdown-toggle" id="lg-grid-results-per-page" data-toggle="dropdown">
-                <span class="lg-grid-pagesize-button" data-role-lg-pagesize="{{pageSize}}">{{pageSize}} per page</span>
+                <span class="lg-grid-pagesize-button" data-role-lg-pagesize="{{grid.pageSize}}">{{grid.pageSize}} per page</span>
                 {% if place == "footer" %}
-                    <input type = "hidden" id="lg-grid-results-per-page" value="{{pageSize}}"/>
+                    <input type = "hidden" id="lg-grid-results-per-page" value="{{grid.pageSize}}"/>
                 {% endif -%}
                 &nbsp;<span class={% if place == "footer" %}"fa fa-caret-up"{% else %}"fa fa-caret-down"{% endif %}></span>
             </button>
