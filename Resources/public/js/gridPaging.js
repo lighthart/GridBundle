@@ -59,6 +59,7 @@ function lastPageControl() {
 }
 
 function pagingInputReload() {
+    $('.lg-grid-table').addClass('text-muted');
     var cookie = "lg-grid-" + getLgCurrentRoute() + "-offset";
     var numPerPage = getNumPerPage();
     var pageVal = Number($('input.lg-grid-page-input').val());
@@ -66,7 +67,7 @@ function pagingInputReload() {
     offset = getOffset();
     search = getSearch();
     getNumPerPage();
-    if (pageVal < 1 || pageval > maxPages) {
+    if (pageVal < 1 || pageVal > maxPages) {
         if (pageVal < 1) {
             pageVal = 1;
         }
@@ -74,7 +75,6 @@ function pagingInputReload() {
             pageVal = maxPages;
         }
     } else {
-        console.log(pageVal);
         $('input.lg-grid-page-input').val(pageVal);
         $.cookie(cookie, offset);
         $.ajax({
@@ -92,6 +92,9 @@ function pagingInputReload() {
                 $('table.lg-grid-table').html($(data).find('table.lg-grid-table').html());
                 $('div#lg-grid-header').html($(data).find('div#lg-grid-header').html());
                 $('div#lg-grid-footer').html($(data).find('div#lg-grid-footer').html());
+                $('.lg-grid-table').removeClass('text-muted');
+                $('input#lg-grid-search-input').blur().focus().val(searchString);
+                highlightSearches();
             }
         });
     }

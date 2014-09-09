@@ -46,4 +46,9 @@ function getSearch() {
 
 function highlightSearches(){
     $('td').highlight($('input#lg-grid-search-input').val().split(' '));
+    if (!!$('input#lg-grid-search-input').val().trim()) {
+        $('input#lg-grid-search-input').addClass('highlight');
+    } else {
+        $('input#lg-grid-search-input').removeClass('highlight');
+    }
 }

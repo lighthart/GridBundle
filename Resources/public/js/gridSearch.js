@@ -7,6 +7,7 @@ function gridSearchControl() {
 }
 
 function gridSearchReload(control) {
+    $('.lg-grid-table').addClass('text-muted');
     var numPerPagecookie = 'lg-grid-results-per-page';
     var offsetCookie = "lg-grid-" + getLgCurrentRoute() + "-offset";
     var cookie = "lg-grid-" + getLgCurrentRoute() + "-search";
@@ -14,7 +15,7 @@ function gridSearchReload(control) {
     $.cookie(offsetCookie, offset);
     searchString = getSearch().trim();
     $.cookie(cookie, searchString);
-    if (!!searchString) {
+    if ( !! searchString) {
         $('input#lg-grid-search-input').addClass('lg-grid-searched');
     } else {
         $('input#lg-grid-search-input').removeClass('lg-grid-searched');
@@ -36,9 +37,9 @@ function gridSearchReload(control) {
             $('table.lg-grid-table').html($(data).find('table.lg-grid-table').html());
             $('div#lg-grid-header').html($(data).find('div#lg-grid-header').html());
             $('div#lg-grid-footer').html($(data).find('div#lg-grid-footer').html());
-            // Get the control, replace the value, move cursor to the end
+            $('.lg-grid-table').removeClass('text-muted');
             $('input#lg-grid-search-input').blur().focus().val(searchString);
-            $('td').highlight($('input#lg-grid-search-input').val().split(' '));
+            highlightSearches();
         }
     });
 }

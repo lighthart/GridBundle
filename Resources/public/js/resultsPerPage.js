@@ -9,6 +9,7 @@ function pageSizeControl() {
 }
 
 function pageSizeReload(control) {
+    $('.lg-grid-table').addClass('text-muted');
     var cookie = 'lg-grid-results-per-page';
     var numPerPage = control.attr('data-role-lg-pagesize');
     var pageVal = $('input.lg-grid-page-input').val();
@@ -41,6 +42,9 @@ function pageSizeReload(control) {
             $('table.lg-grid-table').html($(data).find('table.lg-grid-table').html());
             $('div#lg-grid-header').html($(data).find('div#lg-grid-header').html());
             $('div#lg-grid-footer').html($(data).find('div#lg-grid-footer').html());
+            $('.lg-grid-table').removeClass('text-muted');
+            $('input#lg-grid-search-input').blur().focus().val(searchString);
+            highlightSearches();
         }
     });
 }
