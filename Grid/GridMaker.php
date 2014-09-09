@@ -208,6 +208,7 @@ class GridMaker
 
         $cookies = $request->cookies;
         $pageSize = $request->cookies->get('lg-grid-results-per-page');
+        $pageSize = $pageSize ? : 10;
         $pageOffset = $request->cookies->get("lg-grid-" . $request->attributes->get('_route') . "-offset");
         $search = $request->cookies->get("lg-grid-" . $request->attributes->get('_route') . "-search");
         $this->addSearch($search);
@@ -221,6 +222,7 @@ class GridMaker
         $debug = $request->query->get('debug');
 
         $maxResults = ($request->query->get('pageSize') ? : ($pageSize ? : 10));
+
         $offset = ($request->query->get('pageOffset') ? : ($pageOffset ? : 0));
         $offset = ($offset > $this->getGrid()->getTotal()) ? $offset = $this->getGrid()->getTotal() - $maxResults : $offset;
         $offset = ($offset < 0) ? 0 : $offset;
@@ -293,7 +295,7 @@ class GridMaker
 
             // mark root
             if ($k == $oldRoot) {
-                $v = '=';
+                $v = '##';
             }
             $pattern = '/ ' . $k . '([,. ])/';
             $replace = ' ' . $v . "$1";
@@ -308,7 +310,7 @@ class GridMaker
         // print_r($dql);print_r("<br><br>");
 
         // remark root
-        $dql = str_replace('=', $root, $dql);
+        $dql = str_replace('##', $root, $dql);
 
         // print_r($dql);print_r("<br><br>");die;
 
