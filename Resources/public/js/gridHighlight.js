@@ -49,7 +49,10 @@ jQuery.extend({
             var match = node.data.match(re);
             if (match) {
                 var highlight = document.createElement(nodeName || 'span');
-                highlight.className = className || 'highlight';
+                // original
+                // highlight.className = className || 'highlight';
+                // modified for budget
+                highlight.className = className || 'lg-grid-highlight';
                 var wordNode = node.splitText(match.index);
                 wordNode.splitText(match[0].length);
                 var wordClone = wordNode.cloneNode(true);

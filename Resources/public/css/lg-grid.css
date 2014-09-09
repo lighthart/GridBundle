@@ -90,6 +90,10 @@ input.lg-grid-input-non-field {
     vertical-align: middle;
 }
 
-.lg-grid-searched{
+.lg-grid-searched {
     background-color: rgba(255,255,0,0.2);
+}
+
+.lg-grid-highlight {
+        background-color: rgba(255,255,0,0.2);
 }
