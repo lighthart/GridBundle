@@ -4,12 +4,12 @@
     var assets = [];
     {%  javascripts
         '@LighthartGridBundle/Resources/public/js/grid.js'
+        '@LighthartGridBundle/Resources/public/js/gridPaging.js'
         '@LighthartGridBundle/Resources/public/js/gridHighlight.js'
-        '@LighthartGridBundle/Resources/public/js/tdEdit.js'
         '@LighthartGridBundle/Resources/public/js/gridSearch.js'
         '@LighthartGridBundle/Resources/public/js/resultsPerPage.js'
-        '@LighthartGridBundle/Resources/public/js/gridPaging.js'
         '@LighthartGridBundle/Resources/public/js/gridControls.js'
+        '@LighthartGridBundle/Resources/public/js/tdEdit.js'
     %}
     assets.push("{{ asset_url }}");
     {% endjavascripts %}
