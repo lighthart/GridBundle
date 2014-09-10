@@ -45,7 +45,7 @@ function getSearch() {
 }
 
 function highlightSearches(){
-    $('td').highlight($('input#lg-grid-search-input').val().split(' '));
+    $('td.lg-grid-searchable').highlight($('input#lg-grid-search-input').val().split(' '));
     if (!!$('input#lg-grid-search-input').val().trim()) {
         $('input#lg-grid-search-input').addClass('lg-grid-highlight');
     } else {

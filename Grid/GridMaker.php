@@ -196,7 +196,7 @@ class GridMaker
     public function hydrateGrid(Request $request, $fromQB = false)
     {
 
-        $pageSize = $request->query->get('pageSize');
+        $debug = $request->query->get('debug');
 
         if ($fromQB) {
             $this->mapFieldsFromQB();
@@ -207,10 +207,12 @@ class GridMaker
         $this->mapMethodsFromQB();
 
         $cookies = $request->cookies;
-        $pageSize = $request->cookies->get('lg-grid-results-per-page');
-        $pageSize = $pageSize ? : 10;
+        $pageSize = $request->query->get('pageSize') ?: ($request->cookies->get('lg-grid-results-per-page') ?: 10);
         $pageOffset = $request->cookies->get("lg-grid-" . $request->attributes->get('_route') . "-offset");
         $search = $request->cookies->get("lg-grid-" . $request->attributes->get('_route') . "-search");
+
+        // if ($debug) {var_dump($this->getQB()->getQuery()->getDql()); print_r("<br><br>");}
+
         $this->addSearch($search);
         $cqb = clone $this->QB();
         $root = $cqb->getDQLPart('from') [0]->getAlias() . ".id";
@@ -219,7 +221,8 @@ class GridMaker
         $cqb->distinct();
         $this->getGrid()->setTotal($cqb->getQuery()->getSingleScalarResult());
 
-        $debug = $request->query->get('debug');
+
+        // if ($debug) {var_dump($this->getQB()->getQuery()->getDql());print_r("<br><br>");}
 
         $maxResults = ($request->query->get('pageSize') ? : ($pageSize ? : 10));
 
@@ -237,6 +240,7 @@ class GridMaker
         $this->QB()->setFirstResult($offset);
 
         $q = $this->getQueryBuilder()->getQuery()->setDql($this->mapAliases());
+
 
         if ($this->getGrid()->hasErrors()) {
             $this->getGrid()->fillErrors();
@@ -297,7 +301,7 @@ class GridMaker
             if ($k == $oldRoot) {
                 $v = '##';
             }
-            $pattern = '/ ' . $k . '([,. ])/';
+            $pattern = '/ ' . $k . '([,\. ])/';
             $replace = ' ' . $v . "$1";
             $dql = preg_replace($pattern, $replace, $dql);
 

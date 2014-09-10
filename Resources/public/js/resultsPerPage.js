@@ -20,7 +20,7 @@ function pageSizeReload(control) {
         var offsetCookie = "lg-grid-" + getLgCurrentRoute() + "-offset";
         $.cookie(offsetCookie, offset);
     }
-    search = getSearch();
+    searchString = getSearch();
     // map to the bottom control
     $('.lg-grid-pagesize-button').html(control.html());
     // put the data into our javascript, for next time this is called

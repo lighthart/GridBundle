@@ -249,7 +249,9 @@ class Grid
             'title' => 'Grid Errors',
             'html' => true,
             'type' => 'th',
-            'attr' => array('class' => 'alert-danger alert')
+            'attr' => array(
+                'class' => 'alert-danger alert'
+            )
         )));
         $thead->addRow($row);
         foreach ($this->errors as $error) {
@@ -293,6 +295,9 @@ class Grid
 
                 $attr['data-role-lg-class'] = $match[2];
                 $attr['data-role-lg-field'] = $columns[$key]->getValue();
+                if (isset($columns[$key]->getOptions() ['search'])) {
+                    $attr['class'].= ' lg-grid-searchable';
+                }
                 $title = (isset($columns[$key]->getOptions() ['title']) ? $columns[$key]->getOptions() ['title'] : $key);
 
                 if (isset($columns[$key]->getOptions() ['hidden'])) {
@@ -353,7 +358,9 @@ class Grid
                         $rootId = $match[1] . '__id';
                         $attr['data-role-lg-entity-id'] = $result[$rootId];
                     }
-
+                    if (isset($columns[$key]->getOptions() ['search'])) {
+                        $attr['class'].= ' lg-grid-searchable';
+                    }
                     if (isset($columns[$key]->getOptions() ['hidden'])) {
                     } else {
                         $cell = new Cell(array(

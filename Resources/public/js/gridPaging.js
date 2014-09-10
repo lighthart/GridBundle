@@ -67,7 +67,7 @@ function pagingInputReload() {
     var pageVal = Number($('input.lg-grid-page-input').val());
     var maxPages = Number(getMaxPages());
     offset = getOffset();
-    search = getSearch();
+    searchString = getSearch();
     getNumPerPage();
     if (pageVal < 1 || pageVal > maxPages) {
         if (pageVal < 1) {
