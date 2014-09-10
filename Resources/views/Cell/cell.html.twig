@@ -11,7 +11,7 @@
         {%- endif -%}
     {%- elseif 'th' == cell.type -%}
         {%- if cell.attr.filter is defined %}
-            <input type="text" id="lg-grid-search-{{cell.attr['data-role-lg-class']}}_{{cell.attr['data-role-lg-field']}}" class="lg-grid-filter-input"/>
+            <input type="text" id="lg-grid-filter-{{cell.attr['data-role-lg-class']}}__{{cell.attr['data-role-lg-field']}}" class="lg-grid-filter-input"/>
         {%- elseif cell.html is defined -%}
             {{- cell.title|raw -}}
         {% else %}

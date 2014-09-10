@@ -343,8 +343,8 @@ class Grid
 
                     $pattern = '/(\w+)\_\_\_(\w+)\_\_(\w+)/';
                     preg_match($pattern, $key, $match);
-                    $attr['data-role-lg-class'] = $match[2];
-                    $attr['data-role-lg-field'] = $match[3];
+                    $attr['data-role-lg-class'] = $match[1].'___'.$match[2];
+                    $attr['data-role-lg-field'] = $columns[$key]->getValue();
                     $attr['filter'] = $column->getOptions() ['filter'];
                     $attr['class'].= ' lg-grid-filterable';
                     $cell = new Cell(array(

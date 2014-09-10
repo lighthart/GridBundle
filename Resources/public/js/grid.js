@@ -53,7 +53,7 @@ function getAllFilters() {
     var filter = "";
     $('.lg-grid-filter-input').each(function(i, e) {
         console.log($(this));
-        filter += $(this).parent().attr('data-role-lg-class') + '_' + $(this).parent().attr('data-role-lg-field') + ':' + $(this).val() + ';';
+        filter += $(this).parent().attr('data-role-lg-class') + '__' + $(this).parent().attr('data-role-lg-field') + ':' + $(this).val() + ';';
     });
     return filter;
 }

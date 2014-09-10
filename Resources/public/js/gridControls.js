@@ -16,7 +16,9 @@ function activateControls() {
         for (index = 0; index < filters.length; ++index) {
             var filterVal = filters[index].split(':')[1];
             var filterId = filters[index].split(':')[0];
-            $('#lg-grid-search-'+filterId).val(filterVal);
+            if (filterVal) {
+                $('#lg-grid-filter-'+filterId).val(filterVal);
+            }
         }
     }
     pageSizeControl();

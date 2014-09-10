@@ -207,12 +207,14 @@ class GridMaker
         $this->mapMethodsFromQB();
 
         $cookies = $request->cookies;
-        $pageSize = $request->query->get('pageSize') ?: ($request->cookies->get('lg-grid-results-per-page') ?: 10);
+        $pageSize = $request->query->get('pageSize') ? : ($request->cookies->get('lg-grid-results-per-page') ? : 10);
         $pageOffset = $request->cookies->get("lg-grid-" . $request->attributes->get('_route') . "-offset");
         $search = $request->cookies->get("lg-grid-" . $request->attributes->get('_route') . "-search");
+        $filter = $request->cookies->get("lg-grid-" . $request->attributes->get('_route') . "-filter");
 
         // if ($debug) {var_dump($this->getQB()->getQuery()->getDql()); print_r("<br><br>");}
 
+        $this->addFilter($filter);
         $this->addSearch($search);
         $cqb = clone $this->QB();
         $root = $cqb->getDQLPart('from') [0]->getAlias() . ".id";
@@ -220,7 +222,6 @@ class GridMaker
         $cqb->select($cqb->expr()->count($root));
         $cqb->distinct();
         $this->getGrid()->setTotal($cqb->getQuery()->getSingleScalarResult());
-
 
         // if ($debug) {var_dump($this->getQB()->getQuery()->getDql());print_r("<br><br>");}
 
@@ -240,7 +241,6 @@ class GridMaker
         $this->QB()->setFirstResult($offset);
 
         $q = $this->getQueryBuilder()->getQuery()->setDql($this->mapAliases());
-
 
         if ($this->getGrid()->hasErrors()) {
             $this->getGrid()->fillErrors();
@@ -296,7 +296,6 @@ class GridMaker
         };
 
         foreach ($aliases as $k => $v) {
-
             // mark root
             if ($k == $oldRoot) {
                 $v = '##';
@@ -557,28 +556,84 @@ class GridMaker
                 }
             }
 
-            // below, if value is 2007, this makes a datetime object
-            // for the current day at 8:07 pm, i.e. 20:07
-            // Baffling.
-            // commenting out for now, and parsing like other strings.
-            // if ( $dates != array() ) {
-            //     foreach ($dates as $dateKeys => $dateValues) {
-            //         $value = str_replace( '-', '/', $value );
-            //         try {
-            //             $date    = new \DateTime( $value );
-            //             $dateout = $date->format( 'Y-m-d' );
-            //             $cqb[]   = $qb->expr()->like( "CONCAT($dateValues, '')", "'%$dateout%'" );
-            //         } catch ( \Exception $ex ) {
-            //             $value = preg_replace( '/^(\d\d\/\d\d).*$/', '$1', $value );
-            //             $cqb[] = $qb->expr()->like( "CONCAT($dateValues, '')", str_replace( '/', '-', "'%$value%'" ) );
-            //         }
-            //     }
-            // }
             $qb->andWhere(call_user_func_array(array(
                 $qb->expr() ,
                 "orx"
             ) , $cqb));
         }
+
+        return $qb;
+    }
+
+    public function addFilter($filter)
+    {
+        $qb = $this->QB();
+        $filterFields = array_map(function ($c)
+        {
+            return $c->getOption('filter');
+        }
+        , array_filter($this->getGrid()->getColumns() , function ($c)
+        {
+            return $c->getOption('filter');
+        }));
+
+        $filters = array();
+        foreach ($filterFields as $field => $type) {
+            $filters[$type][] = str_replace('_', '.', $field);
+        }
+
+        // $filter is the explicit request from user
+        // $filters are the fields for while the filter should be filtered
+
+        $numbers = (isset($filters['number']) && $filters['number']) ? $filters['number'] : array();
+        $dates = (isset($filters['date']) && $filters['date']) ? $filters['date'] : array();
+        $strings = (isset($filters['string']) && $filters['string']) ? $filters['string'] : array();
+
+        if ($numbers == array() && $dates == array() && $strings == array()) {
+            // just bail out if there are no fields to filter in
+            return $qb;
+        }
+
+        $filter = explode(';', $filter);
+
+        foreach ($filter as $key => $filt) {
+            $flt = explode(':', $filt);
+
+            // var_dump($flt);
+            unset($filter[$key]);
+            if (isset($flt[1])) {
+                $filter[$flt[0]] = $flt[1];
+            }
+        }
+
+        // var_dump($filter);die;
+
+        $filter = array_filter($filter, function ($e)
+        {
+            return !!$e;
+        });
+
+        if (array(
+            ''
+        ) == $filter || array() == $filter) {
+
+            // just bail out if there is nothing to filter for
+            return $qb;
+        }
+
+        foreach ($filter as $key => $value) {
+            $value = trim($value);
+            $value = str_replace("'", "''", $value);
+            $value = str_replace(",", "", $value);
+            $key = preg_replace('/___(.*?)__/', '.', $key);
+
+            if (in_array($key, $numbers)) {
+                $qb->andWhere($qb->expr()->like("CONCAT($key, '')", "'%" . strtolower($value) . "%'"));
+            } else {
+                $qb->andWhere($qb->expr()->like("LOWER(CONCAT($key, ''))", "'%" . strtolower($value) . "%'"));
+            }
+        }
+
 
         return $qb;
     }
