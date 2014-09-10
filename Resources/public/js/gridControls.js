@@ -1,15 +1,12 @@
 $(document).ready(function() {
     activateControls();
     cookies = getCookies();
-    console.log(cookies);
-    console.log(cookies.offset);
 });
 
 function activateControls() {
     var cookies = getCookies();
     $('input#lg-grid-search-input').val(cookies.search);
     filter = cookies.filter;
-    console.log(filter);
     if (filter) {
         filters = filter.split(';');
         var index;

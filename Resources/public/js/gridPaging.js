@@ -59,14 +59,10 @@ function lastPageControl() {
 }
 
 function pagingInputReload() {
-    $('.lg-grid-table').addClass('text-muted');
-    var cookie = "lg-grid-" + getLgCurrentRoute() + "-offset";
-    var numPerPage = getNumPerPage();
+    var cookies = getCookies();
     var pageVal = Number($('input.lg-grid-page-input').val());
     var maxPages = Number(getMaxPages());
-    offset = getOffset();
-    searchString = getSearch();
-    getNumPerPage();
+    offset = getOffset(cookies);
 
     if (pageVal < 1 || pageVal > maxPages) {
         if (pageVal < 1) {
@@ -77,26 +73,10 @@ function pagingInputReload() {
         }
     } else {
         $('input.lg-grid-page-input').val(pageVal);
-        $.cookie(cookie, offset);
-        $.ajax({
-            url: getLgCurrentURI(),
-            data: {
-                pageSize: numPerPage,
-                pageOffset: offset
-            },
-            dataType: 'html',
-            type: 'GET',
-            complete: function() {
-                activateControls();
-            },
-            success: function(data) {
-                $('table.lg-grid-table').html($(data).find('table.lg-grid-table').html());
-                $('div#lg-grid-header').html($(data).find('div#lg-grid-header').html());
-                $('div#lg-grid-footer').html($(data).find('div#lg-grid-footer').html());
-                $('.lg-grid-table').removeClass('text-muted');
-                $('input#lg-grid-search-input').blur().focus().val(searchString);
-                highlightSearches();
-            }
-        });
+        // reset offset on search
+        cookies.offset = offset;
+        cookies.search = getSearch();
+        setCookies(cookies);
+        gridReload(cookies, $('input#lg-grid-search-input'));
     }
 }

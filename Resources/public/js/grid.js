@@ -10,27 +10,18 @@ var delay = (function() {
 // eg:
 // var quiet = 100; // 100 ms
 // delay(function(){ sidebar.finishMove();}, quiet)
-function getNumPerPage() {
-    var cookie = 'lg-grid-results-per-page';
-    var numPerPage = $.cookie(cookie);
-    if (numPerPage === undefined || numPerPage === null) {
-        numPerPage = 10;
-    }
-    return numPerPage;
-}
 
-function getOffset() {
-    var cookie = "lg-grid-" + getLgCurrentRoute() + "-offset";
+function getOffset(cookies) {
     var pageVal = Number($('input.lg-grid-page-input').val());
     var maxPages = Number($('#lg-grid-max-pages').val());
     if (pageVal > maxPages) {
         pageVal = maxPages;
     }
-    var numPerPage = Number(getNumPerPage());
+
+    var numPerPage = Number(cookies.pageSize);
     var offset = (pageVal - 1) * numPerPage;
     offset = (offset < 0) ? 0 : offset;
     offset = ((offset / numPerPage) > maxPages) ? maxPages - (maxPages % numPerPage) : offset;
-    $.cookie(cookie, offset);
     return offset;
 }
 
@@ -44,15 +35,9 @@ function getSearch() {
     return search;
 }
 
-function getFilter(field) {
-    var filter = $('input#lg-grid-filter-' + field).val();
-    return field + ':' + filter;
-}
-
 function getAllFilters() {
     var filter = "";
     $('.lg-grid-filter-input').each(function(i, e) {
-        console.log($(this));
         filter += $(this).parent().attr('data-role-lg-class') + '__' + $(this).parent().attr('data-role-lg-field') + ':' + $(this).val() + ';';
     });
     return filter;
@@ -72,7 +57,6 @@ function highlightSearches() {
 function highlightFilters() {
     $('input.lg-grid-filter-input').each(function(i) {
         var col = $(this).parent().index();
-        console.log($(this).val());
         $(this).closest("table").find("tr td:nth-child(" + (col + 1) + ")").highlight($(this).val(), {
             className: 'lg-grid-highlight-filters'
         });
