@@ -94,6 +94,10 @@ input.lg-grid-input-non-field {
     background-color: rgba(255,255,0,0.2);
 }
 
-.lg-grid-highlight {
+.lg-grid-highlight-searches {
         background-color: rgba(255,255,0,0.2);
+}
+
+.lg-grid-highlight-filters {
+        background-color: rgba(0,255,0,0.2);
 }

@@ -325,6 +325,44 @@ class Grid
         }
 
         $thead->addRow($row);
+        $this->fillFilters();
+    }
+
+    public function fillFilters()
+    {
+        $thead = $this->getTable()->getThead();
+        $columns = $this->getColumns();
+        $row = new Row(array(
+            'type' => 'tr',
+        ));
+        foreach ($columns as $key => $column) {
+            if (isset($columns[$key]->getOptions() ['hidden'])) {
+            } else {
+                $attr = (isset($columns[$key]->getOptions() ['attr']) ? $columns[$key]->getOptions() ['attr'] : '');
+                if (isset($column->getOptions() ['filter'])) {
+
+                    $pattern = '/(\w+)\_\_\_(\w+)\_\_(\w+)/';
+                    preg_match($pattern, $key, $match);
+                    $attr['data-role-lg-class'] = $match[2];
+                    $attr['data-role-lg-field'] = $match[3];
+                    $attr['filter'] = $column->getOptions() ['filter'];
+                    $attr['class'].= ' lg-grid-filterable';
+                    $cell = new Cell(array(
+                        'title' => 'Filter' . $column->getOptions() ['filter'],
+                        'type' => 'th',
+                        'attr' => $attr
+                    ));
+                } else {
+                    $cell = new Cell(array(
+                        'title' => '',
+                        'type' => 'th',
+                        'attr' => $attr
+                    ));
+                }
+                $row->addCell($cell);
+            }
+        }
+        $thead->addRow($row);
     }
 
     public function fillTr(array $results = array())
@@ -360,6 +398,9 @@ class Grid
                     }
                     if (isset($columns[$key]->getOptions() ['search'])) {
                         $attr['class'].= ' lg-grid-searchable';
+                    }
+                    if (isset($columns[$key]->getOptions() ['filter'])) {
+                        $attr['class'].= ' lg-grid-filterable';
                     }
                     if (isset($columns[$key]->getOptions() ['hidden'])) {
                     } else {

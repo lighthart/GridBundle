@@ -26,7 +26,6 @@ function prevPageControl() {
 
 function nextPageControl() {
     $('.lg-grid-next-page').unbind('click');
-        console.log($('input.lg-grid-page-input').val());
     $('.lg-grid-next-page').on('click', function() {
         currentPage = Number($('input#lg-grid-page-input').val());
         maxPages = Number($('input#lg-grid-max-pages').val());
@@ -36,7 +35,6 @@ function nextPageControl() {
         } else {
             $('input.lg-grid-page-input').val(maxPages);
         }
-        console.log($('input.lg-grid-page-input').val());
         delay(function() {
             pagingInputReload();
         }, quiet);
@@ -69,6 +67,7 @@ function pagingInputReload() {
     offset = getOffset();
     searchString = getSearch();
     getNumPerPage();
+
     if (pageVal < 1 || pageVal > maxPages) {
         if (pageVal < 1) {
             pageVal = 1;

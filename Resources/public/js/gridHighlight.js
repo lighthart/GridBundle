@@ -49,10 +49,7 @@ jQuery.extend({
             var match = node.data.match(re);
             if (match) {
                 var highlight = document.createElement(nodeName || 'span');
-                // original
-                // highlight.className = className || 'highlight';
-                // modified for budget
-                highlight.className = className || 'lg-grid-highlight';
+                highlight.className = className || 'highlight';
                 var wordNode = node.splitText(match.index);
                 wordNode.splitText(match[0].length);
                 var wordClone = wordNode.cloneNode(true);
@@ -72,7 +69,7 @@ jQuery.extend({
 });
 
 jQuery.fn.unhighlight = function (options) {
-    var settings = { className: 'lg-grid-highlight', element: 'span' };
+    var settings = { className: 'highlight', element: 'span' };
     jQuery.extend(settings, options);
 
     return this.find(settings.element + "." + settings.className).each(function () {
@@ -83,7 +80,7 @@ jQuery.fn.unhighlight = function (options) {
 };
 
 jQuery.fn.highlight = function (words, options) {
-    var settings = { className: 'lg-grid-highlight', element: 'span', caseSensitive: false, wordsOnly: false };
+    var settings = { className: 'highlight', element: 'span', caseSensitive: false, wordsOnly: false };
     jQuery.extend(settings, options);
 
     if (words.constructor === String) {
