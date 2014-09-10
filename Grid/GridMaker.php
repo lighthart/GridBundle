@@ -207,12 +207,11 @@ class GridMaker
         $this->mapMethodsFromQB();
 
         $cookies = $request->cookies;
-        $pageSize = $request->query->get('pageSize') ? : ($request->cookies->get('lg-grid-results-per-page') ? : 10);
+        $pageSize = $request->cookies->get('lg-grid-results-per-page') ? : 10;
         $pageOffset = $request->cookies->get("lg-grid-" . $request->attributes->get('_route') . "-offset");
         $search = $request->cookies->get("lg-grid-" . $request->attributes->get('_route') . "-search");
         $filter = $request->cookies->get("lg-grid-" . $request->attributes->get('_route') . "-filter");
 
-        // if ($debug) {var_dump($this->getQB()->getQuery()->getDql()); print_r("<br><br>");}
 
         $this->addFilter($filter);
         $this->addSearch($search);
@@ -223,24 +222,21 @@ class GridMaker
         $cqb->distinct();
         $this->getGrid()->setTotal($cqb->getQuery()->getSingleScalarResult());
 
-        // if ($debug) {var_dump($this->getQB()->getQuery()->getDql());print_r("<br><br>");}
-
-        $maxResults = ($request->query->get('pageSize') ? : ($pageSize ? : 10));
-
         $offset = ($request->query->get('pageOffset') ? : ($pageOffset ? : 0));
-        $offset = ($offset > $this->getGrid()->getTotal()) ? $offset = $this->getGrid()->getTotal() - $maxResults : $offset;
+        $offset = ($offset > $this->getGrid()->getTotal()) ? $offset = $this->getGrid()->getTotal() - $pageSize : $offset;
         $offset = ($offset < 0) ? 0 : $offset;
         $offset = floor($offset / $pageSize) * $pageSize;
 
         $this->getGrid()->setPageSize($pageSize);
         $this->getGrid()->setOffset($offset);
+
         $this->getGrid()->setSearch($search);
 
         $this->QB()->setFirstResult($offset);
-        $this->QB()->setMaxResults($maxResults);
-        $this->QB()->setFirstResult($offset);
+        $this->QB()->setMaxResults($pageSize);
 
-        $q = $this->getQueryBuilder()->getQuery()->setDql($this->mapAliases());
+        $q = $this->QB()->getQuery()->setDql($this->mapAliases());
+
 
         if ($this->getGrid()->hasErrors()) {
             $this->getGrid()->fillErrors();
@@ -296,6 +292,7 @@ class GridMaker
         };
 
         foreach ($aliases as $k => $v) {
+
             // mark root
             if ($k == $oldRoot) {
                 $v = '##';
@@ -310,12 +307,10 @@ class GridMaker
             $dql = preg_replace($pattern, $replace, $dql);
         }
 
-        // print_r($dql);print_r("<br><br>");
 
         // remark root
         $dql = str_replace('##', $root, $dql);
 
-        // print_r($dql);print_r("<br><br>");die;
 
         $g = $this->getGrid();
         $columns = [];
@@ -383,11 +378,10 @@ class GridMaker
         // While addSelect just adds more
         foreach ($partials as $entity => $fields) {
             if ($qb->getRootAlias() == $entity) {
-                $fieldList = implode(',', array_merge(array_values($fields)));
-                if (false === strpos($fields, 'id')) {
-                    $fields.= ', id';
+                if ($key = array_search('id', $fields)) {
+                    unset($fields[$key]);
                 }
-                $qb->select('partial ' . $entity . '.{' . $fields . '}');
+                $qb->select('partial ' . $entity . '.{id,' . implode(',', $fields) . '}');
             } else {
             }
         }
@@ -395,11 +389,10 @@ class GridMaker
         foreach ($partials as $entity => $fields) {
             if ($qb->getRootAlias() == $entity) {
             } else {
-                $fieldList = implode(',', $fields);
-                if (false === strpos($fields, 'id')) {
-                    $fields.= ', id';
+                if ($key = array_search('id', $fields)) {
+                    unset($fields[$key]);
                 }
-                $qb->addSelect('partial ' . $entity . '.{' . implode(',', $fields) . '}');
+                $qb->addSelect('partial ' . $entity . '.{id,' . implode(',', $fields) . '}');
             }
         }
 
@@ -427,25 +420,23 @@ class GridMaker
         // While addSelect just adds more
 
         // This bit is to make sure added columns are added to teh query as partials
-        foreach ($partials as $entity => $field) {
+        foreach ($partials as $entity => $fields) {
             if ($qb->getRootAlias() == $entity) {
-                $fields = implode(',', $field);
-                if (false === strpos($fields, 'id')) {
-                    $fields.= ', id';
+                if ($key = array_search('id', $fields)) {
+                    unset($fields[$key]);
                 }
-                $qb->select('partial ' . $entity . '.{' . $fields . '}');
+                $qb->select('partial ' . $entity . '.{id,' . implode(',', $fields) . '}');
             } else {
             }
         }
 
-        foreach ($partials as $entity => $field) {
+        foreach ($partials as $entity => $fields) {
             if ($qb->getRootAlias() == $entity) {
             } else {
-                $fields = implode(',', $field);
-                if (false === strpos($fields, 'id')) {
-                    $fields.= ', id';
+                if ($key = array_search('id', $fields)) {
+                    unset($fields[$key]);
                 }
-                $qb->addSelect('partial ' . $entity . '.{' . $fields . '}');
+                $qb->addSelect('partial ' . $entity . '.{id,' . implode(',', $fields) . '}');
             }
         }
     }
@@ -590,6 +581,7 @@ class GridMaker
         $strings = (isset($filters['string']) && $filters['string']) ? $filters['string'] : array();
 
         if ($numbers == array() && $dates == array() && $strings == array()) {
+
             // just bail out if there are no fields to filter in
             return $qb;
         }
@@ -633,7 +625,6 @@ class GridMaker
                 $qb->andWhere($qb->expr()->like("LOWER(CONCAT($key, ''))", "'%" . strtolower($value) . "%'"));
             }
         }
-
 
         return $qb;
     }

@@ -23,5 +23,5 @@ function pageSizeReload(control) {
     $('#lg-grid-results-per-page').val(control.attr('data-role-lg-pagesize'));
     cookies.pageSize = control.attr('data-role-lg-pagesize');
     setCookies(cookies);
-    gridReload(cookies, $('input#lg-grid-search-input'));
+    gridReload();
 }

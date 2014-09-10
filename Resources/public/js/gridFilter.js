@@ -12,5 +12,5 @@ function gridFilterReload(control) {
     cookies.offset = 0;
     cookies.filter= getAllFilters();
     setCookies(cookies);
-    gridReload(cookies, $('input#lg-grid-search-input'));
+    gridReload();
 }

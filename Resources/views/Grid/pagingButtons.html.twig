@@ -20,6 +20,7 @@
             <input type="text" maxlength="4" id="lg-grid-page-input" class="lg-grid-page-input" value="{{ ( ( grid.offset + 1 ) / grid.pageSize ) | round(0, 'ceil' )  }}"/>
             <div id="lg-grid-{{place}}-total-pages" class="lg-grid-control-text lg-grid-total-pages form-group">of {{ maxPages }}</div>
             <input type="hidden" id="lg-grid-max-pages" value="{{maxPages}}"/>
+            <input type="hidden" id="lg-grid-max-results" value="{{grid.total}}"/>
         {% endblock pageCounter %}
         {% block pageForwardControls %}
             <div class="btn-group">

@@ -10,16 +10,16 @@ var delay = (function() {
 // eg:
 // var quiet = 100; // 100 ms
 // delay(function(){ sidebar.finishMove();}, quiet)
-
-function getOffset(cookies) {
+function getOffset() {
+    cookies = getCookies();
     var pageVal = Number($('input.lg-grid-page-input').val());
     var maxPages = Number($('#lg-grid-max-pages').val());
     if (pageVal > maxPages) {
         pageVal = maxPages;
     }
-
     var numPerPage = Number(cookies.pageSize);
     var offset = (pageVal - 1) * numPerPage;
+    console.log(offset);
     offset = (offset < 0) ? 0 : offset;
     offset = ((offset / numPerPage) > maxPages) ? maxPages - (maxPages % numPerPage) : offset;
     return offset;
@@ -69,12 +69,14 @@ function highlightFilters() {
 }
 
 function getCookies() {
+    var debugCookie = 'lg-grid-debug';
     var numPerPagecookie = 'lg-grid-results-per-page';
     var offsetCookie = "lg-grid-" + getLgCurrentRoute() + "-offset";
     var searchCookie = "lg-grid-" + getLgCurrentRoute() + "-search";
     var filterCookie = "lg-grid-" + getLgCurrentRoute() + "-filter";
     //reset pagination upon filtering
     var cookies = {
+        debug: $.cookie(debugCookie),
         offset: $.cookie(offsetCookie),
         filter: $.cookie(filterCookie),
         search: $.cookie(searchCookie),
@@ -84,23 +86,26 @@ function getCookies() {
 }
 
 function setCookies(cookies) {
+    var debugCookie = 'lg-grid-debug';
     var numPerPagecookie = 'lg-grid-results-per-page';
     var offsetCookie = "lg-grid-" + getLgCurrentRoute() + "-offset";
     var searchCookie = "lg-grid-" + getLgCurrentRoute() + "-search";
     var filterCookie = "lg-grid-" + getLgCurrentRoute() + "-filter";
-    //reset pagination upon filtering
-    $.cookie(offsetCookie, cookies.offset),
-    $.cookie(filterCookie, cookies.filter),
-    $.cookie(searchCookie, cookies.search),
-    $.cookie(numPerPagecookie, cookies.pageSize)
+    $.cookie(debugCookie, 1);
+    $.cookie(offsetCookie, cookies.offset);
+    $.cookie(filterCookie, cookies.filter);
+    $.cookie(searchCookie, cookies.search);
+    $.cookie(numPerPagecookie, cookies.pageSize);
 }
 
-function gridReload(cookies, element) {
+function gridReload() {
     $('.lg-grid-table').addClass('text-muted');
+    cookies = getCookies();
     $.ajax({
         url: getLgCurrentURI(),
         data: {
-            pageSize: cookies.pagesize,
+            debug: cookies.debug,
+            pageSize: cookies.pageSize,
             pageOffset: cookies.offset,
             filter: cookies.filter,
             search: cookies.search
@@ -115,12 +120,9 @@ function gridReload(cookies, element) {
             $('div#lg-grid-header').html($(data).find('div#lg-grid-header').html());
             $('div#lg-grid-footer').html($(data).find('div#lg-grid-footer').html());
             $('.lg-grid-table').removeClass('text-muted');
-            $('input#lg-grid-search-input').val(cookies.search);
             highlightSearches();
             highlightFilters();
-            if (element) {
-                $('element').blur().focus().val(element.val());
-            }
+            $('#lg-grid-search-input').blur().focus().val($('#lg-grid-search-input').val());
         }
     });
 }
