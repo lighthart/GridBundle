@@ -69,14 +69,12 @@ function highlightFilters() {
 }
 
 function getCookies() {
-    var debugCookie = 'lg-grid-debug';
     var numPerPagecookie = 'lg-grid-results-per-page';
     var offsetCookie = "lg-grid-" + getLgCurrentRoute() + "-offset";
     var searchCookie = "lg-grid-" + getLgCurrentRoute() + "-search";
     var filterCookie = "lg-grid-" + getLgCurrentRoute() + "-filter";
     //reset pagination upon filtering
     var cookies = {
-        debug: $.cookie(debugCookie),
         offset: $.cookie(offsetCookie),
         filter: $.cookie(filterCookie),
         search: $.cookie(searchCookie),
@@ -86,12 +84,10 @@ function getCookies() {
 }
 
 function setCookies(cookies) {
-    var debugCookie = 'lg-grid-debug';
     var numPerPagecookie = 'lg-grid-results-per-page';
     var offsetCookie = "lg-grid-" + getLgCurrentRoute() + "-offset";
     var searchCookie = "lg-grid-" + getLgCurrentRoute() + "-search";
     var filterCookie = "lg-grid-" + getLgCurrentRoute() + "-filter";
-    $.cookie(debugCookie, 1);
     $.cookie(offsetCookie, cookies.offset);
     $.cookie(filterCookie, cookies.filter);
     $.cookie(searchCookie, cookies.search);
@@ -104,7 +100,6 @@ function gridReload() {
     $.ajax({
         url: getLgCurrentURI(),
         data: {
-            debug: cookies.debug,
             pageSize: cookies.pageSize,
             pageOffset: cookies.offset,
             filter: cookies.filter,

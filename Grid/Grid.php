@@ -343,7 +343,7 @@ class Grid
 
                     $pattern = '/(\w+)\_\_\_(\w+)\_\_(\w+)/';
                     preg_match($pattern, $key, $match);
-                    $attr['data-role-lg-class'] = $match[1].'___'.$match[2];
+                    $attr['data-role-lg-class'] = $match[1] . '___' . $match[2];
                     $attr['data-role-lg-field'] = $columns[$key]->getValue();
                     $attr['filter'] = $column->getOptions() ['filter'];
                     $attr['class'].= ' lg-grid-filterable';
@@ -369,58 +369,77 @@ class Grid
     {
         $tbody = $this->getTable()->getTbody();
         $columns = $this->getColumns();
-        foreach ($results as $row => $result) {
-            $result = array_merge($columns, $result);
+
+        if (array() != $results) {
+
+            foreach ($results as $tuple => $result) {
+
+                // var_dump($result);
+                $result = array_merge($columns, $result);
+                $row = new Row(array(
+                    'type' => 'tr'
+                ));
+
+                //Not ready to implement this
+                // $row->addCell(new Cell(array(
+                //     'title' => '',
+                //     'type' => 'td',
+                //     'attr' => array(
+                //         'checkbox' => true
+                //     )
+                // )));
+
+                foreach ($result as $key => $value) {
+                    if (isset($columns[$key])) {
+                        $attr = (isset($columns[$key]->getOptions() ['attr']) ? $columns[$key]->getOptions() ['attr'] : '');
+                        if (isset($attr['entity_id']) && $attr['entity_id']) {
+                            unset($attr['entity_id']);
+
+                            $pattern = '/(\w+\_\_\_\w+)\_\_/';
+                            preg_match($pattern, $key, $match);
+
+                            $rootId = $match[1] . '__id';
+                            $attr['data-role-lg-entity-id'] = $result[$rootId];
+                        }
+                        if (isset($columns[$key]->getOptions() ['search'])) {
+                            $attr['class'].= ' lg-grid-searchable';
+                        }
+                        if (isset($columns[$key]->getOptions() ['filter'])) {
+                            $attr['class'].= ' lg-grid-filterable';
+                        }
+                        if (isset($columns[$key]->getOptions() ['hidden'])) {
+                        } else {
+                            $cell = new Cell(array(
+                                'value' => $value,
+                                'title' => $columns[$key]->getValue() ,
+                                'type' => 'td',
+                                'attr' => $attr,
+                            ));
+                            $row->addCell($cell);
+                            $this->columnOptions($columns[$key]);
+                        }
+                    } else {
+                        // no column!
+                    }
+                }
+                $tbody->addRow($row);
+            }
+        } else {
             $row = new Row(array(
                 'type' => 'tr'
             ));
-
-            //Not ready to implement this
-            // $row->addCell(new Cell(array(
-            //     'title' => '',
-            //     'type' => 'td',
-            //     'attr' => array(
-            //         'checkbox' => true
-            //     )
-            // )));
-
-            foreach ($result as $key => $value) {
-                if (isset($columns[$key])) {
-                    $attr = (isset($columns[$key]->getOptions() ['attr']) ? $columns[$key]->getOptions() ['attr'] : '');
-                    if (isset($attr['entity_id']) && $attr['entity_id']) {
-                        unset($attr['entity_id']);
-
-                        $pattern = '/(\w+\_\_\_\w+)\_\_/';
-                        preg_match($pattern, $key, $match);
-
-                        $rootId = $match[1] . '__id';
-                        $attr['data-role-lg-entity-id'] = $result[$rootId];
-                    }
-                    if (isset($columns[$key]->getOptions() ['search'])) {
-                        $attr['class'].= ' lg-grid-searchable';
-                    }
-                    if (isset($columns[$key]->getOptions() ['filter'])) {
-                        $attr['class'].= ' lg-grid-filterable';
-                    }
-                    if (isset($columns[$key]->getOptions() ['hidden'])) {
-                    } else {
-                        $cell = new Cell(array(
-                            'value' => $value,
-                            'title' => $columns[$key]->getValue() ,
-                            'type' => 'td',
-                            'attr' => $attr,
-                        ));
-                        $row->addCell($cell);
-                        $this->columnOptions($columns[$key]);
-                    }
-                } else {
-
-                    // no column!
-
-
-                }
-            }
-
+            $attr = [];
+            $attr['colspan'] = count(array_filter($columns, function ($c)
+            {
+                return !isset($c->getOptions() ['hidden']);
+            }));
+            $cell = new Cell(array(
+                'value' => 'No Results',
+                'title' => 'No Results',
+                'type' => 'td',
+                'attr' => $attr,
+            ));
+            $row->addCell($cell);
             $tbody->addRow($row);
         }
     }
