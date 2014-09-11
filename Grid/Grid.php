@@ -267,7 +267,7 @@ class Grid
         }
     }
 
-    public function fillTh(array $result = array())
+    public function fillTh(array $result = array() , $filters = true)
     {
         if (array() != $result) {
             $result = $result[0];
@@ -325,10 +325,10 @@ class Grid
         }
 
         $thead->addRow($row);
-        $this->fillFilters();
+        $this->fillFilters($filters);
     }
 
-    public function fillFilters()
+    public function fillFilters($filters)
     {
         $thead = $this->getTable()->getThead();
         $columns = $this->getColumns();
@@ -346,7 +346,10 @@ class Grid
                     $attr['data-role-lg-class'] = $match[1] . '___' . $match[2];
                     $attr['data-role-lg-field'] = $columns[$key]->getValue();
                     $attr['filter'] = $column->getOptions() ['filter'];
-                    $attr['class'].= ' lg-grid-filterable';
+                    $attr['class'].= ' lg-grid-filterable lg-grid-filter';
+                    if (!$filters) {
+                        $attr['class'].= ' hide';
+                    }
                     $cell = new Cell(array(
                         'title' => 'Filter' . $column->getOptions() ['filter'],
                         'type' => 'th',
@@ -419,7 +422,9 @@ class Grid
                             $this->columnOptions($columns[$key]);
                         }
                     } else {
+
                         // no column!
+
                     }
                 }
                 $tbody->addRow($row);

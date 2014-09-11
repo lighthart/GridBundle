@@ -197,6 +197,7 @@ class GridMaker
     {
 
         $debug = $request->query->get('debug');
+        $filters = !!$request->cookies->get('lg-grid-filter-toggle');
 
         if ($fromQB) {
             $this->mapFieldsFromQB();
@@ -245,7 +246,7 @@ class GridMaker
 
             $attr = $this->getGrid()->getTable()->getAttr();
             if (isset($attr['html']) && $attr['html']) {
-                $this->getGrid()->fillTh($results);
+                $this->getGrid()->fillTh($results, $filters);
                 $this->getGrid()->fillTr($results);
             }
         }

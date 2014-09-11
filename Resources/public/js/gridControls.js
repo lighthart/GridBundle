@@ -26,6 +26,7 @@ function activateControls() {
     lastPageControl();
     gridSearchControl();
     gridFilterControl();
+    gridFilterToggleControl();
     highlightFilters();
     highlightSearches();
 }
