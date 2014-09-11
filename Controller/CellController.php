@@ -75,7 +75,6 @@ class CellController extends Controller
                 // for selectors here
 
             } else {
-
                 $em = $this->getDoctrine()->getManager();
                 $entity = $em->getRepository( $class )->findOneById( $id );
                 $method = 'get'.ucfirst( $field );

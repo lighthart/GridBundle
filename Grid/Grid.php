@@ -403,6 +403,7 @@ class Grid
 
                             $rootId = $match[1] . '__id';
                             $attr['data-role-lg-entity-id'] = $result[$rootId];
+                            $attr['data-role-lg-entity-id'] = $result[$rootId];
                         }
                         if (isset($columns[$key]->getOptions() ['search'])) {
                             $attr['class'].= ' lg-grid-searchable';
