@@ -248,6 +248,7 @@ class GridMaker
             if (isset($attr['html']) && $attr['html']) {
                 $this->getGrid()->fillTh($results, $filters);
                 $this->getGrid()->fillTr($results);
+                $this->getGrid()->fillSummary($results, 'sum');
             }
         }
     }
@@ -628,5 +629,9 @@ class GridMaker
         }
 
         return $qb;
+    }
+
+    public function summary($results, $type) {
+        $this->getGrid()->fillSummary($results, $type);
     }
 }
