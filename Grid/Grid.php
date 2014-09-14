@@ -21,6 +21,9 @@ class Grid
     private $errors;
     private $table;
     private $columns;
+    private $options;
+
+
 
 
     public function __toString()
@@ -31,7 +34,8 @@ class Grid
     public function __construct(array $options = array())
     {
         $this->columns = array();
-        $this->table = new Table($options);
+        $this->options = $options;
+        $this->table = new Table(array('attr' => $options['table']));
         $this->table->setGrid($this);
         $this->errors = array();
     }
@@ -184,6 +188,24 @@ class Grid
     public function columnOptions(Column $column)
     {
     }
+
+    public function getOptions() {
+         return $this->options;
+    }
+
+    public function getOption($option) {
+        if (isset($his->options[$option])) {
+            return $this->options;
+        } else {
+            return null;
+        }
+    }
+
+    public function setOptions( $options ) {
+        $this->options = $options;
+        return $this;
+    }
+
 
     public function addMethod(Column $column)
     {
