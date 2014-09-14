@@ -216,29 +216,31 @@ class GridMaker {
 
         $q = $this->QB()->getQuery()->setDql( $this->mapAliases() );
 
-
         if ( $this->getGrid()->hasErrors() ) {
             $this->getGrid()->fillErrors();
         } else {
             $results = $q->getResult( Query::HYDRATE_SCALAR );
 
             $attr = $this->getGrid()->getTable()->getAttr();
-            if (isset($attr['html']) && $attr['html']) {
-                $this->getGrid()->fillTh($results, $filters);
-                $this->getGrid()->fillTr($results);
-                $this->getGrid()->fillSummary($results, 'sum');
+            if ( isset( $attr['html'] ) && $attr['html'] ) {
+                $this->getGrid()->fillTh( $results, $filters );
+                $this->getGrid()->fillTr( $results );
+                $sums = array_filter( $this->getGrid()->getColumns(), function( $c ) {
+                        return in_array( 'aggregate', array_keys( $c->getOptions() ) );
+                    } );
+
+                if ( 0 ) {
+
+                } else {
+                    $this->getGrid()->fillAggregate( $this->aggregateQuery() );
+                }
             }
         }
     }
 
-    public function mapAliases( $q = null ) {
+    public function mapAliases( ) {
         $qb = $this->queryBuilder;
-
-        if ( null == $q ) {
-            $dql = $this->getDQL();
-        } else {
-            $dql = $q->getDQL();
-        }
+        $dql = $qb->getQuery()->getDQL();
 
         $aliases = [];
         $from = $qb->getDqlPart( 'from' ) [0];
@@ -328,6 +330,25 @@ class GridMaker {
         }
         $g->setColumns( $columns );
         return $dql;
+    }
+
+    public function aggregateQuery() {
+        // we don't want to change the original query so we clone it.
+        $qb = clone $this->queryBuilder;
+        print_r($qb->getDql());
+        $qb->resetDQLPart('select');
+        $qb->resetDQLPart('orderBy');
+        foreach ($this->getGrid()->getColumns() as $key => $column)  {
+            if (!$column->getOption('hidden')) {
+            if ($column->getOption('aggregate')) {
+                $qb->addSelect($column->getOption('aggregate'));
+            } else {
+                $qb->addSelect('\'\'');
+            }
+            }
+        }
+
+        return $qb;
     }
 
     public function mapFieldsFromQB() {
@@ -593,9 +614,5 @@ class GridMaker {
         }
 
         return $qb;
-    }
-
-    public function summary($results, $type) {
-        $this->getGrid()->fillSummary($results, $type);
     }
 }
