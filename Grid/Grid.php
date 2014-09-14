@@ -448,6 +448,7 @@ class Grid
 
                         // no column!
 
+
                     }
                 }
                 $tbody->addRow($row);
@@ -468,6 +469,63 @@ class Grid
                 'attr' => $attr,
             ));
             $row->addCell($cell);
+            $tbody->addRow($row);
+        }
+    }
+
+    public function fillSummary($results, $type)
+    {
+        $tbody = $this->getTable()->getTbody();
+        $columns = $this->getColumns();
+
+        if (array() != $results) {
+
+            $result = array_merge($columns, $results[0]);
+            $row = new Row(array(
+                'type' => 'tr'
+            ));
+
+            //Not ready to implement this
+            // $row->addCell(new Cell(array(
+            //     'title' => '',
+            //     'type' => 'td',
+            //     'attr' => array(
+            //         'checkbox' => true
+            //     )
+            // )));
+
+            foreach ($result as $key => $value) {
+                if (isset($columns[$key])) {
+                    $attr = (isset($columns[$key]->getOptions() ['attr']) ? $columns[$key]->getOptions() ['attr'] : '');
+                    if (isset($columns[$key]->getOptions() ['hidden'])) {
+                    } elseif (isset($columns[$key]->getOptions() [$type])) {
+                        $cell = new Cell(array(
+                            'value' => $type,
+                            'title' => "Summary for " . $columns[$key]->getValue() ,
+                            'type' => 'td',
+                            'attr' => $attr,
+                        ));
+                        $row->addCell($cell);
+                        $this->columnOptions($columns[$key]);
+                    } else {
+
+                        // Not a summary
+                        $cell = new Cell(array(
+                            'value' => '',
+                            'title' => '' ,
+                            'type' => 'td',
+                            'attr' => $attr,
+                        ));
+                        $row->addCell($cell);
+                        $this->columnOptions($columns[$key]);
+                    }
+                } else {
+
+                    // no column!
+
+
+                }
+            }
             $tbody->addRow($row);
         }
     }

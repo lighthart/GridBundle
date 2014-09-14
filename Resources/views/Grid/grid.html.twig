@@ -2,15 +2,15 @@
     {# used in blocks below #}
     {% spaceless %}
         <div class="lg-grid">
-            {% block header %}
+            {% block lgGridheader %}
                 {% include 'LighthartGridBundle:Grid:header.html.twig' %}
-            {% endblock header %}
+            {% endblock lgGridheader %}
             {% block lgGridTable %}
                 {% include 'LighthartGridBundle:Grid:table.html.twig' %}
             {% endblock lgGridTable %}
-            {% block footer %}
+            {% block lgGridfooter %}
                 {% include 'LighthartGridBundle:Grid:footer.html.twig' %}
-            {% endblock footer %}
+            {% endblock lgGridfooter %}
         </div>
     {% endspaceless %}
 {% endblock lgGrid %}

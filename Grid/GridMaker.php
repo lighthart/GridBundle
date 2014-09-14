@@ -223,9 +223,10 @@ class GridMaker {
             $results = $q->getResult( Query::HYDRATE_SCALAR );
 
             $attr = $this->getGrid()->getTable()->getAttr();
-            if ( isset( $attr['html'] ) && $attr['html'] ) {
-                $this->getGrid()->fillTh( $results, $filters );
-                $this->getGrid()->fillTr( $results );
+            if (isset($attr['html']) && $attr['html']) {
+                $this->getGrid()->fillTh($results, $filters);
+                $this->getGrid()->fillTr($results);
+                $this->getGrid()->fillSummary($results, 'sum');
             }
         }
     }
@@ -592,5 +593,9 @@ class GridMaker {
         }
 
         return $qb;
+    }
+
+    public function summary($results, $type) {
+        $this->getGrid()->fillSummary($results, $type);
     }
 }
