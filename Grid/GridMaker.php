@@ -158,9 +158,6 @@ class GridMaker {
     public function addField( $entity, $value = 'id', array $options = array() ) {
         $this->getGrid()->addColumn( new Column( $entity . '_' . $value, $value, $options ) );
 
-        // var_dump($options);
-
-
     }
 
     public function addMethod( $entity, $method, array $options = array() ) {
@@ -335,7 +332,6 @@ class GridMaker {
     public function aggregateQuery() {
         // we don't want to change the original query so we clone it.
         $qb = clone $this->queryBuilder;
-        print_r($qb->getDql());
         $qb->resetDQLPart('select');
         $qb->resetDQLPart('orderBy');
         foreach ($this->getGrid()->getColumns() as $key => $column)  {
@@ -579,14 +575,12 @@ class GridMaker {
         foreach ( $filter as $key => $filt ) {
             $flt = explode( ':', $filt );
 
-            // var_dump($flt);
             unset( $filter[$key] );
             if ( isset( $flt[1] ) ) {
                 $filter[$flt[0]] = $flt[1];
             }
         }
 
-        // var_dump($filter);die;
 
         $filter = array_filter( $filter, function ( $e ) {
                 return !!$e;

@@ -367,7 +367,6 @@ class Grid {
 
             foreach ( $results as $tuple => $result ) {
 
-                // var_dump($result);
                 $result = array_merge( $columns, $result );
                 $row = new Row( array(
                         'type' => 'tr'
@@ -446,27 +445,29 @@ class Grid {
 
         $tbody = $this->getTable()->getTbody();
         $columns = $this->getColumns();
+        $visible = array_filter($columns, function($c) {return !$c->getOption('hidden');});
+
+                $row = new Row( array(
+                        'type' => 'tr'
+                    ) );
 
         $results = $qb->getQuery()->getResult();
-        var_dump($results[0]);
-        die;
+        // var_dump($results[0]);
+        // vaR_dump(array_keys($columns));
+        // die;
 
-        if ( array() != $results ) {
 
-            $result = array_merge( $columns, $results[0] );
-            $row = new Row( array(
-                    'type' => 'tr'
-                ) );
 
-            foreach ( $result as $key => $value ) {
+        if ( array() != $results[0] ) {
+
+            foreach ( $results[0] as $key => $value ) {
                 $cell = new Cell( array(
                         'value' => 'Agg: '.$value,
-                        'title' => "Summary for " . $columns[$key]->getValue() ,
+                        'title' => "Summary for " . $columns[array_keys($columns)[$key-1]]->getValue() ,
                         'type' => 'td',
-                        // 'attr' => $attr,
+                        'attr' => $columns[array_keys($columns)[$key-1]]->getOptions()['attr'],
                     ) );
                 $row->addCell( $cell );
-                $this->columnOptions( $columns[$key] );
 
             }
             $tbody->addRow( $row );
