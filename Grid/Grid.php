@@ -22,6 +22,7 @@ class Grid
     private $table;
     private $columns;
 
+
     public function __toString()
     {
         return "Grid -- Don't print this -- print the table instead";

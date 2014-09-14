@@ -1,40 +1,43 @@
 {% set maxPages = ( grid.total / grid.pageSize ) | round(0, 'ceil') %}
 {% set multiPage = 10** ( ( maxPages | length) - 1 ) %}
 {% block pagingControls %}
-    <div class="lg-grid-paging-controls form-group">
-        {% block pageBackControls %}
-            <div class="btn-group">
-                {% block firstPage -%}
-                    <button class="btn btn-xs btn-default lg-grid-btn-top lg-grid-first-page">
-                        <span class="fa fa-step-backward lg-grid-control-icon"></span>
-                    </button>
-                {%- endblock firstPage %}
-                {% block pageBack -%}
-                    <button class="btn btn-xs btn-default lg-grid-btn-top lg-grid-prev-page">
-                        <span class="fa fa-play fa-rotate-180 lg-grid-control-icon"></span>
-                    </button>
-                {%- endblock pageBack %}
-            </div>
-        {% endblock pageBackControls %}
-        {% block pageCounter %}
-            <input type="text" maxlength="4" id="lg-grid-page-input" class="lg-grid-page-input" value="{{ ( ( grid.offset + 1 ) / grid.pageSize ) | round(0, 'ceil' )  }}"/>
-            <div id="lg-grid-{{place}}-total-pages" class="lg-grid-control-text lg-grid-total-pages form-group">of {{ maxPages }}</div>
-            <input type="hidden" id="lg-grid-max-pages" value="{{maxPages}}"/>
-            <input type="hidden" id="lg-grid-max-results" value="{{grid.total}}"/>
-        {% endblock pageCounter %}
-        {% block pageForwardControls %}
-            <div class="btn-group">
-                {% block pageForward -%}
-                    <button class="btn btn-xs btn-default lg-grid-btn-top lg-grid-next-page">
-                        <span class="fa fa-play lg-grid-control-icon"></span>
-                    </button>
-                {%- endblock pageForward %}
-                {% block lastPage -%}
-                    <button class="btn btn-xs btn-default lg-grid-btn-top lg-grid-last-page">
-                        <span class="fa fa-step-forward lg-grid-control-icon"></span>
-                    </button>
-                {%- endblock lastPage %}
-            </div>
-        {% endblock pageForwardControls %}
-    </div>
+    {% if grid.table.attr['singlePage'] is defined %}
+    {% else %}
+        <div class="lg-grid-paging-controls form-group">
+            {% block pageBackControls %}
+                <div class="btn-group">
+                    {% block firstPage -%}
+                        <button class="btn btn-xs btn-default lg-grid-btn-top lg-grid-first-page">
+                            <span class="fa fa-step-backward lg-grid-control-icon"></span>
+                        </button>
+                    {%- endblock firstPage %}
+                    {% block pageBack -%}
+                        <button class="btn btn-xs btn-default lg-grid-btn-top lg-grid-prev-page">
+                            <span class="fa fa-play fa-rotate-180 lg-grid-control-icon"></span>
+                        </button>
+                    {%- endblock pageBack %}
+                </div>
+            {% endblock pageBackControls %}
+            {% block pageCounter %}
+                <input type="text" maxlength="4" id="lg-grid-page-input" class="lg-grid-page-input" value="{{ ( ( grid.offset + 1 ) / grid.pageSize ) | round(0, 'ceil' )  }}"/>
+                <div id="lg-grid-{{place}}-total-pages" class="lg-grid-control-text lg-grid-total-pages form-group">of {{ maxPages }}</div>
+                <input type="hidden" id="lg-grid-max-pages" value="{{maxPages}}"/>
+                <input type="hidden" id="lg-grid-max-results" value="{{grid.total}}"/>
+            {% endblock pageCounter %}
+            {% block pageForwardControls %}
+                <div class="btn-group">
+                    {% block pageForward -%}
+                        <button class="btn btn-xs btn-default lg-grid-btn-top lg-grid-next-page">
+                            <span class="fa fa-play lg-grid-control-icon"></span>
+                        </button>
+                    {%- endblock pageForward %}
+                    {% block lastPage -%}
+                        <button class="btn btn-xs btn-default lg-grid-btn-top lg-grid-last-page">
+                            <span class="fa fa-step-forward lg-grid-control-icon"></span>
+                        </button>
+                    {%- endblock lastPage %}
+                </div>
+            {% endblock pageForwardControls %}
+        </div>
+    {% endif %}
 {% endblock pagingControls %}
