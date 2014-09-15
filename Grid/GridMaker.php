@@ -217,11 +217,12 @@ class GridMaker {
             $this->getGrid()->fillErrors();
         } else {
             $results = $q->getResult( Query::HYDRATE_SCALAR );
-
+            $root = preg_grep('/root\_\_\_(.*?)\_\_id/', array_keys($results[0]));
+            $root = $root[array_keys($root)[0]];
             $attr = $this->getGrid()->getTable()->getAttr();
             if ( isset( $attr['html'] ) && $attr['html'] ) {
                 $this->getGrid()->fillTh( $results, $filters );
-                $this->getGrid()->fillTr( $results );
+                $this->getGrid()->fillTr( $results, $root );
                 $sums = array_filter( $this->getGrid()->getColumns(), function( $c ) {
                         return in_array( 'aggregate', array_keys( $c->getOptions() ) );
                     } );
@@ -299,12 +300,22 @@ class GridMaker {
             $oldOptions = $v->getOptions();
 
             if ( isset( $aliases[stristr( $oldAlias, '_', true ) ] ) ) {
+
+                // tilde mapping
+
                 $newAlias = $aliases[stristr( $oldAlias, '_', true ) ] . '_' . $v->getValue();
                 if ( isset( $oldOptions['title'] ) && false !== strpos( $oldOptions['title'], '~' ) ) {
                     $oldField = substr( stristr( $oldOptions['title'], '.' ) , 1 );
                     $oldSubAlias = substr( stristr( $oldOptions['title'], '.', true ) , 1 );
                     $newTitle = '~' . $aliases[$oldSubAlias] . '_' . $oldField;
                     $oldOptions['title'] = $newTitle;
+                }
+
+                if ( isset( $oldOptions['parentId'] ) && false !== strpos( $oldOptions['parentId'], '~' ) ) {
+                    $oldParent = substr( stristr( $oldOptions['parentId'], '.' ) , 1 );
+                    $oldParentAlias = substr( stristr( $oldOptions['parentId'], '.', true ) , 1 );
+                    $newParent = '~' . $aliases[$oldParentAlias] . '_' . $oldParent;
+                    $oldOptions['parentId'] = $newParent;
                 }
                 $columns[] = new Column( $newAlias, $oldValue, $oldOptions );
             } else {
@@ -325,6 +336,7 @@ class GridMaker {
 
 
         }
+
         $g->setColumns( $columns );
         return $dql;
     }

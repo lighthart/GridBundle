@@ -1,4 +1,4 @@
-<{{- cell.type }} {% for attrib, value in cell.attr -%}{{- attrib -}}="{{- value|trim -}}" {%- endfor -%} {% if cell.attr['width'] is defined %}style="width:{{cell.attr['width']}};"{% endif %}>
+<{{- cell.type }} {% for attrib, value in cell.attr -%}{{- attrib -}}="{{- value -}}" {%- endfor -%} {% if cell.attr['width'] is defined %}style="width:{{cell.attr['width']}};"{% endif %}>
     {%- if cell.attr.checkbox is defined %}
         <input type="checkbox"/>
     {%- elseif cell.value -%}

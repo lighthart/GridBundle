@@ -27,10 +27,10 @@ function makeEditable(object) {
     object.off('click');
 
     var th = object.closest('table').find('th').eq(object.index());
-    $url = makeURLfromTD(object, 'edit');
+    url = makeURLfromTD(object, 'edit');
 
     object.load(
-        $url,
+        url,
         null,
         function(responseText, textStatus, XMLHttpRequest) {
             if ('GRID_CONFIG_ERROR' == responseText) {
@@ -147,16 +147,16 @@ function update(object, original, val) {
     } else {
         // This over writes the input field
         object.text(val);
-        $url = makeURLfromTD(object, 'update');
+        url = makeURLfromTD(object, 'update');
         $.ajax({
             type: 'POST',
-            url: $url,
+            url: url,
             data: {
                 data: val
             },
             success: function(responseText, textStatus, XMLHttpRequest) {
-                $url = makeURLfromTD(object, 'value'),
-                object.load($url, null);
+                url = makeURLfromTD(object, 'value'),
+                object.load(url, null);
             }
             // dataType : dataType
         });
@@ -166,8 +166,8 @@ function update(object, original, val) {
     makeClickable(object);
 }
 
-function makeURLfromTD(object, $action) {
-    var th = object.closest('table').find('th').eq(object.index());
+function makeURLfromTD(object, action) {
+    var thid = object.closest('table').find('th').eq(object.index()).attr('data-role-lg-parent-entity-id');
     // td must have data-role-entity-id
     // or
     // tr must have data-role-parent-entity-id
@@ -176,20 +176,51 @@ function makeURLfromTD(object, $action) {
 
     // the ../../../ is based on bundle config
     // try to make that more extensible
-    var $tr = object.closest('tr');
+    var trid = object.closest('tr').attr('data-role-lg-parent-entity-id');
+    var tdid = object.attr('data-role-lg-entity-id');
+    console.log(tdid);
+    console.log(trid);
+    console.log(thid);
+
+    // if specified use these
+      url = object.attr('data-role-lg-grid-update')
+        .replace('~entity_id~',tdid)
+        .replace('~col_id~', thid)
+        .replace('~row_id~', trid);
+                 console.log(url);
+
+    if (object.attr('data-role-lg-grid-update')) {
+        url = object.attr('data-role-lg-grid-update')
+        .replace('~entity_id~',object.attr('data-role-lg-entity-id'))
+        .replace('~col_id~', thid)
+        .replace('~row_id~', trid);
+        return url;
+    }
+
+    if (object.attr('data-role-lg-grid-new')) {
+        url = object.attr('data-role-lg-grid-update')
+        .replace('~entity_id~',object.attr('data-role-lg-entity-id'))
+        .replace('~col_id~', thid)
+        .replace('~row_id~', trid);
+                 console.log(url);
+        return url;
+    }
+
+    // otherwise try to figure it out yourself
+
     if (object.attr('data-role-lg-entity-id')) {
-        $url =
-            getLgAppRoot() + 'cell/' + $action + '/' +
+        url =
+            getLgAppRoot() + 'cell/' + action + '/' +
             th.attr('data-role-lg-class') + '/' +
             th.attr('data-role-lg-field') + '/' +
             object.attr('data-role-lg-entity-id');
     } else {
-        $url =
-            getLgAppRoot() + 'cell/' + $action + '/' +
+        url =
+            getLgAppRoot() + 'cell/' + action + '/' +
             th.attr('data-role-lg-class') + '/' +
             th.attr('data-role-lg-field') + '/' +
-            $tr.attr('data-role-lg-parent-entity-id');
+            tr.attr('data-role-lg-parent-entity-id');
     }
 
-    return $url;
+    return url;
 }

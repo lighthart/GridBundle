@@ -309,8 +309,9 @@ class Grid
         //         'checkbox' => true
         //     )
         // )));
-        $result = array_merge($columns, $result);
-        foreach ($result as $key => $value) {
+
+        $cells = array_merge($columns, $result);
+        foreach ($cells as $key => $value) {
             if (isset($columns[$key])) {
                 $attr = (isset($columns[$key]->getOptions() ['attr']) ? $columns[$key]->getOptions() ['attr'] : '');
 
@@ -319,10 +320,12 @@ class Grid
 
                 $attr['data-role-lg-class'] = $match[2];
                 $attr['data-role-lg-field'] = $columns[$key]->getValue();
+
                 if (isset($columns[$key]->getOptions() ['search'])) {
                     $attr['class'].= ' lg-grid-searchable';
                 }
-                $title = (isset($columns[$key]->getOptions() ['title']) ? $columns[$key]->getOptions() ['title'] : $key);
+
+                $title = ($columns[$key]->getOption('title') ?: $key);
 
                 if (isset($columns[$key]->getOptions() ['hidden'])) {
                 } else {
@@ -332,6 +335,10 @@ class Grid
 
                     if (false !== strpos($title, '~')) {
                         $title = $result[substr($title, 1) ];
+                    }
+                    $parentId = ($columns[$key]->getOption('parentId') ? : null);
+                    if ($parentId) {
+                        $attr['data-role-lg-parent-entity-id'] = $result[substr($parentId, 1) ];
                     }
                     $cell = new Cell(array(
                         'title' => $title,
@@ -347,7 +354,6 @@ class Grid
 
             }
         }
-
         $thead->addRow($row);
         $this->fillFilters($filters);
     }
@@ -392,7 +398,7 @@ class Grid
         $thead->addRow($row);
     }
 
-    public function fillTr(array $results = array())
+    public function fillTr(array $results = array(), $root = null)
     {
         $tbody = $this->getTable()->getTbody();
         $columns = $this->getColumns();
@@ -400,11 +406,17 @@ class Grid
         if (array() != $results) {
 
             foreach ($results as $tuple => $result) {
-
                 $result = array_merge($columns, $result);
-                $row = new Row(array(
-                    'type' => 'tr'
-                ));
+                if ( $root ) {
+                    $row = new Row(array(
+                        'type' => 'tr',
+                        'attr' => array('data-role-lg-parent-entity-id' => $result[$root])
+                    ));
+                } else {
+                    $row = new Row(array(
+                        'type' => 'tr'
+                    ));
+                }
 
                 //Not ready to implement this
                 // $row->addCell(new Cell(array(
@@ -427,6 +439,7 @@ class Grid
                             $rootId = $match[1] . '__id';
                             $attr['data-role-lg-entity-id'] = $result[$rootId];
                         }
+
                         if (isset($columns[$key]->getOptions() ['search'])) {
                             $attr['class'].= ' lg-grid-searchable';
                         }

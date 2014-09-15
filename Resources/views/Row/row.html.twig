@@ -1,4 +1,4 @@
-<{{- row.type -}}{%- for attrib, value in row.attr|keys -%}{{- attrib -}}="{{- attribs -}}"{%- endfor -%}>
+<{{- row.type }} {% for attrib, value in row.attr -%}{{- attrib -}}="{{- value -}}"{%- endfor -%}>
 {% for cell in row.cell %}
     {% include 'LighthartGridBundle:Cell:cell.html.twig' with {'cell': cell} %}
 {% endfor %}
