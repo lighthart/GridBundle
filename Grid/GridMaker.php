@@ -317,6 +317,15 @@ class GridMaker {
                     $newParent = '~' . $aliases[$oldParentAlias] . '_' . $oldParent;
                     $oldOptions['parentId'] = $newParent;
                 }
+
+                if ( isset( $oldOptions['entityId'] ) && false !== strpos( $oldOptions['entityId'], '~' ) ) {
+                    $oldEntity = substr( stristr( $oldOptions['entityId'], '.' ) , 1 );
+                    $oldEntityAlias = substr( stristr( $oldOptions['entityId'], '.', true ) , 1 );
+                    $newEntity = '~' . $aliases[$oldEntityAlias] . '_' . $oldEntity;
+                    $oldOptions['entityId'] = $newEntity;
+                }
+
+
                 $columns[] = new Column( $newAlias, $oldValue, $oldOptions );
             } else {
                 $g->addError( 'Column \'' . $oldAlias . '\' maps to alias not present in query' );

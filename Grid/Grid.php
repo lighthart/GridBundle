@@ -325,7 +325,7 @@ class Grid
                     $attr['class'].= ' lg-grid-searchable';
                 }
 
-                $title = ($columns[$key]->getOption('title') ?: $key);
+                $title = ($columns[$key]->getOption('title') ? : $key);
 
                 if (isset($columns[$key]->getOptions() ['hidden'])) {
                 } else {
@@ -377,6 +377,10 @@ class Grid
                     $attr['data-role-lg-field'] = $columns[$key]->getValue();
                     $attr['filter'] = $column->getOptions() ['filter'];
                     $attr['class'].= ' lg-grid-filterable lg-grid-filter';
+                    $entityId = ($columns[$key]->getOption('entityId') ? : null);
+                    if ($entityId) {
+                        $attr['data-role-lg--entity-id'] = $result[substr($parentId, 1) ];
+                    }
                     if (!$filters) {
                         $attr['class'].= ' hide';
                     }
@@ -398,7 +402,7 @@ class Grid
         $thead->addRow($row);
     }
 
-    public function fillTr(array $results = array(), $root = null)
+    public function fillTr(array $results = array() , $root = null)
     {
         $tbody = $this->getTable()->getTbody();
         $columns = $this->getColumns();
@@ -407,10 +411,12 @@ class Grid
 
             foreach ($results as $tuple => $result) {
                 $result = array_merge($columns, $result);
-                if ( $root ) {
+                if ($root) {
                     $row = new Row(array(
                         'type' => 'tr',
-                        'attr' => array('data-role-lg-parent-entity-id' => $result[$root])
+                        'attr' => array(
+                            'data-role-lg-parent-entity-id' => $result[$root]
+                        )
                     ));
                 } else {
                     $row = new Row(array(
@@ -429,10 +435,8 @@ class Grid
 
                 foreach ($result as $key => $value) {
                     if (isset($columns[$key])) {
-                        $attr = (isset($columns[$key]->getOptions() ['attr']) ? $columns[$key]->getOptions() ['attr'] : '');
-                        if (isset($attr['entity_id']) && $attr['entity_id']) {
-                            unset($attr['entity_id']);
-
+                        $attr = $columns[$key]->getOption('attr');
+                        if ($columns[$key]->getOption('entityId')) {
                             $pattern = '/(\w+\_\_\_\w+)\_\_/';
                             preg_match($pattern, $key, $match);
 
@@ -499,17 +503,16 @@ class Grid
             return !$c->getOption('hidden');
         });
 
-
         $row = new Row(array(
             'type' => 'tr'
         ));
-
 
         $results = $qb->getQuery()->getResult();
         if (array() != $results[0]) {
 
             foreach ($results[0] as $key => $value) {
                 $attr = $visible[array_keys($visible) [$key - 1]]->getOptions() ['attr'];
+
                 // Can't edit aggregates
                 $attr['class'] = preg_replace('/\s*lg-editable\s*/', '', $attr['class']);
 
