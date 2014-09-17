@@ -15,16 +15,17 @@ class Table {
     private $grid;    // table <tbody>
     private $type;
 
-    public function __construct( $attr = array() ) {
+    public function __construct( $attr = array(), $html = true ) {
         foreach ( $attr as $k => $p ) {
             $this->$k = $p;
         }
 
         $this->section = array();
-        if (isset($this->attr['html']) && $this->attr['html'] ) {
+
+        if ( $html ) {
             $this->type='table';
-            $this->section[]=new Thead();
-            $this->section[]=new Tbody();
+            $this->section[] = new Thead();
+            $this->section[] = new Tbody();
         }
     }
 

@@ -9,7 +9,8 @@ use Symfony\Component\HttpFoundation\Response;
 use Doctrine\ORM\Query;
 use Doctrine\ORM\Query\Expr;
 
-class GridMaker {
+class GridMaker
+{
 
     private $doctrine;
     private $request;
@@ -18,129 +19,148 @@ class GridMaker {
     private $queryBuilder;
     private $grid;
 
-    public function __toString() {
+    public function __toString()
+    {
         return "Grid Maker -- Don't print this";
     }
 
-    public function __construct( $doctrine ) {
+    public function __construct($doctrine)
+    {
         $this->doctrine = $doctrine;
         $this->em = $doctrine->getManager();
     }
 
-    public function getRequest() {
+    public function getRequest()
+    {
         return $this->request;
     }
 
-    public function setRequest( Request $request ) {
+    public function setRequest(Request $request)
+    {
         $this->request = $request;
         return $this;
     }
 
-    public function getGrid() {
+    public function getGrid()
+    {
         return $this->grid;
     }
 
-    public function setGrid( Grid $grid ) {
+    public function setGrid(Grid $grid)
+    {
         $this->grid = $grid;
         return $this;
     }
 
-    public function newGrid() {
+    public function newGrid()
+    {
         $this->grid = new Grid();
         return $this;
     }
 
-    public function getDQL() {
-        if ( $this->dql ) {
+    public function getDQL()
+    {
+        if ($this->dql) {
             return $this->dql;
         } else {
             return $this->queryBuilder->getQuery()->getDQL();
         }
     }
 
-    public function setDQL( $dql ) {
+    public function setDQL($dql)
+    {
         $this->dql = $dql;
         return $this;
     }
 
-    public function getQuery() {
+    public function getQuery()
+    {
         return $this->query;
     }
 
-    public function setQuery( $query ) {
+    public function setQuery($query)
+    {
         $this->query = $query;
         return $this;
     }
 
-    public function Q() {
+    public function Q()
+    {
         return $this->getQuery();
     }
 
-    public function getQ() {
+    public function getQ()
+    {
         return $this->getQuery();
     }
 
-    public function setQ( $query ) {
-        return $this->setQuery( $query );
+    public function setQ($query)
+    {
+        return $this->setQuery($query);
     }
 
-    public function getQueryBuilder() {
+    public function getQueryBuilder()
+    {
         return $this->queryBuilder;
     }
 
-    public function setQueryBuilder( $queryBuilder ) {
+    public function setQueryBuilder($queryBuilder)
+    {
         $this->queryBuilder = $queryBuilder;
         return $this;
     }
 
-    public function QB() {
+    public function QB()
+    {
         return $this->getQueryBuilder();
     }
 
-    public function getQB() {
+    public function getQB()
+    {
         return $this->getQueryBuilder();
     }
 
-    public function setQB( $queryBuilder ) {
-        return $this->setQueryBuilder( $queryBuilder );
+    public function setQB($queryBuilder)
+    {
+        return $this->setQueryBuilder($queryBuilder);
     }
 
-    public function initialize( $options = array() ) {
-        $this->grid = new Grid(
-            $options
-        );
+    public function initialize($options = array())
+    {
+        $this->grid = new Grid($options);
     }
 
-    public function verifyClass( String $class, $slash = null ) {
+    public function verifyClass(String $class, $slash = null)
+    {
 
         // Default is class name is sent with backslashes
         // if another delimiter is used, for example '/' or '_'
         // Send as parameter
 
-        if ( $slash ) {
-            $backslash = str_replace( $slash, '\\', $class );
+        if ($slash) {
+            $backslash = str_replace($slash, '\\', $class);
         }
         $metadataFactory = $em->getMetadataFactory();
 
         $error = '';
 
-        if ( !$class ) {
+        if (!$class) {
             $error.= 'Class for grid verify not specified';
         }
 
         try {
-            $metadata = $metadataFactory->getMetadataFor( $backslash );
+            $metadata = $metadataFactory->getMetadataFor($backslash);
         }
-        catch( \Exception $ex ) {
+        catch(\Exception $ex) {
             $metadata = null;
             $error.= 'No metadata for class: ' . $backslash;
         }
 
-        if ( $error != '' ) {
+        if ($error != '') {
             $error = 'grid.maker error: ' . $error;
         }
 
-        if ( $metadata ) {
+        if ($metadata) {
             return array(
                 'class' => $class,
                 'metadata' => $metadata,
@@ -155,23 +175,25 @@ class GridMaker {
         }
     }
 
-    public function addField( $entity, $value = 'id', array $options = array() ) {
-        $this->getGrid()->addColumn( new Column( $entity . '_' . $value, $value, $options ) );
-
+    public function addField($entity, $value = 'id', array $options = array())
+    {
+        $this->getGrid()->addColumn(new Column($entity . '_' . $value, $value, $options));
     }
 
-    public function addMethod( $entity, $method, array $options = array() ) {
-        if ( method_exists( $entity, $method ) ) {
-            $this->getGrid()->addMethod( new Column( $entity, $method, $options ) );
+    public function addMethod($entity, $method, array $options = array())
+    {
+        if (method_exists($entity, $method)) {
+            $this->getGrid()->addMethod(new Column($entity, $method, $options));
         }
     }
 
-    public function hydrateGrid( Request $request, $fromQB = false ) {
+    public function hydrateGrid(Request $request, $fromQB = false)
+    {
 
-        $debug = $request->query->get( 'debug' );
-        $filters = !!$request->cookies->get( 'lg-grid-filter-toggle' );
+        $debug = $request->query->get('debug');
+        $filters = !!$request->cookies->get('lg-grid-filter-toggle');
 
-        if ( $fromQB ) {
+        if ($fromQB) {
             $this->mapFieldsFromQB();
         } else {
             $this->mapFieldsFromColumns();
@@ -180,73 +202,73 @@ class GridMaker {
         $this->mapMethodsFromQB();
 
         $cookies = $request->cookies;
-        $pageSize = $request->cookies->get( 'lg-grid-results-per-page' ) ? : 10;
-        $pageOffset = $request->cookies->get( "lg-grid-" . $request->attributes->get( '_route' ) . "-offset" );
-        $search = $request->cookies->get( "lg-grid-" . $request->attributes->get( '_route' ) . "-search" );
-        $filter = $request->cookies->get( "lg-grid-" . $request->attributes->get( '_route' ) . "-filter" );
+        $pageSize = $request->cookies->get('lg-grid-results-per-page') ? : 10;
+        $pageOffset = $request->cookies->get("lg-grid-" . $request->attributes->get('_route') . "-offset");
+        $search = $request->cookies->get("lg-grid-" . $request->attributes->get('_route') . "-search");
+        $filter = $request->cookies->get("lg-grid-" . $request->attributes->get('_route') . "-filter");
 
-
-        $this->addFilter( $filter );
-        $this->addSearch( $search );
+        $this->addFilter($filter);
+        $this->addSearch($search);
         $cqb = clone $this->QB();
-        $root = $cqb->getDQLPart( 'from' ) [0]->getAlias() . ".id";
-        $cqb->resetDQLPart( 'orderBy' );
-        $cqb->select( $cqb->expr()->count( $root ) );
+        $root = $cqb->getDQLPart('from') [0]->getAlias() . ".id";
+        $cqb->resetDQLPart('orderBy');
+        $cqb->select($cqb->expr()->count($root));
         $cqb->distinct();
-        $this->getGrid()->setTotal( $cqb->getQuery()->getSingleScalarResult() );
+        $this->getGrid()->setTotal($cqb->getQuery()->getSingleScalarResult());
 
-        $offset = ( $request->query->get( 'pageOffset' ) ? : ( $pageOffset ? : 0 ) );
-        $offset = ( $offset > $this->getGrid()->getTotal() ) ? $offset = $this->getGrid()->getTotal() - $pageSize : $offset;
-        $offset = ( $offset < 0 ) ? 0 : $offset;
-        $offset = floor( $offset / $pageSize ) * $pageSize;
+        $offset = ($request->query->get('pageOffset') ? : ($pageOffset ? : 0));
+        $offset = ($offset > $this->getGrid()->getTotal()) ? $offset = $this->getGrid()->getTotal() - $pageSize : $offset;
+        $offset = ($offset < 0) ? 0 : $offset;
+        $offset = floor($offset / $pageSize) * $pageSize;
 
-        $this->getGrid()->setPageSize( $pageSize );
-        $this->getGrid()->setOffset( $offset );
+        $this->getGrid()->setPageSize($pageSize);
+        $this->getGrid()->setOffset($offset);
 
-        $this->getGrid()->setSearch( $search );
+        $this->getGrid()->setSearch($search);
 
-        if ( $this->getGrid()->getOption( 'singlePage' ) ) {
+        if ($this->getGrid()->getOption('singlePage')) {
         }
 
-        $this->QB()->setFirstResult( $offset );
-        $this->QB()->setMaxResults( $pageSize );
+        $this->QB()->setFirstResult($offset);
+        $this->QB()->setMaxResults($pageSize);
 
-        $q = $this->QB()->getQuery()->setDql( $this->mapAliases() );
+        $q = $this->QB()->getQuery()->setDql($this->mapAliases());
 
-        if ( $this->getGrid()->hasErrors() ) {
+        if ($this->getGrid()->hasErrors()) {
             $this->getGrid()->fillErrors();
         } else {
-            $results = $q->getResult( Query::HYDRATE_SCALAR );
+            $results = $q->getResult(Query::HYDRATE_SCALAR);
             $root = preg_grep('/root\_\_\_(.*?)\_\_id/', array_keys($results[0]));
-            $root = $root[array_keys($root)[0]];
-            $attr = $this->getGrid()->getTable()->getAttr();
-            if ( isset( $attr['html'] ) && $attr['html'] ) {
-                $this->getGrid()->fillTh( $results, $filters );
-                $this->getGrid()->fillTr( $results, $root );
-                $sums = array_filter( $this->getGrid()->getColumns(), function( $c ) {
-                        return in_array( 'aggregate', array_keys( $c->getOptions() ) );
-                    } );
+            $root = $root[array_keys($root) [0]];
+            $html = $this->getGrid()->getOption('html');
+            if ($html) {
+                $this->getGrid()->fillTh($results, $filters);
+                $this->getGrid()->fillTr($results, $root);
+                $sums = array_filter($this->getGrid()->getColumns() , function ($c)
+                {
+                    return in_array('aggregate', array_keys($c->getOptions()));
+                });
 
-                if ( 0 ) {
-
+                if (0) {
                 } else {
-                    $this->getGrid()->fillAggregate( $this->aggregateQuery() );
+                    $this->getGrid()->fillAggregate($this->aggregateQuery());
                 }
             }
         }
     }
 
-    public function mapAliases( ) {
+    public function mapAliases()
+    {
         $qb = $this->queryBuilder;
         $dql = $qb->getQuery()->getDQL();
 
         $aliases = [];
-        $from = $qb->getDqlPart( 'from' ) [0];
+        $from = $qb->getDqlPart('from') [0];
         $rootClassPath = $from->getFrom();
         $oldRoot = $qb->getRootAlias();
 
         // mark root
-        $root = 'root___' . str_replace( '\\', '_', $rootClassPath . '_' );
+        $root = 'root___' . str_replace('\\', '_', $rootClassPath . '_');
         $aliases[$oldRoot] = $root;
         $entities[$oldRoot] = $rootClassPath;
 
@@ -255,80 +277,83 @@ class GridMaker {
 
         // realiased qb
 
-        $rqb = $em->getRepository( $rootClassPath )->createQueryBuilder( $root );
+        $rqb = $em->getRepository($rootClassPath)->createQueryBuilder($root);
 
-        $joins = $qb->getDqlPart( 'join' ) [$oldRoot];
-        foreach ( $joins as $k => $join ) {
-            $entity = stristr( $join->getJoin() , '.', true );
-            $field = substr( stristr( $join->getJoin() , '.', false ) , 1 );
+        $joins = $qb->getDqlPart('join') [$oldRoot];
+        foreach ($joins as $k => $join) {
+            $entity = stristr($join->getJoin() , '.', true);
+            $field = substr(stristr($join->getJoin() , '.', false) , 1);
             $alias = $join->getAlias();
 
-            if ( !in_array( $join->getAlias() , array_keys( $aliases ) ) ) {
-                $mappings = $em->getMetadataFactory()->getMetadataFor( $entities[$entity] )->getAssociationMappings();
-                $aliases[$join->getAlias() ] = $alias . '___' . str_replace( '\\', '_', $mappings[$field]['targetEntity'] . '_' );
+            if (!in_array($join->getAlias() , array_keys($aliases))) {
+                $mappings = $em->getMetadataFactory()->getMetadataFor($entities[$entity])->getAssociationMappings();
+                $aliases[$join->getAlias() ] = $alias . '___' . str_replace('\\', '_', $mappings[$field]['targetEntity'] . '_');
                 $entities[$join->getAlias() ] = $mappings[$field]['targetEntity'];
             }
         };
 
-        foreach ( $aliases as $k => $v ) {
+        foreach ($aliases as $k => $v) {
 
             // mark root
-            if ( $k == $oldRoot ) {
+            if ($k == $oldRoot) {
                 $v = '##';
             }
             $pattern = '/ ' . $k . '([,\. ])/';
             $replace = ' ' . $v . "$1";
-            $dql = preg_replace( $pattern, $replace, $dql );
+            $dql = preg_replace($pattern, $replace, $dql);
 
             // for searches
             $pattern = '/CONCAT\(' . $k . '/';
             $replace = 'CONCAT(' . $v . "$1";
-            $dql = preg_replace( $pattern, $replace, $dql );
+            $dql = preg_replace($pattern, $replace, $dql);
         }
 
-
         // remark root
-        $dql = str_replace( '##', $root, $dql );
-
+        $dql = str_replace('##', $root, $dql);
 
         $g = $this->getGrid();
         $columns = [];
 
-        foreach ( $g->getColumns() as $k => $v ) {;
+        foreach ($g->getColumns() as $k => $v) {;
             $oldAlias = $v->getAlias();
             $oldValue = $v->getValue();
             $oldOptions = $v->getOptions();
 
-            if ( isset( $aliases[stristr( $oldAlias, '_', true ) ] ) ) {
+            if (isset($aliases[stristr($oldAlias, '_', true) ])) {
 
                 // tilde mapping
+                // currently only handles one field
 
-                $newAlias = $aliases[stristr( $oldAlias, '_', true ) ] . '_' . $v->getValue();
-                if ( isset( $oldOptions['title'] ) && false !== strpos( $oldOptions['title'], '~' ) ) {
-                    $oldField = substr( stristr( $oldOptions['title'], '.' ) , 1 );
-                    $oldSubAlias = substr( stristr( $oldOptions['title'], '.', true ) , 1 );
-                    $newTitle = '~' . $aliases[$oldSubAlias] . '_' . $oldField;
-                    $oldOptions['title'] = $newTitle;
+
+                $newAlias = $aliases[stristr($oldAlias, '_', true) ] . '_' . $v->getValue();
+                if (preg_match('/(.*?)~(.*?)~(.*?)/', $oldOptions['title'], $match)) {
+                    $oldField = substr(stristr($match[2], '.') , 1);
+                    $oldSubAlias = stristr($match[2], '.', true);
+                    $newTitle = '~' . $aliases[$oldSubAlias] . '_' . $oldField . '~';
+                    $oldOptions['title'] = $match[1] . $newTitle . $match[3];
                 }
 
-                if ( isset( $oldOptions['parentId'] ) && false !== strpos( $oldOptions['parentId'], '~' ) ) {
-                    $oldParent = substr( stristr( $oldOptions['parentId'], '.' ) , 1 );
-                    $oldParentAlias = substr( stristr( $oldOptions['parentId'], '.', true ) , 1 );
-                    $newParent = '~' . $aliases[$oldParentAlias] . '_' . $oldParent;
-                    $oldOptions['parentId'] = $newParent;
+                if (isset($oldOptions['parentId'])) {
+                    if (preg_match('/(.*?)~(.*?)~(.*?)/', $oldOptions['parentId'], $match)) {
+                        $oldParent = substr(stristr($oldOptions['parentId'], '.') , 1);
+                        $oldParentAlias = substr(stristr($oldOptions['parentId'], '.', true) , 1);
+                        $newParent = '~' . $aliases[$oldParentAlias] . '_' . $oldParent . '~';
+                        $oldOptions['parentId'] = $match[1] . $newParent . $match[3];
+                    }
                 }
 
-                if ( isset( $oldOptions['entityId'] ) && false !== strpos( $oldOptions['entityId'], '~' ) ) {
-                    $oldEntity = substr( stristr( $oldOptions['entityId'], '.' ) , 1 );
-                    $oldEntityAlias = substr( stristr( $oldOptions['entityId'], '.', true ) , 1 );
-                    $newEntity = '~' . $aliases[$oldEntityAlias] . '_' . $oldEntity;
-                    $oldOptions['entityId'] = $newEntity;
+                if (isset($oldOptions['entityId'])) {
+                    if (preg_match('/(.*?)~(.*?)~(.*?)/', $oldOptions['entityId'], $match)) {
+                        $oldEntity = substr(stristr($oldOptions['entityId'], '.') , 1);
+                        $oldEntityAlias = substr(stristr($oldOptions['entityId'], '.', true) , 1);
+                        $newEntity = '~' . $aliases[$oldEntityAlias] . '_' . $oldEntity;
+                        $oldOptions['entityId'] = $match[1] . $newEntity . $match[3];
+                    }
                 }
 
-
-                $columns[] = new Column( $newAlias, $oldValue, $oldOptions );
+                $columns[] = new Column($newAlias, $oldValue, $oldOptions);
             } else {
-                $g->addError( 'Column \'' . $oldAlias . '\' maps to alias not present in query' );
+                $g->addError('Column \'' . $oldAlias . '\' maps to alias not present in query');
             }
 
             // if the column starts with a tilde, use a value from the field specified
@@ -346,33 +371,36 @@ class GridMaker {
 
         }
 
-        $g->setColumns( $columns );
+        $g->setColumns($columns);
         return $dql;
     }
 
-    public function aggregateQuery() {
+    public function aggregateQuery()
+    {
+
         // we don't want to change the original query so we clone it.
         $qb = clone $this->queryBuilder;
         $qb->resetDQLPart('select');
         $qb->resetDQLPart('orderBy');
-        foreach ($this->getGrid()->getColumns() as $key => $column)  {
+        foreach ($this->getGrid()->getColumns() as $key => $column) {
             if (!$column->getOption('hidden')) {
-            if ($column->getOption('aggregate')) {
-                $qb->addSelect($column->getOption('aggregate'));
-            } else {
-                $qb->addSelect('\'\'');
-            }
+                if ($column->getOption('aggregate')) {
+                    $qb->addSelect($column->getOption('aggregate'));
+                } else {
+                    $qb->addSelect('\'\'');
+                }
             }
         }
 
         return $qb;
     }
 
-    public function mapFieldsFromQB() {
+    public function mapFieldsFromQB()
+    {
         $qb = $this->getQB();
         $partials = [];
-        foreach ( $qb->getDQLParts() ['select'] as $select ) {
-            if ( preg_match( '|partial (.*?)\.\{(.*?)\}|', $select->getParts() [0], $matches ) ) {
+        foreach ($qb->getDQLParts() ['select'] as $select) {
+            if (preg_match('|partial (.*?)\.\{(.*?)\}|', $select->getParts() [0], $matches)) {
                 $partials[$matches[1]][] = $matches[2];
             } else {
                 $partials[$select->getParts() [0]] = array(
@@ -381,51 +409,54 @@ class GridMaker {
             }
         }
 
-        $entities = array_merge( array_map( function ( $f ) {
-                    return $f->getAlias();
-                }
-                , $qb->getDQLPart( 'from' ) ) , array_map( function ( $f ) {
-                    return $f->getAlias();
-                }
-                , $qb->getDQLPart( 'join' ) [$qb->getDQLParts() ['from'][0]->getAlias() ] ) );
+        $entities = array_merge(array_map(function ($f)
+        {
+            return $f->getAlias();
+        }
+        , $qb->getDQLPart('from')) , array_map(function ($f)
+        {
+            return $f->getAlias();
+        }
+        , $qb->getDQLPart('join') [$qb->getDQLParts() ['from'][0]->getAlias() ]));
 
         // While addSelect just adds more
-        foreach ( $partials as $entity => $fields ) {
-            if ( $qb->getRootAlias() == $entity ) {
-                if ( $key = array_search( 'id', $fields ) ) {
-                    unset( $fields[$key] );
+        foreach ($partials as $entity => $fields) {
+            if ($qb->getRootAlias() == $entity) {
+                if ($key = array_search('id', $fields)) {
+                    unset($fields[$key]);
                 }
-                $qb->select( 'partial ' . $entity . '.{id,' . implode( ',', $fields ) . '}' );
+                $qb->select('partial ' . $entity . '.{id,' . implode(',', $fields) . '}');
             } else {
             }
         }
 
-        foreach ( $partials as $entity => $fields ) {
-            if ( $qb->getRootAlias() == $entity ) {
+        foreach ($partials as $entity => $fields) {
+            if ($qb->getRootAlias() == $entity) {
             } else {
-                if ( $key = array_search( 'id', $fields ) ) {
-                    unset( $fields[$key] );
+                if ($key = array_search('id', $fields)) {
+                    unset($fields[$key]);
                 }
-                $qb->addSelect( 'partial ' . $entity . '.{id,' . implode( ',', $fields ) . '}' );
+                $qb->addSelect('partial ' . $entity . '.{id,' . implode(',', $fields) . '}');
             }
         }
 
         $this->getGrid()->newColumns();
-        foreach ( $partials as $entity => $fields ) {
-            foreach ( explode( ',', $fields[0] ) as $k => $field ) {
-                $field = trim( $field );
-                $this->getGrid()->addColumn( new Column( $entity . "_" . $field, $field ) );
+        foreach ($partials as $entity => $fields) {
+            foreach (explode(',', $fields[0]) as $k => $field) {
+                $field = trim($field);
+                $this->getGrid()->addColumn(new Column($entity . "_" . $field, $field));
             }
         }
     }
 
-    public function mapFieldsFromColumns() {
+    public function mapFieldsFromColumns()
+    {
         $qb = $this->getQB();
 
         $partials = [];
         $columns = $this->getGrid()->getColumns();
 
-        foreach ( $columns as $key => $column ) {
+        foreach ($columns as $key => $column) {
             $partials[$column->getEntity() ][] = $column->getValue();
         }
 
@@ -433,28 +464,29 @@ class GridMaker {
         // While addSelect just adds more
 
         // This bit is to make sure added columns are added to teh query as partials
-        foreach ( $partials as $entity => $fields ) {
-            if ( $qb->getRootAlias() == $entity ) {
-                if ( $key = array_search( 'id', $fields ) ) {
-                    unset( $fields[$key] );
+        foreach ($partials as $entity => $fields) {
+            if ($qb->getRootAlias() == $entity) {
+                if ($key = array_search('id', $fields)) {
+                    unset($fields[$key]);
                 }
-                $qb->select( 'partial ' . $entity . '.{id,' . implode( ',', $fields ) . '}' );
+                $qb->select('partial ' . $entity . '.{id,' . implode(',', $fields) . '}');
             } else {
             }
         }
 
-        foreach ( $partials as $entity => $fields ) {
-            if ( $qb->getRootAlias() == $entity ) {
+        foreach ($partials as $entity => $fields) {
+            if ($qb->getRootAlias() == $entity) {
             } else {
-                if ( $key = array_search( 'id', $fields ) ) {
-                    unset( $fields[$key] );
+                if ($key = array_search('id', $fields)) {
+                    unset($fields[$key]);
                 }
-                $qb->addSelect( 'partial ' . $entity . '.{id,' . implode( ',', $fields ) . '}' );
+                $qb->addSelect('partial ' . $entity . '.{id,' . implode(',', $fields) . '}');
             }
         }
     }
 
-    public function mapMethodsFromQB() {
+    public function mapMethodsFromQB()
+    {
 
         // $qb = $this->getQB();
 
@@ -490,141 +522,148 @@ class GridMaker {
 
     }
 
-    public function addSearch( $search ) {
+    public function addSearch($search)
+    {
         $qb = $this->QB();
-        $searchFields = array_map( function ( $c ) {
-                return $c->getOption( 'search' );
-            }
-            , array_filter( $this->getGrid()->getColumns() , function ( $c ) {
-                    return $c->getOption( 'search' );
-                } ) );
+        $searchFields = array_map(function ($c)
+        {
+            return $c->getOption('search');
+        }
+        , array_filter($this->getGrid()->getColumns() , function ($c)
+        {
+            return $c->getOption('search');
+        }));
 
         $searches = array();
-        foreach ( $searchFields as $field => $type ) {
-            $searches[$type][] = str_replace( '_', '.', $field );
+        foreach ($searchFields as $field => $type) {
+            $searches[$type][] = str_replace('_', '.', $field);
         }
 
         // $search is the explicit request from user
         // $searches are the fields for while the filter should be searched
 
-        $numbers = ( isset( $searches['number'] ) && $searches['number'] ) ? $searches['number'] : array();
-        $dates = ( isset( $searches['date'] ) && $searches['date'] ) ? $searches['date'] : array();
-        $strings = ( isset( $searches['string'] ) && $searches['string'] ) ? $searches['string'] : array();
+        $numbers = (isset($searches['number']) && $searches['number']) ? $searches['number'] : array();
+        $dates = (isset($searches['date']) && $searches['date']) ? $searches['date'] : array();
+        $strings = (isset($searches['string']) && $searches['string']) ? $searches['string'] : array();
 
-        if ( $numbers == array() && $dates == array() && $strings == array() ) {
+        if ($numbers == array() && $dates == array() && $strings == array()) {
 
             // just bail out if there are no fields to search in
             return $qb;
         }
 
-        $search = explode( ' ', $search );
+        $search = explode(' ', $search);
 
-        $search = array_filter( $search, function ( $e ) {
-                return !!$e;
-            } );
+        $search = array_filter($search, function ($e)
+        {
+            return !!$e;
+        });
 
-        if ( array(
-                ''
-            ) == $search || array() == $search ) {
+        if (array(
+            ''
+        ) == $search || array() == $search) {
 
             // just bail out if there is nothing to search for
             return $qb;
         }
 
-        foreach ( $search as $key => $value ) {
-            $value = trim( $value );
-            $value = str_replace( "'", "''", $value );
-            $value = str_replace( ",", "", $value );
+        foreach ($search as $key => $value) {
+            $value = trim($value);
+            $value = str_replace("'", "''", $value);
+            $value = str_replace(",", "", $value);
             $cqb = array();
 
-            if ( $strings != array() ) {
-                foreach ( $strings as $stringKeys => $stringValues ) {
-                    $cqb[] = $qb->expr()->like( "LOWER(CONCAT($stringValues, ''))", "'%" . strtolower( $value ) . "%'" );
+            if ($strings != array()) {
+                foreach ($strings as $stringKeys => $stringValues) {
+                    $cqb[] = $qb->expr()->like("LOWER(CONCAT($stringValues, ''))", "'%" . strtolower($value) . "%'");
                 }
             }
 
-            if ( $numbers != array() ) {
-                foreach ( $numbers as $numberKeys => $numberValues ) {
-                    $cqb[] = $qb->expr()->like( "CONCAT($numberValues, '')", "'%$value%'" );
+            if ($numbers != array()) {
+                foreach ($numbers as $numberKeys => $numberValues) {
+                    $cqb[] = $qb->expr()->like("CONCAT($numberValues, '')", "'%$value%'");
                 }
             }
 
-            if ( $dates != array() ) {
-                foreach ( $dates as $dateKeys => $dateValues ) {
-                    $cqb[] = $qb->expr()->like( "LOWER(CONCAT($dateValues, ''))", "'%" . strtolower( $value ) . "%'" );
+            if ($dates != array()) {
+                foreach ($dates as $dateKeys => $dateValues) {
+                    $cqb[] = $qb->expr()->like("LOWER(CONCAT($dateValues, ''))", "'%" . strtolower($value) . "%'");
                 }
             }
 
-            $qb->andWhere( call_user_func_array( array(
-                        $qb->expr() ,
-                        "orx"
-                    ) , $cqb ) );
+            $qb->andWhere(call_user_func_array(array(
+                $qb->expr() ,
+                "orx"
+            ) , $cqb));
         }
 
         return $qb;
     }
 
-    public function addFilter( $filter ) {
+    public function addFilter($filter)
+    {
         $qb = $this->QB();
-        $filterFields = array_map( function ( $c ) {
-                return $c->getOption( 'filter' );
-            }
-            , array_filter( $this->getGrid()->getColumns() , function ( $c ) {
-                    return $c->getOption( 'filter' );
-                } ) );
+        $filterFields = array_map(function ($c)
+        {
+            return $c->getOption('filter');
+        }
+        , array_filter($this->getGrid()->getColumns() , function ($c)
+        {
+            return $c->getOption('filter');
+        }));
 
         $filters = array();
-        foreach ( $filterFields as $field => $type ) {
-            $filters[$type][] = str_replace( '_', '.', $field );
+        foreach ($filterFields as $field => $type) {
+            $filters[$type][] = str_replace('_', '.', $field);
         }
 
         // $filter is the explicit request from user
         // $filters are the fields for while the filter should be filtered
 
-        $numbers = ( isset( $filters['number'] ) && $filters['number'] ) ? $filters['number'] : array();
-        $dates = ( isset( $filters['date'] ) && $filters['date'] ) ? $filters['date'] : array();
-        $strings = ( isset( $filters['string'] ) && $filters['string'] ) ? $filters['string'] : array();
+        $numbers = (isset($filters['number']) && $filters['number']) ? $filters['number'] : array();
+        $dates = (isset($filters['date']) && $filters['date']) ? $filters['date'] : array();
+        $strings = (isset($filters['string']) && $filters['string']) ? $filters['string'] : array();
 
-        if ( $numbers == array() && $dates == array() && $strings == array() ) {
+        if ($numbers == array() && $dates == array() && $strings == array()) {
 
             // just bail out if there are no fields to filter in
             return $qb;
         }
 
-        $filter = explode( ';', $filter );
+        $filter = explode(';', $filter);
 
-        foreach ( $filter as $key => $filt ) {
-            $flt = explode( ':', $filt );
+        foreach ($filter as $key => $filt) {
+            $flt = explode(':', $filt);
 
-            unset( $filter[$key] );
-            if ( isset( $flt[1] ) ) {
+            unset($filter[$key]);
+            if (isset($flt[1])) {
                 $filter[$flt[0]] = $flt[1];
             }
         }
 
+        $filter = array_filter($filter, function ($e)
+        {
+            return !!$e;
+        });
 
-        $filter = array_filter( $filter, function ( $e ) {
-                return !!$e;
-            } );
-
-        if ( array(
-                ''
-            ) == $filter || array() == $filter ) {
+        if (array(
+            ''
+        ) == $filter || array() == $filter) {
 
             // just bail out if there is nothing to filter for
             return $qb;
         }
 
-        foreach ( $filter as $key => $value ) {
-            $value = trim( $value );
-            $value = str_replace( "'", "''", $value );
-            $value = str_replace( ",", "", $value );
-            $key = preg_replace( '/___(.*?)__/', '.', $key );
+        foreach ($filter as $key => $value) {
+            $value = trim($value);
+            $value = str_replace("'", "''", $value);
+            $value = str_replace(",", "", $value);
+            $key = preg_replace('/___(.*?)__/', '.', $key);
 
-            if ( in_array( $key, $numbers ) ) {
-                $qb->andWhere( $qb->expr()->like( "CONCAT($key, '')", "'%" . strtolower( $value ) . "%'" ) );
+            if (in_array($key, $numbers)) {
+                $qb->andWhere($qb->expr()->like("CONCAT($key, '')", "'%" . strtolower($value) . "%'"));
             } else {
-                $qb->andWhere( $qb->expr()->like( "LOWER(CONCAT($key, ''))", "'%" . strtolower( $value ) . "%'" ) );
+                $qb->andWhere($qb->expr()->like("LOWER(CONCAT($key, ''))", "'%" . strtolower($value) . "%'"));
             }
         }
 

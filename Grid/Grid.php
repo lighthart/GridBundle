@@ -34,7 +34,7 @@ class Grid
         $this->options = $options;
         $this->table = new Table(array(
             'attr' => $options['table']
-        ));
+        ) , !!(isset($options['html']) && $options['html']));
         $this->table->setGrid($this);
         $this->errors = array();
     }
@@ -195,11 +195,7 @@ class Grid
 
     public function getOption($option)
     {
-        if (isset($his->options[$option])) {
-            return $this->options;
-        } else {
-            return null;
-        }
+        return isset($this->options[$option]) ? $this->options[$option] : null;
     }
 
     public function setOptions($options)
@@ -330,11 +326,14 @@ class Grid
                 if (isset($columns[$key]->getOptions() ['hidden'])) {
                 } else {
 
+                    // tilde mapping
                     // putting a tilde in front of the title causes grid to interpret this as
                     // a result from another column in the query
+                    // currently only handles one field
 
-                    if (false !== strpos($title, '~')) {
-                        $title = $result[substr($title, 1) ];
+
+                    if (preg_match('/(.*?)\~(.*?)\~(.*?)/', $title, $match)) {
+                        $title = $match[1] . $result[$match[2]] . $match[3];
                     }
                     $parentId = ($columns[$key]->getOption('parentId') ? : null);
                     if ($parentId) {
