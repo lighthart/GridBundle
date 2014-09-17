@@ -333,15 +333,22 @@ class Grid
 
                     if (preg_match('/(.*?)~(((.*?)~)+)(.*?)/', $title, $match)) {
                         $matches = array_filter(explode('~', $match[2]));
-                        $title = $match[1] . implode(' ', array_map(function ($m) use (&$result)
-                        {
-                            if (isset($result[$m])) {
-                                return $result[$m];
-                            } else {
-                                return $m;
+                        if (array() == $result) {
+
+                            $title = $match[1] . $match[5];
+
+                        } else {
+
+                            $title = $match[1] . implode(' ', array_map(function ($m) use (&$result)
+                            {
+                                if (isset($result[$m])) {
+                                    return $result[$m];
+                                } else {
+                                    return $m;
+                                }
                             }
+                            , $matches)) . $match[5];
                         }
-                        , $matches)) . $match[5];
                     }
 
                     $parentId = ($columns[$key]->getOption('parentId') ? : null);
