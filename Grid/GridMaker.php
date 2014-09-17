@@ -238,7 +238,7 @@ class GridMaker
             $this->getGrid()->fillErrors();
         } else {
             $results = $q->getResult(Query::HYDRATE_SCALAR);
-            if (array() == $results){
+            if (array() == $results) {
                 $root = 'root';
             } else {
                 $root = preg_grep('/root\_\_\_(.*?)\_\_id/', array_keys($results[0]));
@@ -324,31 +324,29 @@ class GridMaker
             $oldValue = $v->getValue();
             $oldOptions = $v->getOptions();
 
+            // if the alias is missing from our query,
+            // don't do all this other stuff
             if (isset($aliases[stristr($oldAlias, '_', true) ])) {
 
                 // tilde mapping
-                // currently only handles one field
-
                 $newAlias = $aliases[stristr($oldAlias, '_', true) ] . '_' . $v->getValue();
-                if (isset($oldOptions['title']) && preg_match('/(.*?)~(.*?)~(.*?)/', $oldOptions['title'], $match)) {
-                    $oldField = substr(stristr($match[2], '.') , 1);
-                    $oldSubAlias = stristr($match[2], '.', true);
-                    $newTitle = '~' . $aliases[$oldSubAlias] . '_' . $oldField . '~';
-                    $oldOptions['title'] = $match[1] . $newTitle . $match[3];
-                }
 
-                if (isset($oldOptions['parentId']) && preg_match('/(.*?)~(.*?)~(.*?)/', $oldOptions['parentId'], $match)) {
-                    $oldParent = substr(stristr($match[2], '.') , 1);
-                    $oldParentAlias = stristr($match[2], '.', true);
-                    $newParent = '~' . $aliases[$oldParentAlias] . '_' . $oldParent . '~';
-                    $oldOptions['parentId'] = $match[1] . $newParent . $match[3];
-                }
+                $tildes = ['title', 'parentId', 'entityId'];
 
-                if (isset($oldOptions['entityId']) && preg_match('/(.*?)~(.*?)~(.*?)/', $oldOptions['entityId'], $match)) {
-                    $oldEntity = substr(stristr($match[2], '.') , 1);
-                    $oldEntityAlias = stristr($match[2], '.', true);
-                    $newEntity = '~' . $aliases[$oldEntityAlias] . '_' . $oldEntity. '~';
-                    $oldOptions['entityId'] = $match[1] . $newEntity . $match[3];
+                foreach ($tildes as $k => $option) {
+                    $newAlias = $aliases[stristr($oldAlias, '_', true) ] . '_' . $v->getValue();
+                    if (isset($oldOptions[$option]) && preg_match('/(.*?)~(((.*?)~)+)(.*?)/', $oldOptions[$option], $match)) {
+                        $matches = array_filter(explode('~', $match[2]));
+                        foreach ($matches as $key => $col) {
+                            if (preg_match('/\<(.*?)\>/' , $col)) {
+                            } else {
+                                $oldField = substr(stristr($col, '.') , 1);
+                                $oldSubAlias = stristr($col, '.', true);
+                                $matches[$key] = $aliases[$oldSubAlias] . '_' . $oldField;
+                            }
+                        }
+                        $oldOptions[$option] = $match[1] . '~' . implode('~', $matches) . '~' . $match[5];
+                    }
                 }
 
                 $columns[] = new Column($newAlias, $oldValue, $oldOptions);

@@ -331,15 +331,28 @@ class Grid
                     // a result from another column in the query
                     // currently only handles one field
 
-
-                    if (preg_match('/(.*?)\~(.*?)\~(.*?)/', $title, $match)) {
-                        $title = $match[1] . $result[$match[2]] . $match[3];
+                    if (preg_match('/(.*?)~(((.*?)~)+)(.*?)/', $title, $match)) {
+                        $matches = array_filter(explode('~', $match[2]));
+                        $title = $match[1] . implode(' ', array_map(function ($m) use (&$result)
+                        {
+                            if (isset($result[$m])) {
+                                return $result[$m];
+                            } else {
+                                return $m;
+                            }
+                        }
+                        , $matches)) . $match[5];
                     }
+
                     $parentId = ($columns[$key]->getOption('parentId') ? : null);
 
                     if ($parentId) {
+
                         // $attr['data-role-lg-parent-entity-id'] = $result[substr($parentId, 1) ];
+
+
                     }
+
                     $cell = new Cell(array(
                         'title' => $title,
                         'type' => 'th',
