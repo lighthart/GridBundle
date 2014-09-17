@@ -336,8 +336,9 @@ class Grid
                         $title = $match[1] . $result[$match[2]] . $match[3];
                     }
                     $parentId = ($columns[$key]->getOption('parentId') ? : null);
+
                     if ($parentId) {
-                        $attr['data-role-lg-parent-entity-id'] = $result[substr($parentId, 1) ];
+                        // $attr['data-role-lg-parent-entity-id'] = $result[substr($parentId, 1) ];
                     }
                     $cell = new Cell(array(
                         'title' => $title,
@@ -353,6 +354,7 @@ class Grid
 
             }
         }
+
         $thead->addRow($row);
         $this->fillFilters($filters);
     }
