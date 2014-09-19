@@ -187,6 +187,11 @@ class GridMaker
         }
     }
 
+    public function addAction($alias, $route)
+    {
+        $this->getGrid()->addAction(new Action($alias, $route));
+    }
+
     public function hydrateGrid(Request $request, $fromQB = false)
     {
 

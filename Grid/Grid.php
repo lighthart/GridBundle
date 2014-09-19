@@ -22,6 +22,7 @@ class Grid
     private $table;
     private $columns;
     private $options;
+    private $actions;
 
     public function __toString()
     {
@@ -31,6 +32,7 @@ class Grid
     public function __construct(array $options = array())
     {
         $this->columns = array();
+        $this->actions = array();
         $this->options = $options;
         $this->table = new Table(array(
             'attr' => $options['table']
@@ -134,8 +136,6 @@ class Grid
         // not sure how to implement yet
         // $this->columns[] = $columns;
         // return $this;
-
-
     }
 
     public function setColumns(array $columns)
@@ -203,6 +203,30 @@ class Grid
         $this->options = $options;
         return $this;
     }
+
+    public function getActions()
+    {
+        return $this->actions;
+    }
+
+    public function getAction($action)
+    {
+        return isset($this->actions[$action]) ? $this->actions[$action] : null;
+    }
+
+    public function setActions(Array $actions)
+    {
+        $this->actions = $actions;
+        return $this;
+    }
+
+    public function addAction($action)
+    {
+        $this->actions[] = $action;
+        return $this;
+    }
+
+    // doesn't do much yet
 
     public function addMethod(Column $column)
     {
@@ -336,7 +360,6 @@ class Grid
                         if (array() == $result) {
 
                             $title = $match[1] . $match[5];
-
                         } else {
 
                             $title = $match[1] . implode(' ', array_map(function ($m) use (&$result)
@@ -357,13 +380,29 @@ class Grid
 
                         // $attr['data-role-lg-parent-entity-id'] = $result[substr($parentId, 1) ];
 
+                    }
 
+                    $options = [];
+                    $html = ($columns[$key]->getOption('html') ? : null);
+                    if ($html) {
+                        $options['html'] = true;
+                    }
+
+                    $entityId = ($columns[$key]->getOption('entityId') ? : null);
+                    if ($entityId) {
+                        $options['entityId'] = true;
+                    }
+
+                    if (preg_match('/.*?~(.+?)~.*?/', $parentId, $match)) {
+                        $parentId = $match[1];
+                        $attr['data-role-lg-parent-entity-id'] = $result[$parentId];
                     }
 
                     $cell = new Cell(array(
                         'title' => $title,
                         'type' => 'th',
-                        'attr' => $attr
+                        'attr' => $attr,
+                        'options' => $options
                     ));
                     $row->addCell($cell);
                 }
@@ -399,9 +438,7 @@ class Grid
                     $attr['filter'] = $column->getOptions() ['filter'];
                     $attr['class'].= ' lg-grid-filterable lg-grid-filter';
                     $entityId = ($columns[$key]->getOption('entityId') ? : null);
-                    if ($entityId) {
-                        $attr['data-role-lg--entity-id'] = $result[substr($parentId, 1) ];
-                    }
+
                     if (!$filters) {
                         $attr['class'].= ' hide';
                     }

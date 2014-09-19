@@ -11,11 +11,14 @@ use Symfony\Component\HttpFoundation\Response;
 
 class Cell {
 
-    protected $attr;  // html attributes on <td>
-    protected $title; // column reference
-    protected $value; // the contents of the cell
-    protected $row; // which row we belong in
-    private   $type;
+    private   $type;    // td or th
+    protected $attr;    // html attributes on <td>
+    protected $title;   // column reference
+    protected $value;   // the contents of the cell
+    protected $row;     // which row we belong in
+    private   $options;
+
+
 
     public function __construct( $prop = array() ) {
         foreach ($prop as $k => $p) {
@@ -65,6 +68,15 @@ class Cell {
 
     public function setRow( $row ) {
         $this->tr = $row;
+        return $this;
+    }
+
+    public function getOptions() {
+         return $this->options;
+    }
+
+    public function setOptions( $options ) {
+        $this->options = $options;
         return $this;
     }
 
