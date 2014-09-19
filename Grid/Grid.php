@@ -126,7 +126,7 @@ class Grid
 
     public function addColumn(Column $column)
     {
-        $this->columns[$column->getAlias() ] = $column;
+        $this->columns[ $column->getAlias() ] = $column;
         return $this;
     }
 
