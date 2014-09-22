@@ -1,14 +1,14 @@
 function pageSizeControl() {
-    // The unbind is necessary here because the ajax call in
-    // the reload does not replace the buttons which the
-    // events are attached to
+    // The control
     $('.lg-grid-pagesize').unbind('click');
-    $('.lg-grid-pagesize').one('click', function() {
+    $('.lg-grid-pagesize').one('click', function(e) {
+        e.preventDefault();
         pageSizeReload($(this));
     });
 }
 
 function pageSizeReload(control) {
+   // The stuff being done
     var cookies = getCookies();
     var pageVal = Number($('input.lg-grid-page-input').val());
     var maxPages = Number(getMaxPages());

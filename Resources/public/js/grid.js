@@ -73,12 +73,14 @@ function getCookies() {
     var offsetCookie = "lg-grid-" + getLgCurrentRoute() + "-offset";
     var searchCookie = "lg-grid-" + getLgCurrentRoute() + "-search";
     var filterCookie = "lg-grid-" + getLgCurrentRoute() + "-filter";
+    var ajaxVersionCookie = "lg-grid-" + getLgCurrentRoute() + "-version";
     //reset pagination upon filtering
     var cookies = {
         offset: $.cookie(offsetCookie),
         filter: $.cookie(filterCookie),
         search: $.cookie(searchCookie),
-        pageSize: $.cookie(numPerPagecookie)
+        pageSize: $.cookie(numPerPagecookie),
+        version: $.cookie(ajaxVersionCookie)
     };
     return cookies;
 }
@@ -88,36 +90,46 @@ function setCookies(cookies) {
     var offsetCookie = "lg-grid-" + getLgCurrentRoute() + "-offset";
     var searchCookie = "lg-grid-" + getLgCurrentRoute() + "-search";
     var filterCookie = "lg-grid-" + getLgCurrentRoute() + "-filter";
+    var ajaxVersionCookie = "lg-grid-" + getLgCurrentRoute() + "-version";
     $.cookie(offsetCookie, cookies.offset);
     $.cookie(filterCookie, cookies.filter);
     $.cookie(searchCookie, cookies.search);
     $.cookie(numPerPagecookie, cookies.pageSize);
+    $.cookie(ajaxVersionCookie, cookies.version);
 }
 
 function gridReload() {
     $('.lg-grid-table').addClass('text-muted');
     cookies = getCookies();
+    var oldVersion = typeof cookies.version == 'undefined' ? 0 : cookies.version;
+
+    // generate version here
+    cookies.version = new Date().getTime();
+    setCookies(cookies);
     $.ajax({
         url: getLgCurrentURI(),
         data: {
             pageSize: cookies.pageSize,
             pageOffset: cookies.offset,
             filter: cookies.filter,
-            search: cookies.search
+            search: cookies.search,
+            table: true
         },
         dataType: 'html',
         type: 'GET',
-        complete: function() {
-            activateControls();
-        },
+        cache: false,
+        complete: function() {},
         success: function(data) {
-            $('table.lg-grid-table').html($(data).find('table.lg-grid-table').html());
-            $('div#lg-grid-header').html($(data).find('div#lg-grid-header').html());
-            $('div#lg-grid-footer').html($(data).find('div#lg-grid-footer').html());
+            if (cookies.version > oldVersion) {
+                $('table.lg-grid-table').html($(data).find('table.lg-grid-table').html());
+                $('div#lg-grid-header').html($(data).find('div#lg-grid-header').html());
+                $('div#lg-grid-footer').html($(data).find('div#lg-grid-footer').html());
+                highlightSearches();
+                highlightFilters();
+                $('#lg-grid-search-input').blur().focus().val($('#lg-grid-search-input').val());
+                activateControls();
+            }
             $('.lg-grid-table').removeClass('text-muted');
-            highlightSearches();
-            highlightFilters();
-            $('#lg-grid-search-input').blur().focus().val($('#lg-grid-search-input').val());
         }
     });
 }

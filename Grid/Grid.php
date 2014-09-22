@@ -126,7 +126,7 @@ class Grid
 
     public function addColumn(Column $column)
     {
-        $this->columns[ $column->getAlias() ] = $column;
+        $this->columns[$column->getAlias() ] = $column;
         return $this;
     }
 
@@ -136,6 +136,8 @@ class Grid
         // not sure how to implement yet
         // $this->columns[] = $columns;
         // return $this;
+
+
     }
 
     public function setColumns(array $columns)
@@ -313,14 +315,14 @@ class Grid
 
     public function fillTh(array $result = array() , $filters = true)
     {
-        if (array() != $result) {
-            $result = $result[0];
-        }
         $thead = $this->getTable()->getThead();
         $columns = $this->getColumns();
         $row = new Row(array(
             'type' => 'tr'
         ));
+        if (array() != $result) {
+            $result = $result[0];
+        }
 
         // $row->addCell(new Cell(array(
         //     'title' => '',
@@ -380,6 +382,7 @@ class Grid
 
                         // $attr['data-role-lg-parent-entity-id'] = $result[substr($parentId, 1) ];
 
+
                     }
 
                     $options = [];
@@ -395,7 +398,11 @@ class Grid
 
                     if (preg_match('/.*?~(.+?)~.*?/', $parentId, $match)) {
                         $parentId = $match[1];
-                        $attr['data-role-lg-parent-entity-id'] = $result[$parentId];
+
+                        if (isset($result[$parentId])) {
+                            $attr['data-role-lg-parent-entity-id'] = $result[$parentId];
+                        } else {
+                        }
                     }
 
                     $cell = new Cell(array(
@@ -413,7 +420,6 @@ class Grid
 
             }
         }
-
         $thead->addRow($row);
         $this->fillFilters($filters);
     }
@@ -567,7 +573,6 @@ class Grid
 
         $results = $qb->getQuery()->getResult();
         if (array() != $results[0]) {
-
             foreach ($results[0] as $key => $value) {
                 $attr = $visible[array_keys($visible) [$key - 1]]->getOptions() ['attr'];
 

@@ -239,30 +239,29 @@ class GridMaker
 
         $q = $this->QB()->getQuery()->setDql($this->mapAliases());
 
-        if ($this->getGrid()->hasErrors()) {
-            $this->getGrid()->fillErrors();
+        $results = $q->getResult(Query::HYDRATE_SCALAR);
+        if (array() == $results) {
+            $root = 'root';
         } else {
-            $results = $q->getResult(Query::HYDRATE_SCALAR);
-            if (array() == $results) {
-                $root = 'root';
-            } else {
-                $root = preg_grep('/root\_\_\_(.*?)\_\_id/', array_keys($results[0]));
-                $root = $root[array_keys($root) [0]];
+            $root = preg_grep('/root\_\_\_(.*?)\_\_id/', array_keys($results[0]));
+            $root = $root[array_keys($root) [0]];
+        }
+
+        $html = $this->getGrid()->getOption('html');
+        if ($html) {
+            $this->getGrid()->fillTh($results, $filters);
+            $this->getGrid()->fillTr($results, $root);
+            if ($this->getGrid()->hasErrors()) {
+                $this->getGrid()->fillErrors($results, $filters);
             }
+            $sums = array_filter($this->getGrid()->getColumns() , function ($c)
+            {
+                return in_array('aggregate', array_keys($c->getOptions()));
+            });
 
-            $html = $this->getGrid()->getOption('html');
-            if ($html) {
-                $this->getGrid()->fillTh($results, $filters);
-                $this->getGrid()->fillTr($results, $root);
-                $sums = array_filter($this->getGrid()->getColumns() , function ($c)
-                {
-                    return in_array('aggregate', array_keys($c->getOptions()));
-                });
-
-                if (0) {
-                } else {
-                    $this->getGrid()->fillAggregate($this->aggregateQuery());
-                }
+            if (array() !== $results ) {
+                $this->getGrid()->fillAggregate($this->aggregateQuery());
+            } else {
             }
         }
     }
@@ -343,7 +342,7 @@ class GridMaker
                     if (isset($oldOptions[$option]) && preg_match('/(.*?)~(((.*?)~)+)(.*?)/', $oldOptions[$option], $match)) {
                         $matches = array_filter(explode('~', $match[2]));
                         foreach ($matches as $key => $col) {
-                            if (preg_match('/\<(.*?)\>/' , $col)) {
+                            if (preg_match('/\<(.*?)\>/', $col)) {
                             } else {
                                 $oldField = substr(stristr($col, '.') , 1);
                                 $oldSubAlias = stristr($col, '.', true);
