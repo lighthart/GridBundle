@@ -187,16 +187,21 @@ class GridMaker
         }
     }
 
-    public function addAction($alias, $route)
+    public function addAction($options)
     {
-        $this->getGrid()->addAction(new Action($alias, $route));
+        $this->getGrid()->addAction(new Action($options));
+    }
+
+    public function addStatus($options)
+    {
+        $this->getGrid()->addStatus(new Status($options));
     }
 
     public function hydrateGrid(Request $request, $fromQB = false)
     {
 
         $debug = $request->query->get('debug');
-        $filters = !!$request->cookies->get('lg-grid-filter-toggle');
+        $filters = !!$request->cookies->get('lg-filter-toggle');
 
         if ($fromQB) {
             $this->mapFieldsFromQB();
@@ -207,10 +212,10 @@ class GridMaker
         $this->mapMethodsFromQB();
 
         $cookies = $request->cookies;
-        $pageSize = $request->cookies->get('lg-grid-results-per-page') ? : 10;
-        $pageOffset = $request->cookies->get("lg-grid-" . $request->attributes->get('_route') . "-offset");
-        $search = $request->cookies->get("lg-grid-" . $request->attributes->get('_route') . "-search");
-        $filter = $request->cookies->get("lg-grid-" . $request->attributes->get('_route') . "-filter");
+        $pageSize = $request->cookies->get('lg-results-per-page') ? : 10;
+        $pageOffset = $request->cookies->get("lg-" . $request->attributes->get('_route') . "-offset");
+        $search = $request->cookies->get("lg-" . $request->attributes->get('_route') . "-search");
+        $filter = $request->cookies->get("lg-" . $request->attributes->get('_route') . "-filter");
 
         $this->addFilter($filter);
         $this->addSearch($search);

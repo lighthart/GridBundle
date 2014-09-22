@@ -1,16 +1,16 @@
 
-.lg-grid-table {
+.lg-table {
     width: 100%;
     max-width: 100%;
 }
-.lg-grid-navbar {
+.lg-navbar {
     margin-bottom: 0;
     background-color: inherit !important;
     background-image: none !important;
     border:0;
     margin-top: 0;
 }
-.lg-grid-header {
+.lg-header {
     background-color: #eeeeee;
     padding-left: 0;
     padding-right: 0;
@@ -19,7 +19,7 @@
     width: 100%;
     max-width: 100%;
 }
-.lg-grid-footer {
+.lg-footer {
     background-color: #eeeeee;
     padding-bottom: 2px;
     padding-left: 0;
@@ -29,14 +29,14 @@
     width: 100%;
     max-width: 100%;
 }
-.lg-grid-page-input {
+.lg-page-input {
     width: 3em !important;
     max-width: 3em;
     margin-left: 2px;
     margin-right: 1px;
     border: 1px;
 }
-.lg-grid-page-input {
+.lg-page-input {
     width: 3em !important;
     max-width: 3em;
     margin-left: 2px;
@@ -46,7 +46,7 @@
     text-align: center;
     text-indent: 0 !important;
 }
-.lg-grid-pagesize-input {
+.lg-pagesize-input {
     width: 3em !important;
     max-width: 3em;
     text-indent: 4px !important;
@@ -54,19 +54,19 @@
     border: 1px;
     background: inherit;
 }
-input.lg-grid-input-non-field {
+input.lg-input-non-field {
     padding: 0;
     border: 0;
     background: inherit;
 }
-.lg-grid-control-icon {
+.lg-control-icon {
     border: 0 !important;
 }
-.lg-grid-search-input-margin {
+.lg-search-input-margin {
     margin-left: 4px;
     margin-right: 4px;
 }
-.lg-grid-search-input {
+.lg-search-input {
     border-radius: 5px;
     text-indent: 4px !important;
     padding-left: 4px;
@@ -74,30 +74,44 @@ input.lg-grid-input-non-field {
     background: #ffffff;
     line-height: 1.5;
 }
-.lg-grid-left {
+.lg-left {
     padding-left: 0 !important;
 }
-.lg-grid-right {
+.lg-right {
     padding-right: 0 !important;
 }
-.lg-grid-btn-top {
+.lg-btn-top {
     vertical-align: top;
 }
-.lg-grid-control-text {
+.lg-control-text {
     padding: 1px 4px;
     font-size: 11px;
     line-height: 1.5;
     vertical-align: middle;
 }
 
-.lg-grid-searched {
+.lg-searched {
     background-color: rgba(255,255,0,0.2);
 }
 
-.lg-grid-highlight-searches {
+.lg-highlight-searches {
         background-color: rgba(255,255,0,0.2);
 }
 
-.lg-grid-highlight-filters {
+.lg-highlight-filters {
         background-color: rgba(0,255,0,0.2);
+}
+
+.lg-xtra-actions {
+  /*  min-width: 0;
+    padding: 0;
+    background-color: rgba(0,0,0,0);
+    background-image: none;
+    border: 0;*/
+}
+
+.lg-xtra-action {
+/*    padding: 0;
+    // Width of dropdown button
+    margin-left:16px;*/
 }

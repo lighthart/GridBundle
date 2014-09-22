@@ -1,0 +1,25 @@
+<div class="btn-group">
+    {% if cell.actions|length > 4 %}
+        {% for action in cell.actions %}
+            {% if loop.index0 <= 2 %}
+                {% include 'LighthartGridBundle:Action:action.html.twig' with {'action': action} %}
+            {% else %}
+            {% endif %}
+        {% endfor %}
+        {% if loop.length > 2 %}
+            <button class="btn btn-xs btn-default dropdown-toggle lg-xtra-actions" data-toggle="dropdown">
+                <span class="fa fa-caret-down"></span>
+            </button>
+            {% for action in cell.actions %}
+                    {% if loop.index0 > 2 %}
+                        {% include 'LighthartGridBundle:Action:action.html.twig' with {'action': action, 'xtra': 1} %}
+                    {% else %}
+                    {% endif %}
+                {% endfor %}
+        {% endif %}
+    {% else %}
+        {% for action in cell.actions %}
+            {% include 'LighthartGridBundle:Action:action.html.twig' with {'action': action} %}
+        {% endfor %}
+    {% endif %}
+</div>

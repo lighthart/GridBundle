@@ -1,5 +1,5 @@
 function gridFilterControl() {
-    $('input.lg-grid-filter-input').on('keydown keyup change', function() {
+    $('input.lg-filter-input').on('keydown keyup change', function() {
         delay(function() {
             gridFilterReload();
         }, quiet);
@@ -16,22 +16,22 @@ function gridFilterReload(control) {
 }
 
 function gridFilterToggleControl() {
-    $('#lg-grid-toggle-filter').unbind('click');
-    $('#lg-grid-toggle-filter').one('click', function(e) {
+    $('#lg-toggle-filter').unbind('click');
+    $('#lg-toggle-filter').one('click', function(e) {
         e.preventDefault();
-        var filterToggleCookie = 'lg-grid-filter-toggle';
-        if ($('.lg-grid-filter:first').hasClass('hide')) {
+        var filterToggleCookie = 'lg-filter-toggle';
+        if ($('.lg-filter:first').hasClass('hide')) {
             // Open
             $.cookie(filterToggleCookie, 1);
-            $('#lg-grid-toggle-filter > span').removeClass('fa-chevron-right');
-            $('#lg-grid-toggle-filter > span').addClass('fa-chevron-down');
+            $('#lg-toggle-filter > span').removeClass('fa-chevron-right');
+            $('#lg-toggle-filter > span').addClass('fa-chevron-down');
         } else {
             // Closed
             $.cookie(filterToggleCookie, 0);
-            $('#lg-grid-toggle-filter > span').addClass('fa-chevron-right');
-            $('#lg-grid-toggle-filter > span').removeClass('fa-chevron-down');
+            $('#lg-toggle-filter > span').addClass('fa-chevron-right');
+            $('#lg-toggle-filter > span').removeClass('fa-chevron-down');
         }
-        $('.lg-grid-filter').toggleClass('hide');
+        $('.lg-filter').toggleClass('hide');
         activateControls();
     });
 }

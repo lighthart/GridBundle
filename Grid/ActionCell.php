@@ -7,21 +7,38 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-class Cell
+class ActionCell
 {
 
-    protected $attr;     // html attributes on <td>
-    private   $options;
-    protected $row;      // which row we belong in
-    private   $type;     // td or th
-    protected $title;    // column reference
-    protected $value;    // the contents of the cell
+    private $actions;
+    protected $attr;
+     // html attributes on <td>
+    private $options;
+    protected $row;
+     // which row we belong in
+    private $type;
+     // td or th
+    protected $title;
+     // column reference
+    protected $value;
+     // the contents of the cell
 
     public function __construct($prop = array())
     {
         foreach ($prop as $k => $p) {
             $this->$k = $p;
         }
+    }
+
+    public function getActions()
+    {
+        return $this->actions;
+    }
+
+    public function setActions($actions)
+    {
+        $this->actions = $actions;
+        return $this;
     }
 
     public function getAttr()

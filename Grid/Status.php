@@ -7,40 +7,35 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Doctrine\ORM\Query;
 
-class Action
+class Status
 {
 
     private $attr;
     private $icon;
-    private $name;
-    private $route;
     private $security;
-    private $severity;
+    private $title;
 
     public function __construct($options = array())
     {
-        // default action is always present
-        // default severity is btn-default
         $options = array_merge(array(
             'attr' => null,
             'icon' => null,
-            'name' => null,
             'route' => null,
-            'security' => true,
-            'severity' => 'btn-default',
+            'security' => null,
+            'title' => null,
         ) , $options);
         $this->attr = $options['attr'];
-        $this->icon = ($options['icon'] ? : 'fa-rocket');
-        $this->route = $options['route'];
+        $this->icon = $options['icon'];
         $this->security = $options['security'];
-        $this->severity = $options['severity'];
-        $this->name = $options['name'];
+        $this->title = $options['title'];
 
+        // default is action is always present
+        $this->security = ($this->security === null ? $this->security : true);
     }
 
     public function __toString()
     {
-        return "Action " . $this->name . " printed.";
+        return "Status " . $this->title . " printed.";
     }
 
     public function getAttr()
@@ -65,28 +60,6 @@ class Action
         return $this;
     }
 
-    public function getName()
-    {
-        return $this->name;
-    }
-
-    public function setName($name)
-    {
-        $this->name = $name;
-        return $this;
-    }
-
-    public function getRoute()
-    {
-        return $this->route;
-    }
-
-    public function setRoute($route)
-    {
-        $this->route = $route;
-        return $this;
-    }
-
     public function getSecurity()
     {
         return $this->security;
@@ -98,12 +71,14 @@ class Action
         return $this;
     }
 
-    public function getSeverity() {
-         return $this->severity;
+    public function getTitle()
+    {
+        return $this->title;
     }
 
-    public function setSeverity( $severity ) {
-        $this->severity = $severity;
+    public function setTitle($title)
+    {
+        $this->title = $title;
         return $this;
     }
 }

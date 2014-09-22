@@ -183,22 +183,22 @@ function makeURLfromTD(object, action) {
     console.log(thid);
 
     // if specified use these
-      url = object.attr('data-role-lg-grid-update')
+      url = object.attr('data-role-lg-update')
         .replace('~entity_id~',tdid)
         .replace('~col_id~', thid)
         .replace('~row_id~', trid);
                  console.log(url);
 
-    if (object.attr('data-role-lg-grid-update')) {
-        url = object.attr('data-role-lg-grid-update')
+    if (object.attr('data-role-lg-update')) {
+        url = object.attr('data-role-lg-update')
         .replace('~entity_id~',object.attr('data-role-lg-entity-id'))
         .replace('~col_id~', thid)
         .replace('~row_id~', trid);
         return url;
     }
 
-    if (object.attr('data-role-lg-grid-new')) {
-        url = object.attr('data-role-lg-grid-update')
+    if (object.attr('data-role-lg-new')) {
+        url = object.attr('data-role-lg-update')
         .replace('~entity_id~',object.attr('data-role-lg-entity-id'))
         .replace('~col_id~', thid)
         .replace('~row_id~', trid);

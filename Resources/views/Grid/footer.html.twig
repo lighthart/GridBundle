@@ -1,12 +1,12 @@
 {% block footer %}
     {% set place = 'footer' %}
-    <div id="lg-grid-{{place}}" class="container lg-grid-{{place}}">
+    <div id="lg-{{place}}" class="container lg-{{place}}">
         <nav class="navbar navbar-default" role="navigation">
             <div class="container-fluid">
-                <form class="navbar-form navbar-left lg-grid-left" role="search">
+                <form class="navbar-form navbar-left lg-left" role="search">
                     {% include 'LighthartGridBundle:Grid:exportControl.html.twig' %}
                 </form>
-                <form class="navbar-form navbar-right lg-grid-right" role="search">
+                <form class="navbar-form navbar-right lg-right" role="search">
                         {% include 'LighthartGridBundle:Grid:pagingControls.html.twig' %}
                 </form>
             </div>

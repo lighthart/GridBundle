@@ -1,9 +1,9 @@
 {% block searchControl %}
-    <button class="btn btn-xs btn-default" id="lg-grid-toggle-filter">
-        <span class="fa {% if app.request.cookies.get('lg-grid-filter-toggle') %}fa-chevron-down{% else %}fa-chevron-right{% endif %}"></span>
+    <button class="btn btn-xs btn-default" id="lg-toggle-filter">
+        <span class="fa {% if app.request.cookies.get('lg-filter-toggle') %}fa-chevron-down{% else %}fa-chevron-right{% endif %}"></span>
     </button>
-    <div class="form-group lg-grid-search-input-margin">
-        <input type="text" id="lg-grid-search-input"{% if grid.search %} class="lg-grid-filtered lg-grid-search-input" {% else %} class="lg-grid-search-input" {% endif %}placeholder="Search"/>
+    <div class="form-group lg-search-input-margin">
+        <input type="text" id="lg-search-input"{% if grid.search %} class="lg-filtered lg-search-input" {% else %} class="lg-search-input" {% endif %}placeholder="Search"/>
     </div>
     {% if grid.newButton is defined %}
         <button class="btn btn-xs btn-default">

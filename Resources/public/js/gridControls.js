@@ -5,7 +5,7 @@ $(document).ready(function() {
 
 function activateControls() {
     var cookies = getCookies();
-    $('input#lg-grid-search-input').val(cookies.search);
+    $('input#lg-search-input').val(cookies.search);
     filter = cookies.filter;
     if (filter) {
         filters = filter.split(';');
@@ -14,7 +14,7 @@ function activateControls() {
             var filterVal = filters[index].split(':')[1];
             var filterId = filters[index].split(':')[0];
             if (filterVal) {
-                $('#lg-grid-filter-'+filterId).val(filterVal);
+                $('#lg-filter-'+filterId).val(filterVal);
             }
         }
     }
@@ -29,4 +29,5 @@ function activateControls() {
     gridFilterToggleControl();
     highlightFilters();
     highlightSearches();
+    gridExtraActionsControl();
 }

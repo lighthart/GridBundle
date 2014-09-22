@@ -12,8 +12,8 @@ var delay = (function() {
 // delay(function(){ sidebar.finishMove();}, quiet)
 function getOffset() {
     cookies = getCookies();
-    var pageVal = Number($('input.lg-grid-page-input').val());
-    var maxPages = Number($('#lg-grid-max-pages').val());
+    var pageVal = Number($('input.lg-page-input').val());
+    var maxPages = Number($('#lg-max-pages').val());
     if (pageVal > maxPages) {
         pageVal = maxPages;
     }
@@ -26,54 +26,54 @@ function getOffset() {
 }
 
 function getMaxPages() {
-    var maxPages = Number($('#lg-grid-max-pages').val());
+    var maxPages = Number($('#lg-max-pages').val());
     return maxPages;
 }
 
 function getSearch() {
-    var search = $('input#lg-grid-search-input').val();
+    var search = $('input#lg-search-input').val();
     return search;
 }
 
 function getAllFilters() {
     var filter = "";
-    $('.lg-grid-filter-input').each(function(i, e) {
+    $('.lg-filter-input').each(function(i, e) {
         filter += $(this).parent().attr('data-role-lg-class') + '__' + $(this).parent().attr('data-role-lg-field') + ':' + $(this).val() + ';';
     });
     return filter;
 }
 
 function highlightSearches() {
-    $('td.lg-grid-searchable').highlight($('input#lg-grid-search-input').val().split(' '), {
-        className: 'lg-grid-highlight-searches'
+    $('td.lg-searchable').highlight($('input#lg-search-input').val().split(' '), {
+        className: 'lg-highlight-searches'
     });
-    if ( !! $('input#lg-grid-search-input').val().trim()) {
-        $('input#lg-grid-search-input').addClass('lg-grid-highlight-searches');
+    if ( !! $('input#lg-search-input').val().trim()) {
+        $('input#lg-search-input').addClass('lg-highlight-searches');
     } else {
-        $('input#lg-grid-search-input').removeClass('lg-grid-highlight-searches');
+        $('input#lg-search-input').removeClass('lg-highlight-searches');
     }
 }
 
 function highlightFilters() {
-    $('input.lg-grid-filter-input').each(function(i) {
+    $('input.lg-filter-input').each(function(i) {
         var col = $(this).parent().index();
         $(this).closest("table").find("tr td:nth-child(" + (col + 1) + ")").highlight($(this).val(), {
-            className: 'lg-grid-highlight-filters'
+            className: 'lg-highlight-filters'
         });
         if ( !! $(this).val().trim()) {
-            $(this).addClass('lg-grid-highlight-filters');
+            $(this).addClass('lg-highlight-filters');
         } else {
-            $(this).removeClass('lg-grid-highlight-filters');
+            $(this).removeClass('lg-highlight-filters');
         }
     });
 }
 
 function getCookies() {
-    var numPerPagecookie = 'lg-grid-results-per-page';
-    var offsetCookie = "lg-grid-" + getLgCurrentRoute() + "-offset";
-    var searchCookie = "lg-grid-" + getLgCurrentRoute() + "-search";
-    var filterCookie = "lg-grid-" + getLgCurrentRoute() + "-filter";
-    var ajaxVersionCookie = "lg-grid-" + getLgCurrentRoute() + "-version";
+    var numPerPagecookie = 'lg-results-per-page';
+    var offsetCookie = "lg-" + getLgCurrentRoute() + "-offset";
+    var searchCookie = "lg-" + getLgCurrentRoute() + "-search";
+    var filterCookie = "lg-" + getLgCurrentRoute() + "-filter";
+    var ajaxVersionCookie = "lg-" + getLgCurrentRoute() + "-version";
     //reset pagination upon filtering
     var cookies = {
         offset: $.cookie(offsetCookie),
@@ -86,11 +86,11 @@ function getCookies() {
 }
 
 function setCookies(cookies) {
-    var numPerPagecookie = 'lg-grid-results-per-page';
-    var offsetCookie = "lg-grid-" + getLgCurrentRoute() + "-offset";
-    var searchCookie = "lg-grid-" + getLgCurrentRoute() + "-search";
-    var filterCookie = "lg-grid-" + getLgCurrentRoute() + "-filter";
-    var ajaxVersionCookie = "lg-grid-" + getLgCurrentRoute() + "-version";
+    var numPerPagecookie = 'lg-results-per-page';
+    var offsetCookie = "lg-" + getLgCurrentRoute() + "-offset";
+    var searchCookie = "lg-" + getLgCurrentRoute() + "-search";
+    var filterCookie = "lg-" + getLgCurrentRoute() + "-filter";
+    var ajaxVersionCookie = "lg-" + getLgCurrentRoute() + "-version";
     $.cookie(offsetCookie, cookies.offset);
     $.cookie(filterCookie, cookies.filter);
     $.cookie(searchCookie, cookies.search);
@@ -124,7 +124,7 @@ function gridReload() {
         type: 'GET',
         cache: false,
         beforeSend: function(xhr) {
-            $('.lg-grid-table').addClass('text-muted');
+            $('.lg-table').addClass('text-muted');
             cookies = getCookies();
             oldVersion = typeof cookies.version == 'undefined' ? 0 : cookies.version;
             cookies.version = new Date().getTime();
@@ -132,15 +132,15 @@ function gridReload() {
             oldFocus = gridFocus() ? '#' + gridFocus().attr('id') : 0;
         },
         success: function(data) {
-            $('table.lg-grid-table').html($(data).find('table.lg-grid-table').html());
-            $('div#lg-grid-header').html($(data).find('div#lg-grid-header').html());
-            $('div#lg-grid-footer').html($(data).find('div#lg-grid-footer').html());
+            $('table.lg-table').html($(data).find('table.lg-table').html());
+            $('div#lg-header').html($(data).find('div#lg-header').html());
+            $('div#lg-footer').html($(data).find('div#lg-footer').html());
         },
         complete: function() {
             highlightSearches();
             highlightFilters();
             activateControls();
-            $('.lg-grid-table').removeClass('text-muted');
+            $('.lg-table').removeClass('text-muted');
             if (oldFocus) {
                 $(oldFocus).blur().focus().val($(oldFocus).val());
             }

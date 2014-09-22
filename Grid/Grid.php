@@ -23,6 +23,7 @@ class Grid
     private $columns;
     private $options;
     private $actions;
+    private $statuses;
 
     public function __toString()
     {
@@ -33,6 +34,7 @@ class Grid
     {
         $this->columns = array();
         $this->actions = array();
+        $this->statuses = array();
         $this->options = $options;
         $this->table = new Table(array(
             'attr' => $options['table']
@@ -228,6 +230,26 @@ class Grid
         return $this;
     }
 
+    public function getStatuses() {
+         return $this->statuses;
+    }
+
+    public function getStatus($status)
+    {
+        return isset($this->statuses[$status]) ? $this->statuses[$status] : null;
+    }
+
+    public function setStatus( $statuses ) {
+        $this->statuses = $statuses;
+        return $this;
+    }
+
+    public function addStatus($status)
+    {
+        $this->statuses[] = $status;
+        return $this;
+    }
+
     // doesn't do much yet
 
     public function addMethod(Column $column)
@@ -320,17 +342,34 @@ class Grid
         $row = new Row(array(
             'type' => 'tr'
         ));
-        if (array() != $result) {
-            $result = $result[0];
+
+        if (array() != $this->getActions()) {
+            $actionCell = new Cell(array(
+                'title' => 'Actions',
+                'type' => 'th',
+            ));
+            $row->addCell($actionCell);
+        }
+
+        if (array() != $this->getStatuses()) {
+            $statusCell = new Cell(array(
+                'title' => 'Status',
+                'type' => 'th',
+            ));
+            $row->addCell($statusCell);
         }
 
         // $row->addCell(new Cell(array(
         //     'title' => '',
         //     'type' => 'th',
         //     'attr' => array(
-        //         'checkbox' => true
         //     )
         // )));
+
+        if (array() != $result) {
+            $result = $result[0];
+        }
+
 
         $cells = array_merge($columns, $result);
         foreach ($cells as $key => $value) {
@@ -344,7 +383,7 @@ class Grid
                 $attr['data-role-lg-field'] = $columns[$key]->getValue();
 
                 if (isset($columns[$key]->getOptions() ['search'])) {
-                    $attr['class'].= ' lg-grid-searchable';
+                    $attr['class'].= ' lg-searchable';
                 }
 
                 $title = ($columns[$key]->getOption('title') ? : $key);
@@ -379,10 +418,7 @@ class Grid
                     $parentId = ($columns[$key]->getOption('parentId') ? : null);
 
                     if ($parentId) {
-
                         // $attr['data-role-lg-parent-entity-id'] = $result[substr($parentId, 1) ];
-
-
                     }
 
                     $options = [];
@@ -414,10 +450,7 @@ class Grid
                     $row->addCell($cell);
                 }
             } else {
-
                 // no column!
-
-
             }
         }
         $thead->addRow($row);
@@ -431,6 +464,32 @@ class Grid
         $row = new Row(array(
             'type' => 'tr',
         ));
+
+                //Not ready to implement this
+                // $row->addCell(new Cell(array(
+                //     'title' => '',
+                //     'type' => 'th',
+                //     'attr' => array(
+                //         'checkbox' => true
+                //     )
+                // )));
+
+        if (array() != $this->getActions()) {
+            $actionCell = new Cell(array(
+                'title' => '',
+                'type' => 'th',
+            ));
+            $row->addCell($actionCell);
+        }
+
+        if (array() != $this->getStatuses()) {
+            $statusCell = new Cell(array(
+                'title' => '',
+                'type' => 'th',
+            ));
+            $row->addCell($statusCell);
+        }
+
         foreach ($columns as $key => $column) {
             if (isset($columns[$key]->getOptions() ['hidden'])) {
             } else {
@@ -442,7 +501,7 @@ class Grid
                     $attr['data-role-lg-class'] = $match[1] . '___' . $match[2];
                     $attr['data-role-lg-field'] = $columns[$key]->getValue();
                     $attr['filter'] = $column->getOptions() ['filter'];
-                    $attr['class'].= ' lg-grid-filterable lg-grid-filter';
+                    $attr['class'].= ' lg-filterable lg-filter';
                     $entityId = ($columns[$key]->getOption('entityId') ? : null);
 
                     if (!$filters) {
@@ -497,6 +556,23 @@ class Grid
                 //     )
                 // )));
 
+                if (array() != $this->getActions()) {
+                    $actionCell = new ActionCell(array(
+                        'title' => 'Actions',
+                        'type' => 'td',
+                        'actions' => $this->getActions(),
+                    ));
+                    $row->addCell($actionCell);
+                }
+
+                if (array() != $this->getStatuses()) {
+                    $statusCell = new Cell(array(
+                        'title' => 'Status',
+                        'type' => 'td',
+                    ));
+                    $row->addCell($statusCell);
+                }
+
                 foreach ($result as $key => $value) {
                     if (isset($columns[$key])) {
                         $attr = $columns[$key]->getOption('attr');
@@ -509,10 +585,10 @@ class Grid
                         }
 
                         if (isset($columns[$key]->getOptions() ['search'])) {
-                            $attr['class'].= ' lg-grid-searchable';
+                            $attr['class'].= ' lg-searchable';
                         }
                         if (isset($columns[$key]->getOptions() ['filter'])) {
-                            $attr['class'].= ' lg-grid-filterable';
+                            $attr['class'].= ' lg-filterable';
                         }
                         if (isset($columns[$key]->getOptions() ['hidden'])) {
                         } else {
@@ -570,6 +646,31 @@ class Grid
         $row = new Row(array(
             'type' => 'tr'
         ));
+
+                        //Not ready to implement this
+                // $row->addCell(new Cell(array(
+                //     'title' => '',
+                //     'type' => 'td',
+                //     'attr' => array(
+                //         'checkbox' => true
+                //     )
+                // )));
+
+                if (array() != $this->getActions()) {
+                    $actionCell = new Cell(array(
+                        'title' => 'Actions',
+                        'type' => 'td',
+                    ));
+                    $row->addCell($actionCell);
+                }
+
+                if (array() != $this->getStatuses()) {
+                    $statusCell = new Cell(array(
+                        'title' => 'Status',
+                        'type' => 'td',
+                    ));
+                    $row->addCell($statusCell);
+                }
 
         $results = $qb->getQuery()->getResult();
         if (array() != $results[0]) {
