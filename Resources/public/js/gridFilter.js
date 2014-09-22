@@ -1,5 +1,5 @@
 function gridFilterControl() {
-    $('input.lg-grid-filter-input').on('keyup', function() {
+    $('input.lg-grid-filter-input').on('keydown keyup change', function() {
         delay(function() {
             gridFilterReload();
         }, quiet);

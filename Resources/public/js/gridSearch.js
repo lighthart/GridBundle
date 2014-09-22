@@ -1,5 +1,5 @@
 function gridSearchControl() {
-    $('input#lg-grid-search-input').on('keyup', function() {
+    $('input#lg-grid-search-input').on('keydown keyup change', function() {
         delay(function() {
             gridSearchReload();
         }, quiet);

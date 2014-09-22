@@ -98,14 +98,20 @@ function setCookies(cookies) {
     $.cookie(ajaxVersionCookie, cookies.version);
 }
 
-function gridReload() {
-    $('.lg-grid-table').addClass('text-muted');
-    cookies = getCookies();
-    var oldVersion = typeof cookies.version == 'undefined' ? 0 : cookies.version;
+function gridFocus() {
+    var focus = null;
+    $('input').each(function() {
+        // o for dom 'o'bject
+        if ($(this).is(':focus')) {
+            focus = $(this);
+        }
+    });
+    return focus;
+}
 
-    // generate version here
-    cookies.version = new Date().getTime();
-    setCookies(cookies);
+function gridReload() {
+    var oldFocus = null;
+    var oldVersion = null;
     $.ajax({
         url: getLgCurrentURI(),
         data: {
@@ -113,23 +119,31 @@ function gridReload() {
             pageOffset: cookies.offset,
             filter: cookies.filter,
             search: cookies.search,
-            table: true
         },
         dataType: 'html',
         type: 'GET',
         cache: false,
-        complete: function() {},
+        beforeSend: function(xhr) {
+            $('.lg-grid-table').addClass('text-muted');
+            cookies = getCookies();
+            oldVersion = typeof cookies.version == 'undefined' ? 0 : cookies.version;
+            cookies.version = new Date().getTime();
+            setCookies(cookies);
+            oldFocus = gridFocus() ? '#' + gridFocus().attr('id') : 0;
+        },
         success: function(data) {
-            if (cookies.version > oldVersion) {
-                $('table.lg-grid-table').html($(data).find('table.lg-grid-table').html());
-                $('div#lg-grid-header').html($(data).find('div#lg-grid-header').html());
-                $('div#lg-grid-footer').html($(data).find('div#lg-grid-footer').html());
-                highlightSearches();
-                highlightFilters();
-                $('#lg-grid-search-input').blur().focus().val($('#lg-grid-search-input').val());
-                activateControls();
-            }
+            $('table.lg-grid-table').html($(data).find('table.lg-grid-table').html());
+            $('div#lg-grid-header').html($(data).find('div#lg-grid-header').html());
+            $('div#lg-grid-footer').html($(data).find('div#lg-grid-footer').html());
+        },
+        complete: function() {
+            highlightSearches();
+            highlightFilters();
+            activateControls();
             $('.lg-grid-table').removeClass('text-muted');
+            if (oldFocus) {
+                $(oldFocus).blur().focus().val($(oldFocus).val());
+            }
         }
     });
 }
