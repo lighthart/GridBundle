@@ -1,0 +1,3 @@
+<button {% for attrib, value in action.attr -%}{% if attrib == 'class' %}{% else %}{{- attrib -}}="{{- value -}}"{% endif %} {%- endfor -%} class="btn btn-xs {{action.severity}}{% if xtra is defined %} lg-xtra-action hide{% endif %}">
+    <span class="fa {{action.icon}}"></span> {{ action.name -}}
+</button>
