@@ -24,7 +24,7 @@ class GridMaker
         return "Grid Maker -- Don't print this";
     }
 
-    public function __construct($doctrine)
+    public function __construct($doctrine, $options = array())
     {
         $this->doctrine = $doctrine;
         $this->em = $doctrine->getManager();

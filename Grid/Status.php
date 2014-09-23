@@ -9,33 +9,39 @@ use Doctrine\ORM\Query;
 
 class Status
 {
-
     private $attr;
     private $icon;
+    private $name;
     private $security;
+    private $severity;
     private $title;
 
     public function __construct($options = array())
     {
+
+        // default action is always present
+        // default severity is btn-default
         $options = array_merge(array(
             'attr' => null,
             'icon' => null,
+            'name' => null,
             'route' => null,
-            'security' => null,
+            'security' => true,
+            'severity' => 'label-default',
             'title' => null,
         ) , $options);
         $this->attr = $options['attr'];
-        $this->icon = $options['icon'];
+        $this->icon = ($options['icon'] ? : 'fa-rocket');
+        $this->name = $options['name'];
+        $this->route = $options['route'];
         $this->security = $options['security'];
+        $this->severity = $options['severity'];
         $this->title = $options['title'];
-
-        // default is action is always present
-        $this->security = ($this->security === null ? $this->security : true);
     }
 
     public function __toString()
     {
-        return "Status " . $this->title . " printed.";
+        return "Action " . $this->name . " printed.";
     }
 
     public function getAttr()
@@ -60,6 +66,28 @@ class Status
         return $this;
     }
 
+    public function getName()
+    {
+        return $this->name;
+    }
+
+    public function setName($name)
+    {
+        $this->name = $name;
+        return $this;
+    }
+
+    public function getRoute()
+    {
+        return $this->route;
+    }
+
+    public function setRoute($route)
+    {
+        $this->route = $route;
+        return $this;
+    }
+
     public function getSecurity()
     {
         return $this->security;
@@ -68,6 +96,17 @@ class Status
     public function setSecurity($security)
     {
         $this->security = $security;
+        return $this;
+    }
+
+    public function getSeverity()
+    {
+        return $this->severity;
+    }
+
+    public function setSeverity($severity)
+    {
+        $this->severity = $severity;
         return $this;
     }
 

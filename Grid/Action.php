@@ -9,16 +9,17 @@ use Doctrine\ORM\Query;
 
 class Action
 {
-
     private $attr;
     private $icon;
     private $name;
     private $route;
     private $security;
     private $severity;
+    private $title;
 
     public function __construct($options = array())
     {
+
         // default action is always present
         // default severity is btn-default
         $options = array_merge(array(
@@ -28,14 +29,15 @@ class Action
             'route' => null,
             'security' => true,
             'severity' => 'btn-default',
+            'title' => null,
         ) , $options);
         $this->attr = $options['attr'];
         $this->icon = ($options['icon'] ? : 'fa-rocket');
+        $this->name = $options['name'];
         $this->route = $options['route'];
         $this->security = $options['security'];
         $this->severity = $options['severity'];
-        $this->name = $options['name'];
-
+        $this->title = $options['title'];
     }
 
     public function __toString()
@@ -98,12 +100,25 @@ class Action
         return $this;
     }
 
-    public function getSeverity() {
-         return $this->severity;
+    public function getSeverity()
+    {
+        return $this->severity;
     }
 
-    public function setSeverity( $severity ) {
+    public function setSeverity($severity)
+    {
         $this->severity = $severity;
+        return $this;
+    }
+
+    public function getTitle()
+    {
+        return $this->title;
+    }
+
+    public function setTitle($title)
+    {
+        $this->title = $title;
         return $this;
     }
 }

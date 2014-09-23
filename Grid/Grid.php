@@ -24,6 +24,7 @@ class Grid
     private $options;
     private $actions;
     private $statuses;
+    private $massAction;
 
     public function __toString()
     {
@@ -41,6 +42,9 @@ class Grid
         ) , !!(isset($options['html']) && $options['html']));
         $this->table->setGrid($this);
         $this->errors = array();
+        if (isset($options['massAction']) && $options['massAction']) {
+            $this->massAction = true;
+        }
     }
 
     public function getOffset()
@@ -230,8 +234,9 @@ class Grid
         return $this;
     }
 
-    public function getStatuses() {
-         return $this->statuses;
+    public function getStatuses()
+    {
+        return $this->statuses;
     }
 
     public function getStatus($status)
@@ -239,7 +244,8 @@ class Grid
         return isset($this->statuses[$status]) ? $this->statuses[$status] : null;
     }
 
-    public function setStatus( $statuses ) {
+    public function setStatus($statuses)
+    {
         $this->statuses = $statuses;
         return $this;
     }
@@ -343,6 +349,15 @@ class Grid
             'type' => 'tr'
         ));
 
+        if ($this->massAction) {
+
+            $row->addCell(new Cell(array(
+                'title' => 'Mass',
+                'type' => 'th',
+                'attr' => array()
+            )));
+        }
+
         if (array() != $this->getActions()) {
             $actionCell = new Cell(array(
                 'title' => 'Actions',
@@ -359,17 +374,9 @@ class Grid
             $row->addCell($statusCell);
         }
 
-        // $row->addCell(new Cell(array(
-        //     'title' => '',
-        //     'type' => 'th',
-        //     'attr' => array(
-        //     )
-        // )));
-
         if (array() != $result) {
             $result = $result[0];
         }
-
 
         $cells = array_merge($columns, $result);
         foreach ($cells as $key => $value) {
@@ -418,7 +425,10 @@ class Grid
                     $parentId = ($columns[$key]->getOption('parentId') ? : null);
 
                     if ($parentId) {
+
                         // $attr['data-role-lg-parent-entity-id'] = $result[substr($parentId, 1) ];
+
+
                     }
 
                     $options = [];
@@ -450,7 +460,10 @@ class Grid
                     $row->addCell($cell);
                 }
             } else {
+
                 // no column!
+
+
             }
         }
         $thead->addRow($row);
@@ -465,14 +478,16 @@ class Grid
             'type' => 'tr',
         ));
 
-                //Not ready to implement this
-                // $row->addCell(new Cell(array(
-                //     'title' => '',
-                //     'type' => 'th',
-                //     'attr' => array(
-                //         'checkbox' => true
-                //     )
-                // )));
+        //Not ready to implement this
+        if ($this->massAction) {
+            $row->addCell(new Cell(array(
+                'title' => '',
+                'type' => 'th',
+                'attr' => array(
+                    'checkbox' => true
+                )
+            )));
+        }
 
         if (array() != $this->getActions()) {
             $actionCell = new Cell(array(
@@ -547,39 +562,38 @@ class Grid
                     ));
                 }
 
-                //Not ready to implement this
-                // $row->addCell(new Cell(array(
-                //     'title' => '',
-                //     'type' => 'td',
-                //     'attr' => array(
-                //         'checkbox' => true
-                //     )
-                // )));
+                if ($this->massAction) {
+                    $row->addCell(new Cell(array(
+                        'title' => '',
+                        'type' => 'td',
+                        'attr' => array(
+                            'checkbox' => true
+                        )
+                    )));
+                }
 
                 if (array() != $this->getActions()) {
                     $actionCell = new ActionCell(array(
                         'title' => 'Actions',
                         'type' => 'td',
-                        'actions' => $this->getActions(),
+                        'actions' => $this->getActions() ,
                     ));
                     $row->addCell($actionCell);
                 }
-
                 if (array() != $this->getStatuses()) {
-                    $statusCell = new Cell(array(
+                    $statusCell = new StatusCell(array(
                         'title' => 'Status',
                         'type' => 'td',
+                        'statuses' => $this->getStatuses() ,
                     ));
                     $row->addCell($statusCell);
                 }
-
                 foreach ($result as $key => $value) {
                     if (isset($columns[$key])) {
                         $attr = $columns[$key]->getOption('attr');
                         if ($columns[$key]->getOption('entityId')) {
                             $pattern = '/(\w+\_\_\_\w+)\_\_/';
                             preg_match($pattern, $key, $match);
-
                             $rootId = $match[1] . '__id';
                             $attr['data-role-lg-entity-id'] = $result[$rootId];
                         }
@@ -635,7 +649,6 @@ class Grid
 
         // this is handled positionally, not by reference.
         // that might have to change later
-
         $tbody = $this->getTable()->getTbody();
         $columns = $this->getColumns();
         $visible = array_filter($columns, function ($c)
@@ -647,30 +660,29 @@ class Grid
             'type' => 'tr'
         ));
 
-                        //Not ready to implement this
-                // $row->addCell(new Cell(array(
-                //     'title' => '',
-                //     'type' => 'td',
-                //     'attr' => array(
-                //         'checkbox' => true
-                //     )
-                // )));
+        //Not ready to implement this
+        if ($this->massAction) {
+            $row->addCell(new Cell(array(
+                'title' => '',
+                'type' => 'td',
+                'attr' => array()
+            )));
+        }
+        if (array() != $this->getActions()) {
+            $actionCell = new Cell(array(
+                'title' => 'Actions',
+                'type' => 'td',
+            ));
+            $row->addCell($actionCell);
+        }
 
-                if (array() != $this->getActions()) {
-                    $actionCell = new Cell(array(
-                        'title' => 'Actions',
-                        'type' => 'td',
-                    ));
-                    $row->addCell($actionCell);
-                }
-
-                if (array() != $this->getStatuses()) {
-                    $statusCell = new Cell(array(
-                        'title' => 'Status',
-                        'type' => 'td',
-                    ));
-                    $row->addCell($statusCell);
-                }
+        if (array() != $this->getStatuses()) {
+            $statusCell = new Cell(array(
+                'title' => 'Status',
+                'type' => 'td',
+            ));
+            $row->addCell($statusCell);
+        }
 
         $results = $qb->getQuery()->getResult();
         if (array() != $results[0]) {
@@ -690,5 +702,16 @@ class Grid
             }
             $tbody->addRow($row);
         }
+    }
+
+    public function getMassAction()
+    {
+        return $this->massAction;
+    }
+
+    public function setMassAction($massAction)
+    {
+        $this->massAction = $massAction;
+        return $this;
     }
 }
