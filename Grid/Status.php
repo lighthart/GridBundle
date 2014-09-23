@@ -14,7 +14,6 @@ class Status
     private $name;
     private $security;
     private $severity;
-    private $title;
 
     public function __construct($options = array())
     {
@@ -28,7 +27,6 @@ class Status
             'route' => null,
             'security' => true,
             'severity' => 'label-default',
-            'title' => null,
         ) , $options);
         $this->attr = $options['attr'];
         $this->icon = ($options['icon'] ? : 'fa-rocket');
@@ -107,17 +105,6 @@ class Status
     public function setSeverity($severity)
     {
         $this->severity = $severity;
-        return $this;
-    }
-
-    public function getTitle()
-    {
-        return $this->title;
-    }
-
-    public function setTitle($title)
-    {
-        $this->title = $title;
         return $this;
     }
 }

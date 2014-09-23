@@ -616,10 +616,7 @@ class Grid
                             $this->columnOptions($columns[$key]);
                         }
                     } else {
-
                         // no column!
-
-
                     }
                 }
                 $tbody->addRow($row);

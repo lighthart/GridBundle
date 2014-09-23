@@ -15,7 +15,6 @@ class Action
     private $route;
     private $security;
     private $severity;
-    private $title;
 
     public function __construct($options = array())
     {
@@ -108,17 +107,6 @@ class Action
     public function setSeverity($severity)
     {
         $this->severity = $severity;
-        return $this;
-    }
-
-    public function getTitle()
-    {
-        return $this->title;
-    }
-
-    public function setTitle($title)
-    {
-        $this->title = $title;
         return $this;
     }
 }

@@ -28,9 +28,16 @@ Step 2.  Initialize your grid.
         $gm = $this->get('grid.maker');
         $gm->initialize(array(
             'table' => 'table table-bordered table-condensed table-hover table-striped',
-            'html' => true
+            'html' => true,
+            'massAction' => true,
         ));
         $gm->setQueryBuilder($qb);
+
+    Features:
+        'table'         classes applied to table
+        'html'          indicates the table is html
+        'massAction'    if evaluates to true, mass action column is included
+
 
 Step 3.  Start adding fields/columns.
 
