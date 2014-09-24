@@ -2,23 +2,23 @@ cell_edit :
     pattern      : /edit/{class}/{field}/{id}
     defaults     : { _controller: "LighthartGridBundle:Cell:edit" }
     requirements :
-        class : \w+
-        field : \w+
-        id    : \d+
+        class : .+
+        field : .+
+        id    : .+
 
 cell_value :
     pattern      : /value/{class}/{field}/{id}
     defaults     : { _controller: "LighthartGridBundle:Cell:value" }
     requirements :
-        class : \w+
-        field : \w+
-        id    : \d+
+        class : .+
+        field : .+
+        id    : .+
 
 cell_update :
     pattern      : /update/{class}/{field}/{id}
     defaults     : { _controller: "LighthartGridBundle:Cell:update" }
     requirements :
-        class   : \w+
-        field   : \w+
-        id      : \d+
+        class   : .+
+        field   : .+
+        id      : .+
         _method : post

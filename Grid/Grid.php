@@ -403,7 +403,7 @@ class Grid
                     // a result from another column in the query
                     // currently only handles one field
 
-                    if (preg_match('/(.*?)~(((.*?)~)+)(.*?)/', $title, $match)) {
+                    if ('string' == gettype($title) && preg_match('/(.*?)~(((.*?)~)+)(.*?)/', $title, $match)) {
                         $matches = array_filter(explode('~', $match[2]));
                         if (array() == $result) {
 
@@ -451,6 +451,7 @@ class Grid
                         }
                     }
 
+                    $attr['title'] = $title;
                     $cell = new Cell(array(
                         'title' => $title,
                         'type' => 'th',
@@ -528,6 +529,7 @@ class Grid
                         'attr' => $attr
                     ));
                 } else {
+                    $attr['title']=''; // blank this out incase it was processed from column
                     $cell = new Cell(array(
                         'title' => '',
                         'type' => 'th',
@@ -589,6 +591,7 @@ class Grid
                     $row->addCell($statusCell);
                 }
                 foreach ($result as $key => $value) {
+
                     if (isset($columns[$key])) {
                         $attr = $columns[$key]->getOption('attr');
                         if ($columns[$key]->getOption('entityId')) {
@@ -604,21 +607,112 @@ class Grid
                         if (isset($columns[$key]->getOptions() ['filter'])) {
                             $attr['class'].= ' lg-filterable';
                         }
+
+                        $title = ($columns[$key]->getOption('title') ? : $key);
+
                         if (isset($columns[$key]->getOptions() ['hidden'])) {
                         } else {
+
+                            // tilde mapping
+                            // putting a tilde in front of the title causes grid to interpret this as
+                            // a result from another column in the query
+                            // currently only handles one field
+
+                            $tildes = [&$title, &$value];
+                            foreach ($tildes as $tildeKey => $what) {
+                                if ('string' == gettype($what) && preg_match('/(.*?)~(((.*?)~)+)(.*?)/', $what, $match)) {
+                                    $matches = array_filter(explode('~', $match[2]));
+                                    if (array() == $result) {
+                                        $what = $match[1] . $match[5];
+                                    } else {
+                                        $what = $match[1] . implode(' ', array_map(function ($m) use (&$result)
+                                        {
+                                            if (isset($result[$m])) {
+                                                return $result[$m];
+                                            } else {
+                                                return $m;
+                                            }
+                                        }
+                                        , $matches)) . $match[5];
+                                    }
+                                    $tildes[$tildeKey] = $what;
+                                }
+                            }
+
+                            foreach ($attr as $attrKey => $what) {
+                                if ('string' == gettype($what) && preg_match('/(.*?)~(((.*?)~)+)(.*?)/', $what, $match)) {
+                                    $matches = array_filter(explode('~', $match[2]));
+                                    if (array() == $result) {
+                                        $what = $match[1] . $match[5];
+                                    } else {
+                                        $what = $match[1] . implode('', array_map(function ($m) use (&$result)
+                                        {
+                                            if (isset($result[$m])) {
+                                                return $result[$m];
+                                            } else {
+                                                return $m;
+                                            }
+                                        }
+                                        , $matches)) . $match[5];
+                                    }
+                                    $attr[$attrKey] = $what;
+                                }
+                            }
+
+                            // if ('string' == gettype($value) && preg_match('/(.*?)~(((.*?)~)+)(.*?)/', $value, $match)) {
+                            //     $matches = array_filter(explode('~', $match[2]));
+                            //     if (array() == $result) {
+
+                            //         $value = $match[1] . $match[5];
+                            //     } else {
+
+                            //         $value = $match[1] . implode(' ', array_map(function ($m) use (&$result)
+                            //         {
+                            //             if (isset($result[$m])) {
+                            //                 return $result[$m];
+                            //             } else {
+                            //                 return $m;
+                            //             }
+                            //         }
+                            //         , $matches)) . $match[5];
+                            //     }
+                            // }
+
+                            // if (isset( $attr['title'] ) && 'string' == gettype($attr['title']) && preg_match('/(.*?)~(((.*?)~)+)(.*?)/', $attr['title'], $match)) {
+                            //     $matches = array_filter(explode('~', $match[2]));
+                            //     if (array() == $result) {
+
+                            //         $attr['title'] = $match[1] . $match[5];
+                            //     } else {
+
+                            //         $attr['title'] = $match[1] . implode(' ', array_map(function ($m) use (&$result)
+                            //         {
+                            //             if (isset($result[$m])) {
+                            //                 return $result[$m];
+                            //             } else {
+                            //                 return $m;
+                            //             }
+                            //         }
+                            //         , $matches)) . $match[5];
+                            //     }
+                            // }
                             $cell = new Cell(array(
                                 'value' => $value,
-                                'title' => $columns[$key]->getValue() ,
+                                'title' => $title,
                                 'type' => 'td',
                                 'attr' => $attr,
                             ));
+
                             $row->addCell($cell);
                             $this->columnOptions($columns[$key]);
                         }
                     } else {
+
                         // no column!
+
                     }
                 }
+
                 $tbody->addRow($row);
             }
         } else {

@@ -68,8 +68,8 @@ Step 3.  Start adding fields/columns.
 
 
         tildes:
-            for 'entityId', 'parentId' and 'title', enclosing any portion of that string with ~~ will
-            grab the appropriate column(s) from the query and insert that text.  This interpolation
+            for 'entityId', 'parentId', 'title' and all elements of 'attr', enclosing any portion of that string
+            with ~~ will grab the appropriate column(s) from the query and insert that text.  This interpolation
             will ignore html tags.  So the title text in the example above will add
             Biller:
             <District Name>

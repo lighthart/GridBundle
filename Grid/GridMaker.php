@@ -264,7 +264,7 @@ class GridMaker
                 return in_array('aggregate', array_keys($c->getOptions()));
             });
 
-            if (array() !== $results ) {
+            if (array() !== $results) {
                 $this->getGrid()->fillAggregate($this->aggregateQuery());
             } else {
             }
@@ -355,6 +355,26 @@ class GridMaker
                             }
                         }
                         $oldOptions[$option] = $match[1] . '~' . implode('~', $matches) . '~' . $match[5];
+                    }
+                }
+
+                if (isset($oldOptions['attr'])) {
+                    foreach (array_keys($oldOptions['attr']) as $k => $option) {
+                        $newAlias = $aliases[stristr($oldAlias, '_', true) ] . '_' . $v->getValue();
+                        if (isset($oldOptions['attr'][$option]) && preg_match('/(.*?)~(((.*?)~)+)(.*?)/', $oldOptions['attr'][$option], $match)) {
+                            $matches = array_filter(explode('~', $match[2]));
+                            foreach ($matches as $key => $col) {
+                                if (preg_match('/\<(.*?)\>/', $col)) {
+                                } else {
+                                    $oldField = substr(stristr($col, '.') , 1);
+                                    $oldSubAlias = stristr($col, '.', true);
+                                    if (isset($aliases[$oldSubAlias]) && isset($matches[$key])) {
+                                        $matches[$key] = $aliases[$oldSubAlias] . '_' . $oldField;
+                                    }
+                                }
+                            }
+                            $oldOptions['attr'][$option] = $match[1] . '~' . implode('~', $matches) . '~' . $match[5];
+                        }
                     }
                 }
 
