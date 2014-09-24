@@ -25,6 +25,7 @@ class Grid
     private $actions;
     private $statuses;
     private $massAction;
+    private $router;
 
     public function __toString()
     {
@@ -45,6 +46,17 @@ class Grid
         if (isset($options['massAction']) && $options['massAction']) {
             $this->massAction = true;
         }
+    }
+
+    public function getRouter()
+    {
+        return $this->router;
+    }
+
+    public function setRouter($router)
+    {
+        $this->router = $router;
+        return $this;
     }
 
     public function getOffset()
@@ -403,25 +415,8 @@ class Grid
                     // a result from another column in the query
                     // currently only handles one field
 
-                    if ('string' == gettype($title) && preg_match('/(.*?)~(((.*?)~)+)(.*?)/', $title, $match)) {
-                        $matches = array_filter(explode('~', $match[2]));
-                        if (array() == $result) {
-
-                            $title = $match[1] . $match[5];
-                        } else {
-
-                            $title = $match[1] . implode(' ', array_map(function ($m) use (&$result)
-                            {
-                                if (isset($result[$m])) {
-                                    return $result[$m];
-                                } else {
-                                    return $m;
-                                }
-                            }
-                            , $matches)) . $match[5];
-                        }
-                    }
-
+                    $this->tildes(array(&$title
+                    ) , $result);
                     $parentId = ($columns[$key]->getOption('parentId') ? : null);
 
                     if ($parentId) {
@@ -435,6 +430,11 @@ class Grid
                     $html = ($columns[$key]->getOption('titleHtml') ? : null);
                     if ($html) {
                         $options['titleHtml'] = true;
+                    }
+
+                    $html = ($columns[$key]->getOption('sort') ? : null);
+                    if ($html) {
+                        $options['sort'] = true;
                     }
 
                     $entityId = ($columns[$key]->getOption('entityId') ? : null);
@@ -530,7 +530,8 @@ class Grid
                     ));
                 } else {
                     $attr['title'] = '';
-                     // blank this out incase it was processed from column
+
+                    // blank this out incase it was processed from column
                     $cell = new Cell(array(
                         'title' => '',
                         'type' => 'th',
@@ -574,15 +575,33 @@ class Grid
                         )
                     )));
                 }
-
+                $cellActions = [];
                 if (array() != $this->getActions()) {
+                    foreach ($this->getActions() as $slug => $action) {
+                        $newAction = clone $action;
+
+                        if ($newAction->getRoute()) {
+                            $routeConfig = $newAction->getRoute();
+                            if ('array' == gettype($routeConfig)) {
+                                foreach ($routeConfig as $routeKey => $params) {
+                                    foreach ($params as $paramKey => $param) {
+                                        $routeConfig[$routeKey][$paramKey] = $this->tilde($param, $result);
+                                    }
+                                    $newAction->setRoute($this->router->generate($routeKey, $routeConfig[$routeKey]));
+                                }
+                            }
+                        }
+                        $cellActions[] = $newAction;
+                    }
+
                     $actionCell = new ActionCell(array(
                         'title' => 'Actions',
                         'type' => 'td',
-                        'actions' => $this->getActions() ,
+                        'actions' => $cellActions,
                     ));
                     $row->addCell($actionCell);
                 }
+
                 if (array() != $this->getStatuses()) {
                     $statusCell = new StatusCell(array(
                         'title' => 'Status',
@@ -591,6 +610,7 @@ class Grid
                     ));
                     $row->addCell($statusCell);
                 }
+
                 foreach ($result as $key => $value) {
 
                     if (isset($columns[$key])) {
@@ -619,84 +639,17 @@ class Grid
                             // a result from another column in the query
                             // currently only handles one field
 
-                            $tildes = [&$title, &$value];
-                            foreach ($tildes as $tildeKey => $what) {
-                                if ('string' == gettype($what) && preg_match('/(.*?)~(((.*?)~)+)(.*?)/', $what, $match)) {
-                                    $matches = array_filter(explode('~', $match[2]));
-                                    if (array() == $result) {
-                                        $what = $match[1] . $match[5];
-                                    } else {
-                                        $what = $match[1] . implode(' ', array_map(function ($m) use (&$result)
-                                        {
-                                            if (isset($result[$m])) {
-                                                return $result[$m];
-                                            } else {
-                                                return $m;
-                                            }
-                                        }
-                                        , $matches)) . $match[5];
-                                    }
-                                    $tildes[$tildeKey] = $what;
+                            $this->tildes(array(&$title, &$value
+                            ) , $result);
+                            foreach ($attr as $k => $attrib) {
+                                if (false !== strpos($attrib, '~')) {
+                                    $tildeAttr[$k] = $attrib;
                                 }
                             }
-
-                            foreach ($attr as $attrKey => $what) {
-                                if ('string' == gettype($what) && preg_match('/(.*?)~(((.*?)~)+)(.*?)/', $what, $match)) {
-                                    $matches = array_filter(explode('~', $match[2]));
-                                    if (array() == $result) {
-                                        $what = $match[1] . $match[5];
-                                    } else {
-                                        $what = $match[1] . implode('', array_map(function ($m) use (&$result)
-                                        {
-                                            if (isset($result[$m])) {
-                                                return $result[$m];
-                                            } else {
-                                                return $m;
-                                            }
-                                        }
-                                        , $matches)) . $match[5];
-                                    }
-                                    $attr[$attrKey] = $what;
-                                }
+                            foreach ($tildeAttr as $attrib) {
+                                $this->tildes(array(&$attrib
+                                ) , $result);
                             }
-
-                            // if ('string' == gettype($value) && preg_match('/(.*?)~(((.*?)~)+)(.*?)/', $value, $match)) {
-                            //     $matches = array_filter(explode('~', $match[2]));
-                            //     if (array() == $result) {
-
-                            //         $value = $match[1] . $match[5];
-                            //     } else {
-
-                            //         $value = $match[1] . implode(' ', array_map(function ($m) use (&$result)
-                            //         {
-                            //             if (isset($result[$m])) {
-                            //                 return $result[$m];
-                            //             } else {
-                            //                 return $m;
-                            //             }
-                            //         }
-                            //         , $matches)) . $match[5];
-                            //     }
-                            // }
-
-                            // if (isset( $attr['title'] ) && 'string' == gettype($attr['title']) && preg_match('/(.*?)~(((.*?)~)+)(.*?)/', $attr['title'], $match)) {
-                            //     $matches = array_filter(explode('~', $match[2]));
-                            //     if (array() == $result) {
-
-                            //         $attr['title'] = $match[1] . $match[5];
-                            //     } else {
-
-                            //         $attr['title'] = $match[1] . implode(' ', array_map(function ($m) use (&$result)
-                            //         {
-                            //             if (isset($result[$m])) {
-                            //                 return $result[$m];
-                            //             } else {
-                            //                 return $m;
-                            //             }
-                            //         }
-                            //         , $matches)) . $match[5];
-                            //     }
-                            // }
                             $cell = new Cell(array(
                                 'value' => $value,
                                 'title' => $title,
@@ -714,7 +667,6 @@ class Grid
 
                     }
                 }
-
                 $tbody->addRow($row);
             }
         } else {
@@ -781,7 +733,7 @@ class Grid
         $aqb->setFirstResult(0);
 
         $results = $aqb->getQuery()->getResult();
-        if (array()!= $results && array() != $results[0]) {
+        if (array() != $results && array() != $results[0]) {
             foreach ($results[0] as $key => $value) {
                 $attr = $visible[array_keys($visible) [$key - 1]]->getOptions() ['attr'];
 
@@ -810,5 +762,49 @@ class Grid
     {
         $this->massAction = $massAction;
         return $this;
+    }
+
+    public function tilde($what, &$result)
+    {
+        if ('string' == gettype($what) && preg_match('/(.*?)~(((.*?)~)+)(.*?)/', $what, $match)) {
+            $matches = array_filter(explode('~', $match[2]));
+            if (array() == $result) {
+                $what = $match[1] . $match[5];
+            } else {
+                $what = $match[1] . implode(' ', array_map(function ($m) use (&$result)
+                {
+                    if (isset($result[$m])) {
+                        return $result[$m];
+                    } else {
+                        return $m;
+                    }
+                }
+                , $matches)) . $match[5];
+            }
+        }
+        return $what;
+    }
+
+    public function tildes(Array $tildes, &$result)
+    {
+        foreach ($tildes as $tildeKey => $what) {
+            if ('string' == gettype($what) && preg_match('/(.*?)~(((.*?)~)+)(.*?)/', $what, $match)) {
+                $matches = array_filter(explode('~', $match[2]));
+                if (array() == $result) {
+                    $what = $match[1] . $match[5];
+                } else {
+                    $what = $match[1] . implode(' ', array_map(function ($m) use (&$result)
+                    {
+                        if (isset($result[$m])) {
+                            return $result[$m];
+                        } else {
+                            return $m;
+                        }
+                    }
+                    , $matches)) . $match[5];
+                }
+                $tildes[$tildeKey] = $what;
+            }
+        }
     }
 }

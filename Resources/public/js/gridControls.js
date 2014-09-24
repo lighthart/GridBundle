@@ -30,4 +30,5 @@ function activateControls() {
     highlightFilters();
     highlightSearches();
     gridExtraActionsControl();
+    gridSortControl();
 }

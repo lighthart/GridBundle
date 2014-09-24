@@ -13,6 +13,7 @@ class GridMaker
 {
 
     private $doctrine;
+    private $router;
     private $request;
     private $dql;
     private $query;
@@ -24,10 +25,10 @@ class GridMaker
         return "Grid Maker -- Don't print this";
     }
 
-    public function __construct($doctrine, $options = array())
+    public function __construct($doctrine, $router)
     {
         $this->doctrine = $doctrine;
-        $this->em = $doctrine->getManager();
+        $this->router = $router;
     }
 
     public function getRequest()
@@ -128,6 +129,7 @@ class GridMaker
     public function initialize($options = array())
     {
         $this->grid = new Grid($options);
+        $this->grid->setRouter($this->router);
     }
 
     public function verifyClass(String $class, $slash = null)
@@ -271,6 +273,25 @@ class GridMaker
         }
     }
 
+    public function pregAlias(&$alias, $aliases)
+    {
+        if (preg_match('/(.*?)~(((.*?)~)+)(.*?)/', $alias, $match)) {
+            $matches = array_filter(explode('~', $match[2]));
+            foreach ($matches as $key => $col) {
+                if (preg_match('/\<(.*?)\>/', $col)) {
+                } else {
+                    $oldField = substr(stristr($col, '.') , 1);
+                    $oldSubAlias = stristr($col, '.', true);
+                    if(false !== $oldSubAlias) {
+                        $matches[$key] = $aliases[$oldSubAlias] . '_' . $oldField;
+                    }
+                }
+            }
+            $alias = $match[1] . '~' . implode('~', $matches) . '~' . $match[5];
+        }
+        return $alias;
+    }
+
     public function mapAliases()
     {
         $qb = $this->queryBuilder;
@@ -328,6 +349,23 @@ class GridMaker
         $g = $this->getGrid();
         $columns = [];
 
+
+        foreach ($this->getGrid()->getActions() as $actionKey => $action) {
+            if ($action->getRoute()) {
+                $routeConfig = $action->getRoute();
+                if (1 === count($routeConfig)) {
+                    foreach ($routeConfig as $routeKey => $params) {
+                        foreach ($params as $paramKey => $param) {
+                            $routeConfig[$routeKey][$paramKey] = $this->pregAlias($param, $aliases);
+                        }
+                    }
+                $action->setRoute($routeConfig);
+                } else {
+                    $this->addError('Action route improperly specified with more than one route.');
+                }
+            }
+        }
+
         foreach ($g->getColumns() as $k => $v) {;
             $oldAlias = $v->getAlias();
             $oldValue = $v->getValue();
@@ -344,36 +382,17 @@ class GridMaker
 
                 foreach ($tildes as $k => $option) {
                     $newAlias = $aliases[stristr($oldAlias, '_', true) ] . '_' . $v->getValue();
-                    if (isset($oldOptions[$option]) && preg_match('/(.*?)~(((.*?)~)+)(.*?)/', $oldOptions[$option], $match)) {
-                        $matches = array_filter(explode('~', $match[2]));
-                        foreach ($matches as $key => $col) {
-                            if (preg_match('/\<(.*?)\>/', $col)) {
-                            } else {
-                                $oldField = substr(stristr($col, '.') , 1);
-                                $oldSubAlias = stristr($col, '.', true);
-                                $matches[$key] = $aliases[$oldSubAlias] . '_' . $oldField;
-                            }
-                        }
-                        $oldOptions[$option] = $match[1] . '~' . implode('~', $matches) . '~' . $match[5];
+                    if (isset($oldOptions[$option])){
+                        $this->pregAlias($oldOptions[$option], $aliases);
                     }
                 }
 
                 if (isset($oldOptions['attr'])) {
                     foreach (array_keys($oldOptions['attr']) as $k => $option) {
                         $newAlias = $aliases[stristr($oldAlias, '_', true) ] . '_' . $v->getValue();
-                        if (isset($oldOptions['attr'][$option]) && preg_match('/(.*?)~(((.*?)~)+)(.*?)/', $oldOptions['attr'][$option], $match)) {
-                            $matches = array_filter(explode('~', $match[2]));
-                            foreach ($matches as $key => $col) {
-                                if (preg_match('/\<(.*?)\>/', $col)) {
-                                } else {
-                                    $oldField = substr(stristr($col, '.') , 1);
-                                    $oldSubAlias = stristr($col, '.', true);
-                                    if (isset($aliases[$oldSubAlias]) && isset($matches[$key])) {
-                                        $matches[$key] = $aliases[$oldSubAlias] . '_' . $oldField;
-                                    }
-                                }
-                            }
-                            $oldOptions['attr'][$option] = $match[1] . '~' . implode('~', $matches) . '~' . $match[5];
+
+                        if (isset($oldOptions['attr'][$option])) {
+                            $this->pregAlias($oldOptions['attr'][$option], $aliases);
                         }
                     }
                 }

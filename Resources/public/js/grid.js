@@ -19,7 +19,6 @@ function getOffset() {
     }
     var numPerPage = Number(cookies.pageSize);
     var offset = (pageVal - 1) * numPerPage;
-    console.log(offset);
     offset = (offset < 0) ? 0 : offset;
     offset = ((offset / numPerPage) > maxPages) ? maxPages - (maxPages % numPerPage) : offset;
     return offset;
@@ -84,13 +83,6 @@ function getCookies() {
     };
 
     // Setting Defaults
-    console.log('getCookies');
-    console.log(cookies.offset);
-    console.log(!!cookies.offset);
-    console.log(cookies.pageSize);
-    console.log(!!cookies.pageSize);
-    console.log(cookies.version);
-    console.log(!!cookies.version);
 
     if ( 'undefined' == typeof cookies.offset || isNaN(cookies.offset) ) { cookies.offset = 0;}
     if ( 'undefined' == typeof cookies.pageSize || isNaN(cookies.pageSize) ) { cookies.pageSize = 10;}

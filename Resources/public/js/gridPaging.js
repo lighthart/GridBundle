@@ -6,7 +6,6 @@ function pagingInputControl() {
         cookies.offset = cookies.offset ? cookies.offset : 0;
         var maxPages = Number($('#lg-max-pages').val());
         var newPage = Number($('#lg-page-input').val());
-        console.log('NewPage:' + newPage);
         if (newPage < 0) {
             cookies.offset = 0;
         } else if (newPage >= maxPages) {

@@ -6,4 +6,4 @@ imports:
 services:
     grid.maker:
         class: Lighthart\GridBundle\Grid\GridMaker
-        arguments: [ @doctrine ]
+        arguments: [ @doctrine, @router ]

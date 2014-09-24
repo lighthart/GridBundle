@@ -19,12 +19,8 @@ function makeEditable(object) {
     var original = object.text().trim();
     object.off('click');
     input=object.children('input');
-    console.log(input);
     $('.lg-editing').each(function() {
         var val = $(this).children('input').val();
-        console.log($(this));
-        console.log('editing val: ' + val);
-        console.log('editing original: ' + original);
     });
     object.addClass('lg-editing');
     var th = object.closest('table').find('th').eq(object.index());
@@ -37,7 +33,6 @@ function makeEditable(object) {
                 // this tells us which key is pressed
                 // keep in comments if more functionality
                 // becomes required
-                // console.log(event.which);
                 var tab = 9;
                 var enter = 13;
                 var escape = 27;
@@ -47,13 +42,11 @@ function makeEditable(object) {
                 // var down   = 40;
                 if (event.which == escape) {
                     // rewrite original value of ajax loaded input
-                    console.log('event.which == escape');
                     update(object, original, original);
                     makeClickable(object);
                 }
                 if (event.which == tab || event.which == enter) {
                     var val = object.children('input').val();
-                    console.log('event.which == tab || event.which == enter');
                     update(object, original, val);
                     if (event.which == enter) {
                         if (object.closest('tr').is(':last-child')) {
@@ -118,8 +111,6 @@ function makeEditable(object) {
 function update(object, original, val) {
     object.removeClass('lg-editing');
     var th = object.closest('table').find('th').eq(object.index());
-    console.log('val: ' + val);
-    console.log('org: ' + original);
     if (val == original) {
         object.text(val);
     } else {
@@ -156,9 +147,6 @@ function makeURLfromTD(td, action) {
     var tr = td.closest('tr');
     var trid = tr.attr('data-role-lg-parent-entity-id');
     var tdid = td.attr('data-role-lg-entity-id');
-    console.log(tdid);
-    console.log(trid);
-    console.log(thid);
     if (action == 'update' && td.attr('data-role-lg-update')) {
         url = td.attr('data-role-lg-update').replace('~entity_id~', td.attr('data-role-lg-entity-id')).replace('~col_id~', thid).replace('~row_id~', trid);
         return url;
