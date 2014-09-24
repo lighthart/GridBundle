@@ -13,11 +13,17 @@
     {%- elseif cell.attr.checkbox is defined -%}
         <input type="checkbox"/>
     {%- elseif cell.value -%}
-        {{value}}
+        {% if cell.attr['emphasis'] is defined %}
+            <{{cell.attr['emphasis']}}>
+            {% endif %}
+            {{value}}
+            {% if cell.attr['emphasis'] is defined %}
+            </{{cell.attr['emphasis']}}>
+        {% endif %}
     {%- elseif 'th' == cell.type -%}
         {%- if cell.attr.filter is defined %}
             <input type="text" id="lg-filter-{{cell.attr['data-role-lg-class']}}__{{cell.attr['data-role-lg-field']}}" class="lg-filter-input"/>
-        {%- elseif cell.options.html is defined and cell.options.html -%}
+        {%- elseif cell.options.titleHtml is defined and cell.options.titleHtml -%}
             {{- cell.title|raw -}}
         {% else %}
             {{- cell.title -}}

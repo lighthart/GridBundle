@@ -82,6 +82,19 @@ function getCookies() {
         pageSize: $.cookie(numPerPagecookie),
         version: $.cookie(ajaxVersionCookie)
     };
+
+    // Setting Defaults
+    console.log('getCookies');
+    console.log(cookies.offset);
+    console.log(!!cookies.offset);
+    console.log(cookies.pageSize);
+    console.log(!!cookies.pageSize);
+    console.log(cookies.version);
+    console.log(!!cookies.version);
+
+    if ( 'undefined' == typeof cookies.offset || isNaN(cookies.offset) ) { cookies.offset = 0;}
+    if ( 'undefined' == typeof cookies.pageSize || isNaN(cookies.pageSize) ) { cookies.pageSize = 10;}
+
     return cookies;
 }
 
@@ -112,6 +125,7 @@ function gridFocus() {
 function gridReload() {
     var oldFocus = null;
     var oldVersion = null;
+    cookies = getCookies();
     $.ajax({
         url: getLgCurrentURI(),
         data: {

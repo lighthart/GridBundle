@@ -432,9 +432,9 @@ class Grid
                     }
 
                     $options = [];
-                    $html = ($columns[$key]->getOption('html') ? : null);
+                    $html = ($columns[$key]->getOption('titleHtml') ? : null);
                     if ($html) {
-                        $options['html'] = true;
+                        $options['titleHtml'] = true;
                     }
 
                     $entityId = ($columns[$key]->getOption('entityId') ? : null);
@@ -456,7 +456,7 @@ class Grid
                         'title' => $title,
                         'type' => 'th',
                         'attr' => $attr,
-                        'options' => $options
+                        'options' => $options,
                     ));
                     $row->addCell($cell);
                 }
@@ -529,7 +529,8 @@ class Grid
                         'attr' => $attr
                     ));
                 } else {
-                    $attr['title']=''; // blank this out incase it was processed from column
+                    $attr['title'] = '';
+                     // blank this out incase it was processed from column
                     $cell = new Cell(array(
                         'title' => '',
                         'type' => 'th',
@@ -710,6 +711,7 @@ class Grid
 
                         // no column!
 
+
                     }
                 }
 
@@ -775,13 +777,17 @@ class Grid
             $row->addCell($statusCell);
         }
 
-        $results = $qb->getQuery()->getResult();
-        if (array() != $results[0]) {
+        $aqb = clone $qb;
+        $aqb->setFirstResult(0);
+
+        $results = $aqb->getQuery()->getResult();
+        if (array()!= $results && array() != $results[0]) {
             foreach ($results[0] as $key => $value) {
                 $attr = $visible[array_keys($visible) [$key - 1]]->getOptions() ['attr'];
 
                 // Can't edit aggregates
                 $attr['class'] = preg_replace('/\s*lg-editable\s*/', '', $attr['class']);
+                $attr['emphasis'] = 'strong';
 
                 $cell = new Cell(array(
                     'value' => $value,
