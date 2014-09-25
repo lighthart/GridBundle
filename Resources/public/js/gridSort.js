@@ -22,7 +22,7 @@ function gridSortControl() {
 function gridSortReload(control) {
 
     var order = control.children('input').val();
-    console.log(order);
+    $('.lg-sort').each(function() { $(this).val(''); });
     if (!order) {
         order = 'ASC';
     } else if (order == 'ASC') {
@@ -31,7 +31,6 @@ function gridSortReload(control) {
         order = '';
     }
     control.children('input').val(order);
-    console.log(order);
 
     var cookies = getCookies();
     console.log(cookies.sort);

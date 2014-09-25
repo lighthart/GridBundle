@@ -788,8 +788,8 @@ class Grid
     {
         foreach ($tildes as $tildeKey => $what) {
             if ('string' == gettype($what) && preg_match('/(.*?)~(((.*?)~)+)(.*?)/', $what, $match)) {
+                // array filter strips out extra empties from explode
                 $matches = array_filter(explode('~', $match[2]));
-                var_dump($match[5]);
                 if (array() == $result) {
                     $what = $match[1] . $match[5];
                 } else {
@@ -798,13 +798,17 @@ class Grid
                         if (isset($result[$m])) {
                             return $result[$m];
                         } else {
-                            return $m;
+                            if (false === strpos($m, '___')) {
+                                return $m;
+                            } else {
+                                // in this case no match was found-- remove the tilde tag
+                                return '';
+                            }
                         }
                     }
                     , $matches)) . $match[5];
                 }
                 $tildes[$tildeKey] = $what;
-                var_dump($what);
             }
         }
     }
