@@ -205,6 +205,8 @@ class GridMaker
         $debug = $request->query->get('debug');
         $filters = !!$request->cookies->get('lg-filter-toggle');
 
+        // this is for autogeneration of grid from QB instead of column specifications
+        // it is not really built as og Sep 2014
         if ($fromQB) {
             $this->mapFieldsFromQB();
         } else {
@@ -218,6 +220,7 @@ class GridMaker
         $pageOffset = $request->cookies->get("lg-" . $request->attributes->get('_route') . "-offset");
         $search = $request->cookies->get("lg-" . $request->attributes->get('_route') . "-search");
         $filter = $request->cookies->get("lg-" . $request->attributes->get('_route') . "-filter");
+        $sort = $request->cookies->get("lg-" . $request->attributes->get('_route') . "-sort");
 
         $this->addFilter($filter);
         $this->addSearch($search);
@@ -243,6 +246,22 @@ class GridMaker
 
         $this->QB()->setFirstResult($offset);
         $this->QB()->setMaxResults($pageSize);
+
+        $orderBys = $this->QB()->getDQLPart('orderBy');
+        $this->QB()->resetDQLPart('orderBy');
+
+        $sorts = explode(';', $sort);
+        foreach ($sorts as $key => $srt) {
+            if (preg_match('/(.*?)\_\_\_(.*?)\_\_(.*?)\:(.*)/', $srt, $match)) {
+                if ($match[4]) {
+                    $this->QB()->add('orderBy', $match[1] . '.' . $match[3] . ' ' . $match[4], true);
+                }
+            }
+        }
+
+        foreach ($orderBys as $k => $part) {
+            $this->QB()->add('orderBy', $part, true);
+        }
 
         $q = $this->QB()->getQuery()->setDql($this->mapAliases());
 
@@ -282,7 +301,7 @@ class GridMaker
                 } else {
                     $oldField = substr(stristr($col, '.') , 1);
                     $oldSubAlias = stristr($col, '.', true);
-                    if(false !== $oldSubAlias) {
+                    if (false !== $oldSubAlias) {
                         $matches[$key] = $aliases[$oldSubAlias] . '_' . $oldField;
                     }
                 }
@@ -349,7 +368,6 @@ class GridMaker
         $g = $this->getGrid();
         $columns = [];
 
-
         foreach ($this->getGrid()->getActions() as $actionKey => $action) {
             if ($action->getRoute()) {
                 $routeConfig = $action->getRoute();
@@ -359,7 +377,7 @@ class GridMaker
                             $routeConfig[$routeKey][$paramKey] = $this->pregAlias($param, $aliases);
                         }
                     }
-                $action->setRoute($routeConfig);
+                    $action->setRoute($routeConfig);
                 } else {
                     $this->addError('Action route improperly specified with more than one route.');
                 }
@@ -382,7 +400,7 @@ class GridMaker
 
                 foreach ($tildes as $k => $option) {
                     $newAlias = $aliases[stristr($oldAlias, '_', true) ] . '_' . $v->getValue();
-                    if (isset($oldOptions[$option])){
+                    if (isset($oldOptions[$option])) {
                         $this->pregAlias($oldOptions[$option], $aliases);
                     }
                 }

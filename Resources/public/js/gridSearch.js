@@ -1,3 +1,8 @@
+function getSearch() {
+    var search = $('input#lg-search-input').val();
+    return search;
+}
+
 function gridSearchControl() {
     $('input#lg-search-input').on('keydown keyup change', function() {
         delay(function() {

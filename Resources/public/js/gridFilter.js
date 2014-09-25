@@ -1,3 +1,11 @@
+function getAllFilters() {
+    var filter = "";
+    $('.lg-filter-input').each(function(i, e) {
+        filter += $(this).parent().attr('data-role-lg-class') + '__' + $(this).parent().attr('data-role-lg-field') + ':' + $(this).val() + ';';
+    });
+    return filter;
+}
+
 function gridFilterControl() {
     $('input.lg-filter-input').on('keydown keyup change', function() {
         delay(function() {

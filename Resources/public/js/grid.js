@@ -29,19 +29,6 @@ function getMaxPages() {
     return maxPages;
 }
 
-function getSearch() {
-    var search = $('input#lg-search-input').val();
-    return search;
-}
-
-function getAllFilters() {
-    var filter = "";
-    $('.lg-filter-input').each(function(i, e) {
-        filter += $(this).parent().attr('data-role-lg-class') + '__' + $(this).parent().attr('data-role-lg-field') + ':' + $(this).val() + ';';
-    });
-    return filter;
-}
-
 function highlightSearches() {
     $('td.lg-searchable').highlight($('input#lg-search-input').val().split(' '), {
         className: 'lg-highlight-searches'
@@ -68,17 +55,19 @@ function highlightFilters() {
 }
 
 function getCookies() {
+    var ajaxVersionCookie = "lg-" + getLgCurrentRoute() + "-version";
     var numPerPagecookie = 'lg-results-per-page';
+    var filterCookie = "lg-" + getLgCurrentRoute() + "-filter";
     var offsetCookie = "lg-" + getLgCurrentRoute() + "-offset";
     var searchCookie = "lg-" + getLgCurrentRoute() + "-search";
-    var filterCookie = "lg-" + getLgCurrentRoute() + "-filter";
-    var ajaxVersionCookie = "lg-" + getLgCurrentRoute() + "-version";
+    var sortCookie = "lg-" + getLgCurrentRoute() + "-sort";
     //reset pagination upon filtering
     var cookies = {
-        offset: $.cookie(offsetCookie),
         filter: $.cookie(filterCookie),
-        search: $.cookie(searchCookie),
+        offset: $.cookie(offsetCookie),
         pageSize: $.cookie(numPerPagecookie),
+        search: $.cookie(searchCookie),
+        sort: $.cookie(sortCookie),
         version: $.cookie(ajaxVersionCookie)
     };
 
@@ -91,14 +80,16 @@ function getCookies() {
 }
 
 function setCookies(cookies) {
+    var ajaxVersionCookie = "lg-" + getLgCurrentRoute() + "-version";
     var numPerPagecookie = 'lg-results-per-page';
+    var filterCookie = "lg-" + getLgCurrentRoute() + "-filter";
     var offsetCookie = "lg-" + getLgCurrentRoute() + "-offset";
     var searchCookie = "lg-" + getLgCurrentRoute() + "-search";
-    var filterCookie = "lg-" + getLgCurrentRoute() + "-filter";
-    var ajaxVersionCookie = "lg-" + getLgCurrentRoute() + "-version";
-    $.cookie(offsetCookie, cookies.offset);
+    var sortCookie = "lg-" + getLgCurrentRoute() + "-sort";
     $.cookie(filterCookie, cookies.filter);
+    $.cookie(offsetCookie, cookies.offset);
     $.cookie(searchCookie, cookies.search);
+    $.cookie(sortCookie, cookies.sort);
     $.cookie(numPerPagecookie, cookies.pageSize);
     $.cookie(ajaxVersionCookie, cookies.version);
 }

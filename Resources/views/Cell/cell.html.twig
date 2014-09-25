@@ -29,11 +29,13 @@
         {{- cell.title -}}
     {%- endif -%}
     {%- if cell.options.sort is defined -%}
+        {% set val = app.request.cookies.get('lg-'~app.request.attributes.get('_route')~'-sort')|subcookie(cell.attr['data-role-lg-class'] ~'__'~ cell.attr['data-role-lg-field'])%}
         <span class="fa-stack pull-right lg-sort">
+            <input type="hidden" id="lg-sort-{{cell.attr['data-role-lg-class']}}__{{cell.attr['data-role-lg-field']}}" value="{{val}}"/>
             <span class="fa fa-sort fa-stack-1x" style="color:#999999"></span>
-            {% if 1 %}
+            {% if val == 'ASC' %}
                 <span class="fa fa-sort-up fa-stack-1x" style="color:#000000"></span>
-            {% elseif 1 %}
+            {% elseif val == 'DESC' %}
                 <span class="fa fa-sort-down fa-stack-1x" style="color:#000000"></span>
             {% else %}
             {% endif %}

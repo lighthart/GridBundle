@@ -397,8 +397,7 @@ class Grid
 
                 $pattern = '/(\w+)\_\_\_(\w+)\_\_(\w+)/';
                 preg_match($pattern, $key, $match);
-
-                $attr['data-role-lg-class'] = $match[2];
+                $attr['data-role-lg-class'] = $match[1] . '___' . $match[2];
                 $attr['data-role-lg-field'] = $columns[$key]->getValue();
 
                 if (isset($columns[$key]->getOptions() ['search'])) {
@@ -790,6 +789,7 @@ class Grid
         foreach ($tildes as $tildeKey => $what) {
             if ('string' == gettype($what) && preg_match('/(.*?)~(((.*?)~)+)(.*?)/', $what, $match)) {
                 $matches = array_filter(explode('~', $match[2]));
+                var_dump($match[5]);
                 if (array() == $result) {
                     $what = $match[1] . $match[5];
                 } else {
@@ -804,6 +804,7 @@ class Grid
                     , $matches)) . $match[5];
                 }
                 $tildes[$tildeKey] = $what;
+                var_dump($what);
             }
         }
     }
