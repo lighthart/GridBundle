@@ -366,7 +366,6 @@ class Grid
             $row->addCell(new Cell(array(
                 'title' => 'Mass',
                 'type' => 'th',
-                'attr' => array()
             )));
         }
 
@@ -382,6 +381,9 @@ class Grid
             $statusCell = new Cell(array(
                 'title' => 'Status',
                 'type' => 'th',
+                'attr' => array(
+                    'class' => 'lg-filterable lg-filter'
+                )
             ));
             $row->addCell($statusCell);
         }
@@ -489,7 +491,8 @@ class Grid
                 'title' => '',
                 'type' => 'th',
                 'attr' => array(
-                    'checkbox' => true
+                    'checkbox' => true,
+                    'class' => 'lg-filterable lg-filter'
                 )
             )));
         }
@@ -498,7 +501,11 @@ class Grid
             $actionCell = new Cell(array(
                 'title' => '',
                 'type' => 'th',
+                'attr' => array(
+                    'class' => 'lg-filterable lg-filter'
+                ) ,
             ));
+
             $row->addCell($actionCell);
         }
 
@@ -506,6 +513,9 @@ class Grid
             $statusCell = new Cell(array(
                 'title' => '',
                 'type' => 'th',
+                'attr' => array(
+                    'class' => 'lg-filterable lg-filter'
+                ) ,
             ));
             $row->addCell($statusCell);
         }
@@ -642,7 +652,7 @@ class Grid
                             // putting a tilde in front of the title causes grid to interpret this as
                             // a result from another column in the query
                             // currently only handles one field
-                            $tildeAttr=[];
+                            $tildeAttr = [];
                             $this->tildes(array(&$title, &$value
                             ) , $result);
                             foreach ($attr as $k => $attrib) {
@@ -655,12 +665,11 @@ class Grid
                                 ) , $result);
                             }
 
-                        $options=[];
-                    $boolean = ($columns[$key]->getOption('boolean') ? : null);
-                    if ($boolean) {
-                        $options['boolean'] = true;
-                    }
-
+                            $options = [];
+                            $boolean = ($columns[$key]->getOption('boolean') ? : null);
+                            if ($boolean) {
+                                $options['boolean'] = true;
+                            }
 
                             $cell = new Cell(array(
                                 'value' => $value,
@@ -802,6 +811,7 @@ class Grid
     {
         foreach ($tildes as $tildeKey => $what) {
             if ('string' == gettype($what) && preg_match('/(.*?)~(((.*?)~)+)(.*?)/', $what, $match)) {
+
                 // array filter strips out extra empties from explode
                 $matches = array_filter(explode('~', $match[2]));
                 if (array() == $result) {
@@ -815,6 +825,7 @@ class Grid
                             if (false === strpos($m, '___')) {
                                 return $m;
                             } else {
+
                                 // in this case no match was found-- remove the tilde tag
                                 return '';
                             }
