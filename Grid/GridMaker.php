@@ -221,7 +221,6 @@ class GridMaker
         $search = $request->cookies->get("lg-" . $request->attributes->get('_route') . "-search");
         $filter = $request->cookies->get("lg-" . $request->attributes->get('_route') . "-filter");
         $sort = $request->cookies->get("lg-" . $request->attributes->get('_route') . "-sort");
-
         $this->addFilter($filter);
         $this->addSearch($search);
         $cqb = clone $this->QB();
@@ -265,6 +264,7 @@ class GridMaker
 
         $q = $this->QB()->getQuery()->setDql($this->mapAliases());
 
+        // print_r($q->getDql());die;
         $results = $q->getResult(Query::HYDRATE_SCALAR);
         if (array() == $results) {
             $root = 'root';
@@ -335,14 +335,29 @@ class GridMaker
 
         $joins = $qb->getDqlPart('join') [$oldRoot];
         foreach ($joins as $k => $join) {
-            $entity = stristr($join->getJoin() , '.', true);
-            $field = substr(stristr($join->getJoin() , '.', false) , 1);
-            $alias = $join->getAlias();
 
-            if (!in_array($join->getAlias() , array_keys($aliases))) {
-                $mappings = $em->getMetadataFactory()->getMetadataFor($entities[$entity])->getAssociationMappings();
-                $aliases[$join->getAlias() ] = $alias . '___' . str_replace('\\', '_', $mappings[$field]['targetEntity'] . '_');
-                $entities[$join->getAlias() ] = $mappings[$field]['targetEntity'];
+            if (false === strpos($join->getJoin() , '\\')) {
+                $entity = stristr($join->getJoin() , '.', true);
+                $field = substr(stristr($join->getJoin() , '.', false) , 1);
+                $alias = $join->getAlias();
+
+                if (!in_array($join->getAlias() , array_keys($aliases))) {
+                    $mappings = $em->getMetadataFactory()->getMetadataFor($entities[$entity])->getAssociationMappings();
+                    $aliases[$join->getAlias() ] = $alias . '___' . str_replace('\\', '_', $mappings[$field]['targetEntity'] . '_');
+                    $entities[$join->getAlias() ] = $mappings[$field]['targetEntity'];
+                }
+            } else {
+
+                // for backside joins
+                $entity = $join->getJoin();
+                $field = stristr($join->getCondition() , '=', true);
+                $field = trim(substr(stristr($field, '.', false) , 1));
+                $alias = $join->getAlias();
+                if (!in_array($join->getAlias() , array_keys($aliases))) {
+                    $mappings = $em->getMetadataFactory()->getMetadataFor($entity)->getAssociationMappings();
+                    $aliases[$join->getAlias() ] = $alias . '___' . str_replace('\\', '_', $entity . '_');
+                    $entities[$join->getAlias() ] = $entity;
+                }
             }
         };
 
@@ -635,6 +650,7 @@ class GridMaker
             $value = trim($value);
             $value = str_replace("'", "''", $value);
             $value = str_replace(",", "", $value);
+            $value = str_replace(";", "", $value);
             $cqb = array();
 
             if ($strings != array()) {
@@ -722,15 +738,18 @@ class GridMaker
             $value = trim($value);
             $value = str_replace("'", "''", $value);
             $value = str_replace(",", "", $value);
+            $value = str_replace(";", "", $value);
             $key = preg_replace('/___(.*?)__/', '.', $key);
-
-            if (in_array($key, $numbers)) {
-                $qb->andWhere($qb->expr()->like("CONCAT($key, '')", "'%" . strtolower($value) . "%'"));
+            if ( $value == 'null') {
+                $qb->andWhere($qb->expr()->isNull($key));
             } else {
-                $qb->andWhere($qb->expr()->like("LOWER(CONCAT($key, ''))", "'%" . strtolower($value) . "%'"));
+                if (in_array($key, $numbers)) {
+                    $qb->andWhere($qb->expr()->like("CONCAT($key, '')", "'%" . strtolower($value) . "%'"));
+                } else {
+                    $qb->andWhere($qb->expr()->like("LOWER(CONCAT($key, ''))", "'%" . strtolower($value) . "%'"));
+                }
             }
         }
-
         return $qb;
     }
 }

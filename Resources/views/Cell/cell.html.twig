@@ -2,17 +2,19 @@
     {% set value = cell.value|date('Y-m-d') %}
 {%- elseif cell.html is defined -%}
     {% set value = cell.value|raw %}
+{%- elseif cell.options.boolean is defined -%}
+    {% set value = cell.value|boolean %}
 {%- else -%}
     {% set value = cell.value|trim %}
 {%- endif -%}
-<{{- cell.type }} {% for attrib, value in cell.attr -%}{{- attrib -}}="{{- value -}}" {%- endfor -%} {% if cell.attr['width'] is defined %}style="width:{{cell.attr['width']}};"{% endif %} {% if cell.attr['title'] is defined and 'td' == cell.type %}{% else %} title="{{- value -}}"{%- endif %}>{{-''-}}
+<{{- cell.type }} {% for attrib, value in cell.attr -%}{{- attrib -}}="{{- value -}}" {%- endfor -%} {% if cell.attr['width'] is defined %}style="width:{{cell.attr['width']}};"{% endif %} {% if cell.attr['title'] is defined and 'td' == cell.type %}{% else %} title="{{- value -}}"{%- endif %}{% if cell.options.boolean is defined%} boolean{% endif %}>{{-''-}}
 {%- if cell.actions is defined -%}
     {% include 'LighthartGridBundle:Action:actions.html.twig' with {'actions': cell.actions} %}
 {%- elseif cell.statuses is defined -%}
     {% include 'LighthartGridBundle:Status:statuses.html.twig' with {'status': cell.statuses} %}
 {%- elseif cell.attr.checkbox is defined -%}
     <input type="checkbox"/>
-{%- elseif cell.value -%}
+{%- elseif cell.value or cell.options.boolean is defined -%}
     {%- if cell.attr.emphasis is defined %}
         <{{cell.attr.emphasis}}>
         {% endif %}

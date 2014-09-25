@@ -431,9 +431,14 @@ class Grid
                         $options['titleHtml'] = true;
                     }
 
-                    $html = ($columns[$key]->getOption('sort') ? : null);
-                    if ($html) {
+                    $sort = ($columns[$key]->getOption('sort') ? : null);
+                    if ($sort) {
                         $options['sort'] = true;
+                    }
+
+                    $boolean = ($columns[$key]->getOption('boolean') ? : null);
+                    if ($boolean) {
+                        $options['boolean'] = true;
                     }
 
                     $entityId = ($columns[$key]->getOption('entityId') ? : null);
@@ -630,14 +635,14 @@ class Grid
 
                         $title = ($columns[$key]->getOption('title') ? : $key);
 
-                        if (isset($columns[$key]->getOptions() ['hidden'])) {
+                        if ($columns[$key]->getOption('hidden')) {
                         } else {
 
                             // tilde mapping
                             // putting a tilde in front of the title causes grid to interpret this as
                             // a result from another column in the query
                             // currently only handles one field
-
+                            $tildeAttr=[];
                             $this->tildes(array(&$title, &$value
                             ) , $result);
                             foreach ($attr as $k => $attrib) {
@@ -649,11 +654,20 @@ class Grid
                                 $this->tildes(array(&$attrib
                                 ) , $result);
                             }
+
+                        $options=[];
+                    $boolean = ($columns[$key]->getOption('boolean') ? : null);
+                    if ($boolean) {
+                        $options['boolean'] = true;
+                    }
+
+
                             $cell = new Cell(array(
                                 'value' => $value,
                                 'title' => $title,
                                 'type' => 'td',
                                 'attr' => $attr,
+                                'options' => $options,
                             ));
 
                             $row->addCell($cell);

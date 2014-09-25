@@ -12,3 +12,8 @@ services:
         class: Lighthart\GridBundle\Twig\SubcookieExtension
         tags:
             - { name: twig.extension }
+
+    lg.boolean.extension:
+        class: Lighthart\GridBundle\Twig\BooleanExtension
+        tags:
+            - { name: twig.extension }
