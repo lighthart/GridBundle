@@ -7,18 +7,18 @@
 {%- else -%}
     {% set value = cell.value|trim %}
 {%- endif -%}
-<{{- cell.type }} {% for attrib, value in cell.attr -%}{{- attrib -}}="{{- value -}}" {%- endfor -%} {% if cell.attr['width'] is defined %}style="width:{{cell.attr['width']}};"{% endif %} {% if cell.attr['title'] is defined and 'td' == cell.type %}{% else %} title="{{- value -}}"{%- endif %}{% if cell.options.boolean is defined%} boolean{% endif %}>{{-''-}}
+<{{- cell.type }} {% for attrib, value in cell.attr -%}{{- attrib -}}="{{- value|trim -}}" {%- endfor -%} {% if cell.attr['width'] is defined %}style="width:{{cell.attr['width']}};"{% endif %} {% if cell.attr['title'] is defined and 'td' == cell.type -%}{%- elseif cell.options.boolean is defined -%} title="{{cell.value|boolean(false)}}"{%- else -%} title="{{- value -}}"{%- endif %}{% if cell.options.boolean is defined%}{% endif %}>{{-''-}}
 {%- if cell.actions is defined -%}
     {% include 'LighthartGridBundle:Action:actions.html.twig' with {'actions': cell.actions} %}
 {%- elseif cell.statuses is defined -%}
     {% include 'LighthartGridBundle:Status:statuses.html.twig' with {'status': cell.statuses} %}
 {%- elseif cell.attr.checkbox is defined -%}
     <input type="checkbox"/>
-{%- elseif cell.value or cell.options.boolean is defined -%}
+{%- elseif cell.value or ( cell.options.boolean is defined and 'th' != cell.type ) -%}
     {%- if cell.attr.emphasis is defined %}
         <{{cell.attr.emphasis}}>
         {% endif %}
-        {{value}}
+        {{value|raw}}
         {% if cell.attr.emphasis is defined %}
         </{{cell.attr.emphasis}}>
     {% endif -%}
@@ -30,19 +30,6 @@
     {%- else -%}
         {{- cell.title -}}
     {%- endif -%}
-    {%- if cell.options.sort is defined -%}
-        {% set val = app.request.cookies.get('lg-'~app.request.attributes.get('_route')~'-sort')|subcookie(cell.attr['data-role-lg-class'] ~'__'~ cell.attr['data-role-lg-field'])%}
-        <span class="fa-stack pull-right lg-sort">
-            <input type="hidden" class ="lg-sort" id="lg-sort-{{cell.attr['data-role-lg-class']}}__{{cell.attr['data-role-lg-field']}}" value="{{val}}"/>
-            <span class="fa fa-sort fa-stack-1x" style="color:#999999"></span>
-            {% if val == 'ASC' %}
-                <span class="fa fa-sort-up fa-stack-1x" style="color:#000000"></span>
-            {% elseif val == 'DESC' %}
-                <span class="fa fa-sort-down fa-stack-1x" style="color:#000000"></span>
-            {% else %}
-            {% endif %}
-        </span>
-    {% else %}
-    {%- endif -%}
+    {%- include 'LighthartGridBundle:Cell:sort.html.twig' %}
     {%- endif -%}{{-''-}}
 </{{- cell.type -}}>

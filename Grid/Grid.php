@@ -361,11 +361,16 @@ class Grid
             'type' => 'tr'
         ));
 
+        //Not ready to implement this
         if ($this->massAction) {
-
             $row->addCell(new Cell(array(
-                'title' => 'Mass',
+                'title' => '',
                 'type' => 'th',
+                'attr' => array(
+                    'checkbox' => true,
+                    'class' => '',
+                    'width' => '1em',
+                )
             )));
         }
 
@@ -488,10 +493,9 @@ class Grid
         //Not ready to implement this
         if ($this->massAction) {
             $row->addCell(new Cell(array(
-                'title' => '',
+                'title' => ' ',
                 'type' => 'th',
                 'attr' => array(
-                    'checkbox' => true,
                     'class' => 'lg-filterable lg-filter'
                 )
             )));
@@ -499,7 +503,7 @@ class Grid
 
         if (array() != $this->getActions()) {
             $actionCell = new Cell(array(
-                'title' => '',
+                'title' => ' ',
                 'type' => 'th',
                 'attr' => array(
                     'class' => 'lg-filterable lg-filter'

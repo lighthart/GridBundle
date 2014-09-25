@@ -15,5 +15,6 @@ services:
 
     lg.boolean.extension:
         class: Lighthart\GridBundle\Twig\BooleanExtension
+        arguments: [ @twig ]
         tags:
             - { name: twig.extension }
