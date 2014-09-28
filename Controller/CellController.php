@@ -27,6 +27,9 @@ class CellController extends Controller
             $error .= 'Id for grid cell not specified' ;
         }
 
+
+        // strrev-strstr-strrev is alternate to substr-strstr:strpos
+        $class = strstr($class,'___')?strrev(strstr(strrev($class),'___',true)):$class;
         $class = str_replace( '_', '\\', $class );
 
         try {
@@ -56,6 +59,10 @@ class CellController extends Controller
         // This returns the input control for the cell
         // it is responsible for setting the data roles
         // that update reads
+
+        // strrev-strstr-strrev is alternate to substr-strstr:strpos
+        $class = strstr($class,'___')?strrev(strstr(strrev($class),'___',true)):$class;
+        $class = str_replace( '_', '\\', $class );
 
         $verity = $this->verifyAction( $class );
         if ( $verity ) {

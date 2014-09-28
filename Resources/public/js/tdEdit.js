@@ -6,6 +6,7 @@ $(document).ready(function() {
 
 function makeClickable(object) {
     object.on('click', function() {
+        console.log('makeclickable');
         var th = object.closest('table').find('th').eq(object.index());
         if (typeof th.attr('data-role-lg-editable') != 'undefined' && th.attr('data-role-lg-editable')) {
             makeEditable(object);
@@ -125,6 +126,9 @@ function update(object, original, val) {
             },
             success: function(responseText, textStatus, XMLHttpRequest) {
                 url = makeURLfromTD(object, 'value');
+                console.log(url);
+                console.log(object);
+
                 object.load(url, null);
             }
             // dataType : dataType
@@ -157,8 +161,10 @@ function makeURLfromTD(td, action) {
     }
     // otherwise try to figure it out yourself
     if (typeof tdid != 'undefined') {
+        console.log('no tdid');
         url = getLgAppRoot() + 'cell/' + action + '/' + th.attr('data-role-lg-class') + '/' + th.attr('data-role-lg-field') + '/' + tdid;
     } else {
+        console.log('no trid');
         url = getLgAppRoot() + 'cell/' + action + '/' + th.attr('data-role-lg-class') + '/' + th.attr('data-role-lg-field') + '/' + trid;
     }
     return url;
