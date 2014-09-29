@@ -111,6 +111,7 @@ function makeEditable(object) {
 
 function update(object, original, val) {
     object.removeClass('lg-editing');
+    console.log('update');
     var th = object.closest('table').find('th').eq(object.index());
     if (val == original) {
         object.text(val);
@@ -118,6 +119,7 @@ function update(object, original, val) {
         // This over writes the input field
         object.text(val);
         url = makeURLfromTD(object, 'update');
+        console.log(url);
         $.ajax({
             type: 'POST',
             url: url,
@@ -153,6 +155,8 @@ function makeURLfromTD(td, action) {
     var tdid = td.attr('data-role-lg-entity-id');
     if (action == 'update' && td.attr('data-role-lg-update')) {
         url = td.attr('data-role-lg-update').replace('~entity_id~', td.attr('data-role-lg-entity-id')).replace('~col_id~', thid).replace('~row_id~', trid);
+        console.log('update make url');
+        console.log(url);
         return url;
     }
     if (action == 'new' && td.attr('data-role-lg-new')) {
@@ -163,9 +167,11 @@ function makeURLfromTD(td, action) {
     if (typeof tdid != 'undefined') {
         console.log('no tdid');
         url = getLgAppRoot() + 'cell/' + action + '/' + th.attr('data-role-lg-class') + '/' + th.attr('data-role-lg-field') + '/' + tdid;
+        console.log(url);
     } else {
         console.log('no trid');
         url = getLgAppRoot() + 'cell/' + action + '/' + th.attr('data-role-lg-class') + '/' + th.attr('data-role-lg-field') + '/' + trid;
+        console.log(url);
     }
     return url;
 }
