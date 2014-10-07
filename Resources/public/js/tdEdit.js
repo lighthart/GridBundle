@@ -172,6 +172,7 @@ function makeURLfromTD(td, action) {
     } else if (typeof tdid != 'undefined') {
      // otherwise try to figure it out yourself
         console.log('tdid is not undefined');
+
         url = getLgAppRoot() + 'cell/' + action + '/' + th.attr('data-role-lg-class') + '/' + th.attr('data-role-lg-field') + '/' + tdid;
         console.log(url);
     } else {

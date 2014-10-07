@@ -294,7 +294,8 @@ class GridMaker
 
     public function pregAlias(&$alias, $aliases)
     {
-        if (preg_match('/(.*?)~(((.*?)~)+)(.*?)/', $alias, $match)) {
+        if (preg_match('/(.*?)~(((.*?)~)+)(.*)/', $alias, $match)) {
+
             $matches = array_filter(explode('~', $match[2]));
             foreach ($matches as $key => $col) {
                 if (preg_match('/\<(.*?)\>/', $col)) {
@@ -308,6 +309,7 @@ class GridMaker
             }
             $alias = $match[1] . '~' . implode('~', $matches) . '~' . $match[5];
         }
+
         return $alias;
     }
 
@@ -451,6 +453,7 @@ class GridMaker
         }
 
         $g->setColumns($columns);
+
         return $dql;
     }
 
