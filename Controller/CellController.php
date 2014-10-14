@@ -110,6 +110,61 @@ class CellController extends Controller
         }
     }
 
+   public function newAction( Request $request, $class = null, $field = null ) {
+        // This returns the input control for the cell
+        // it is responsible for setting the data roles
+        // that update reads
+
+        // strrev-strstr-strrev is alternate to substr-strstr:strpos
+        $class = strstr($class,'___')?strrev(strstr(strrev($class),'___',true)):$class;
+        $class = str_replace( '_', '\\', $class );
+
+        $verity = $this->verifyAction( $class );
+        if ( $verity ) {
+            $class    = str_replace( '_', '\\', $class );
+            $em       = $this->getDoctrine()->getManager();
+            $metadata = $verity['metadata'];
+            $assoc    = array_filter(
+                $metadata->getAssociationMappings() ,
+                function( $mapping ) use ( $metadata ) {
+                    $mapping['fieldName'] ;
+                }
+            );
+
+            if ( in_array($field, $assoc) ) {
+                var_dump('Entity Selector');die;
+
+                // for selectors here
+
+            } else {
+                $em = $this->getDoctrine()->getManager();
+                $entity = new $class();
+                $method = 'get'.ucfirst( $field );
+                $form = $this->createForm(
+                    'cell',
+                    $entity->{$method}(),
+                    array(
+                        'attr'  =>
+                        array(
+                            'data-role-lg-class'     => $class ,
+                            'data-role-lg-field'     => $field ,
+                            'data-role-lg-entity-id' => 'new'  ,
+                        )
+                    )
+                )->createView();
+
+                return $this->render(
+                    'LighthartGridBundle:Cell:edit.html.twig'
+                    , array(
+                        'form' => $form
+                    )
+                );
+            }
+        } else {
+            return $this->render( 'LighthartGridBundle:Cell:configerror.html.twig' );
+        }
+    }
+
     public function updateAction( Request $request, $class = null, $field = null, $id = null ) {
         // This function, post only, reads data roles
         // and persists the data

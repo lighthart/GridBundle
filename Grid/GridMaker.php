@@ -264,7 +264,6 @@ class GridMaker
 
         $q = $this->QB()->getQuery()->setDql($this->mapAliases());
 
-        // print_r($q->getDql());die;
         $results = $q->getResult(Query::HYDRATE_SCALAR);
         if (array() == $results) {
             $root = 'root';

@@ -39,16 +39,9 @@ function gridSortReload(control) {
     console.log(cookies.sort);
     setCookies(cookies);
 
-
-    console.log('Sort');
-    console.log(control);
-
     var th = control.closest('th');
     var thClass = th.attr('data-role-lg-class');
     var thField = th.attr('data-role-lg-field');
-    console.log(th);
-    console.log(thField);
-    console.log(thClass);
 
     gridReload();
 }

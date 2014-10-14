@@ -6,6 +6,14 @@ cell_edit :
         field : .+
         id    : .+
 
+cell_new :
+    pattern      : /new/{class}/{field}
+    defaults     : { _controller: "LighthartGridBundle:Cell:new" }
+    requirements :
+        class : .+
+        field : .+
+        id    : .+
+
 cell_value :
     pattern      : /value/{class}/{field}/{id}
     defaults     : { _controller: "LighthartGridBundle:Cell:value" }
