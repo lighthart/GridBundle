@@ -1,0 +1,10 @@
+{% block lgGrid %}
+    {# used in blocks below #}
+    {% spaceless %}
+            {% block lgGridTable %}
+            {% for section in table.section %}
+                {% include 'LighthartGridBundle:Section:section.html.twig' with {'section' : section } %}
+            {% endfor %}
+            {% endblock lgGridTable %}
+    {% endspaceless %}
+{% endblock lgGrid %}
