@@ -16,13 +16,9 @@
 {%- elseif cell.attr.checkbox is defined -%}
     <input type="checkbox"/>
 {%- elseif cell.value or ( boolean and 'th' != cell.type ) -%}
-    {%- if cell.attr.emphasis is defined %}
-        <{{cell.attr.emphasis}}>
-        {% endif %}
-        {{value|raw}}
-        {% if cell.attr.emphasis is defined %}
-        </{{cell.attr.emphasis}}>
-    {% endif -%}
+    {%- if cell.attr.emphasis is defined %}<{{- cell.attr.emphasis -}}>{% endif -%}
+        {{- value|raw -}}
+        {%- if cell.attr.emphasis is defined %}</{{cell.attr.emphasis}}>{% endif -%}
 {%- elseif 'th' == cell.type -%}
     {%- if cell.attr.filter is defined %}
         <input type="text" id="lg-filter-{{cell.attr['data-role-lg-class']}}__{{cell.attr['data-role-lg-field']}}" class="lg-filter-input"/>

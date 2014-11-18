@@ -224,6 +224,13 @@ class Grid
         return $this;
     }
 
+    public function setOption($option, $value)
+    {
+        $this->options[$option] = $value;
+        return $this;
+    }
+
+
     public function getActions()
     {
         return $this->actions;

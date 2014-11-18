@@ -30,13 +30,18 @@ function getMaxPages() {
 }
 
 function highlightSearches() {
-    $('td.lg-searchable').highlight($('input#lg-search-input').val().split(' '), {
-        className: 'lg-highlight-searches'
-    });
-    if ( !! $('input#lg-search-input').val().trim()) {
-        $('input#lg-search-input').addClass('lg-highlight-searches');
-    } else {
-        $('input#lg-search-input').removeClass('lg-highlight-searches');
+    console.log('prehiglight');
+    console.log($('input#lg-search-input'));
+    console.log($('input#lg-search-input').val());
+    if ($('input#lg-search-input') && undefined != $('input#lg-search-input').val()) {
+        $('td.lg-searchable').highlight($('input#lg-search-input').val().split(' '), {
+            className: 'lg-highlight-searches'
+        });
+        if ( !! $('input#lg-search-input').val().trim()) {
+            $('input#lg-search-input').addClass('lg-highlight-searches');
+        } else {
+            $('input#lg-search-input').removeClass('lg-highlight-searches');
+        }
     }
 }
 
@@ -70,12 +75,13 @@ function getCookies() {
         sort: $.cookie(sortCookie),
         version: $.cookie(ajaxVersionCookie)
     };
-
     // Setting Defaults
-
-    if ( 'undefined' == typeof cookies.offset || isNaN(cookies.offset) ) { cookies.offset = 0;}
-    if ( 'undefined' == typeof cookies.pageSize || isNaN(cookies.pageSize) ) { cookies.pageSize = 10;}
-
+    if ('undefined' == typeof cookies.offset || isNaN(cookies.offset)) {
+        cookies.offset = 0;
+    }
+    if ('undefined' == typeof cookies.pageSize || isNaN(cookies.pageSize)) {
+        cookies.pageSize = 10;
+    }
     return cookies;
 }
 

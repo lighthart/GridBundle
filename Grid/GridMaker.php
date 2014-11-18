@@ -274,8 +274,12 @@ class GridMaker
 
         $html = $this->getGrid()->getOption('html');
         if ($html) {
-            $this->getGrid()->fillTh($results, $filters);
-            $this->getGrid()->fillTr($results, $root);
+            if ($this->getGrid()->getOption('aggregateOnly')) {
+                // aggregate only
+            } else {
+                $this->getGrid()->fillTh($results, $filters);
+                $this->getGrid()->fillTr($results, $root);
+            }
             if ($this->getGrid()->hasErrors()) {
                 $this->getGrid()->fillErrors($results, $filters);
             }
@@ -458,7 +462,6 @@ class GridMaker
 
     public function aggregateQuery()
     {
-
         // we don't want to change the original query so we clone it.
         $qb = clone $this->queryBuilder;
         $qb->resetDQLPart('select');
@@ -466,13 +469,16 @@ class GridMaker
         foreach ($this->getGrid()->getColumns() as $key => $column) {
             if (!$column->getOption('hidden')) {
                 if ($column->getOption('aggregate')) {
-                    $qb->addSelect($column->getOption('aggregate'));
+                    if (strpos($column->getOption('aggregate'), '#') !== false) {
+                        $qb->addSelect('\''.substr($column->getOption('aggregate'),1).'\'');
+                    } else {
+                        $qb->addSelect($column->getOption('aggregate'));
+                    }
                 } else {
                     $qb->addSelect('\'\'');
                 }
             }
         }
-
         return $qb;
     }
 
