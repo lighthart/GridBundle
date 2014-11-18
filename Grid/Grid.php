@@ -486,7 +486,10 @@ class Grid
             }
         }
         $thead->addRow($row);
-        $this->fillFilters($filters);
+        if (array() == array_filter($columns, function($c) {return $c->getOption('filter');})) {
+        } else {
+            $this->fillFilters($filters);
+        }
     }
 
     public function fillFilters($filters)
