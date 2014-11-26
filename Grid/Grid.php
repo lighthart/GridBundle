@@ -517,7 +517,7 @@ class Grid
                 'title' => ' ',
                 'type' => 'th',
                 'attr' => array(
-                    'class' => 'lg-filterable lg-filter'
+                    'class' => 'lg-filterable lg-filter'.($filters?'':' hide')
                 )
             )));
         }
@@ -527,7 +527,7 @@ class Grid
                 'title' => ' ',
                 'type' => 'th',
                 'attr' => array(
-                    'class' => 'lg-filterable lg-filter'
+                    'class' => 'lg-filterable lg-filter'.($filters?'':' hide')
                 ) ,
             ));
 
@@ -621,10 +621,10 @@ class Grid
 
                         // figure out a bial out clause
                         // which uses tildes
-
                         $newAction = clone $action;
                         $security = $action->getSecurity();
-                        if (is_bool($security) && $security) {
+                        if (is_bool($security)) {
+                            // default is true, set in the Action constructor
                         } else {
                             $security = $action->getSecurity();
                             $security = $security($result, $this->aliases);
@@ -640,14 +640,15 @@ class Grid
                                         try {
                                             $newAction->setRoute($this->router->generate($routeKey, $routeConfig[$routeKey]));
                                         } catch (\Exception $e) {
+                                            $newAction= null;
                                         }
                                     }
                                 }
                             } else {
-                                $newAction->setRoute('#');
+                                $newAction= null;
                             }
 
-                        if ( $security ){
+                        if ( $security  && $newAction){
                             $cellActions[] = $newAction;
                         }
                     }

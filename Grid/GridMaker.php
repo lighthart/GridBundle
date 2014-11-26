@@ -441,20 +441,22 @@ class GridMaker
 
         foreach ($this->getGrid()->getActions() as $actionKey => $action) {
             if ($action->getRoute()) {
-                $routeConfig = $action->getRoute();
-                if (1 === count($routeConfig)) {
-                    foreach ($routeConfig as $routeKey => $params) {
-                        foreach ($params as $paramKey => $param) {
-                            $routeConfig[$routeKey][$paramKey] = $this->pregAlias($param, $aliases);
+                if ('#' == $action->getRoute()) {
+                    } else {
+                    $routeConfig = $action->getRoute();
+                    if (1 === count($routeConfig)) {
+                        foreach ($routeConfig as $routeKey => $params) {
+                            foreach ($params as $paramKey => $param) {
+                                $routeConfig[$routeKey][$paramKey] = $this->pregAlias($param, $aliases);
+                            }
                         }
+                        $action->setRoute($routeConfig);
+                    } else {
+                        $this->addError('Action route improperly specified with more than one route.');
                     }
-                    $action->setRoute($routeConfig);
-                } else {
-                    $this->addError('Action route improperly specified with more than one route.');
                 }
             }
         }
-
 
         $g->setColumns($columns);
 
