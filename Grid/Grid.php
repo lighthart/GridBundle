@@ -630,19 +630,24 @@ class Grid
                             $security = $security($result, $this->aliases);
                         }
 
-                        if ( $security ) {
                             if ($newAction->getRoute()) {
                                 $routeConfig = $newAction->getRoute();
                                 if ('array' == gettype($routeConfig)) {
                                     foreach ($routeConfig as $routeKey => $params) {
                                         foreach ($params as $paramKey => $param) {
-                                            // var_dump($param);
                                             $routeConfig[$routeKey][$paramKey] = $this->tilde($param, $result);
                                         }
-                                        $newAction->setRoute($this->router->generate($routeKey, $routeConfig[$routeKey]));
+                                        try {
+                                            $newAction->setRoute($this->router->generate($routeKey, $routeConfig[$routeKey]));
+                                        } catch (\Exception $e) {
+                                        }
                                     }
                                 }
+                            } else {
+                                $newAction->setRoute('#');
                             }
+
+                        if ( $security ){
                             $cellActions[] = $newAction;
                         }
                     }
@@ -692,8 +697,7 @@ class Grid
                             // a result from another column in the query
                             // currently only handles one field
                             $tildeAttr = [];
-                            $this->tildes(array(&$title, &$value
-                            ) , $result);
+                            $this->tildes(array(&$title, &$value) , $result);
                             foreach ($attr as $k => $attrib) {
                                 if (false !== strpos($attrib, '~')) {
                                     $tildeAttr[$k] = $attrib;
