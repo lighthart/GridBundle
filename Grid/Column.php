@@ -16,6 +16,7 @@ class Column
      // from the query
     private $options;
 
+
     public function __construct($alias, $value = 'id', array $options = array())
     {
         $this->alias = $alias;

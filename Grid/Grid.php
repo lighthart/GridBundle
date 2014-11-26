@@ -26,6 +26,7 @@ class Grid
     private $statuses;
     private $massAction;
     private $router;
+    private $aliases;
 
     public function __toString()
     {
@@ -141,6 +142,16 @@ class Grid
         $this->table = new Table();
         return $this;
     }
+
+    public function getAliases() {
+         return $this->aliases;
+    }
+
+    public function setAliases( $aliases ) {
+        $this->aliases = $aliases;
+        return $this;
+    }
+
 
     public function addColumn(Column $column)
     {
@@ -603,23 +614,37 @@ class Grid
                         )
                     )));
                 }
+
                 $cellActions = [];
                 if (array() != $this->getActions()) {
                     foreach ($this->getActions() as $slug => $action) {
-                        $newAction = clone $action;
 
-                        if ($newAction->getRoute()) {
-                            $routeConfig = $newAction->getRoute();
-                            if ('array' == gettype($routeConfig)) {
-                                foreach ($routeConfig as $routeKey => $params) {
-                                    foreach ($params as $paramKey => $param) {
-                                        $routeConfig[$routeKey][$paramKey] = $this->tilde($param, $result);
+                        // figure out a bial out clause
+                        // which uses tildes
+
+                        $newAction = clone $action;
+                        $security = $action->getSecurity();
+                        if (is_bool($security) && $security) {
+                        } else {
+                            $security = $action->getSecurity();
+                            $security = $security($result, $this->aliases);
+                        }
+
+                        if ( $security ) {
+                            if ($newAction->getRoute()) {
+                                $routeConfig = $newAction->getRoute();
+                                if ('array' == gettype($routeConfig)) {
+                                    foreach ($routeConfig as $routeKey => $params) {
+                                        foreach ($params as $paramKey => $param) {
+                                            // var_dump($param);
+                                            $routeConfig[$routeKey][$paramKey] = $this->tilde($param, $result);
+                                        }
+                                        $newAction->setRoute($this->router->generate($routeKey, $routeConfig[$routeKey]));
                                     }
-                                    $newAction->setRoute($this->router->generate($routeKey, $routeConfig[$routeKey]));
                                 }
                             }
+                            $cellActions[] = $newAction;
                         }
-                        $cellActions[] = $newAction;
                     }
 
                     $actionCell = new ActionCell(array(
@@ -802,6 +827,7 @@ class Grid
 
     public function tilde($what, &$result)
     {
+        // converts ~column.def~ into the value from the result
         if ('string' == gettype($what) && preg_match('/(.*?)~(((.*?)~)+)(.*?)/', $what, $match)) {
             $matches = array_filter(explode('~', $match[2]));
             if (array() == $result) {

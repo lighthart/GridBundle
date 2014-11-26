@@ -295,7 +295,7 @@ class GridMaker
         }
     }
 
-    public function pregAlias(&$alias, $aliases)
+    public function pregAlias($alias, $aliases)
     {
         if (preg_match('/(.*?)~(((.*?)~)+)(.*)/', $alias, $match)) {
 
@@ -388,6 +388,57 @@ class GridMaker
         $g = $this->getGrid();
         $columns = [];
 
+        foreach ($g->getColumns() as $k => $v) {;
+            $oldAlias = $v->getAlias();
+            $oldValue = $v->getValue();
+            $oldOptions = $v->getOptions();
+
+            // if the alias is missing from our query,
+            // don't do all this other stuff
+            if (isset($aliases[stristr($oldAlias, '_', true) ])) {
+
+                // tilde mapping
+                $newAlias = $aliases[stristr($oldAlias, '_', true) ] . '_' . $v->getValue();
+                $oldAliases[str_replace('_', '.', $oldAlias)] = $newAlias;
+                $tildes = ['title', 'parentId', 'entityId'];
+
+                foreach ($tildes as $k => $option) {
+                    $newAlias = $aliases[stristr($oldAlias, '_', true) ] . '_' . $v->getValue();
+                    if (isset($oldOptions[$option])) {
+                        $oldOptions[$option] = $this->pregAlias($oldOptions[$option], $aliases);
+                    }
+                }
+
+                if (isset($oldOptions['attr'])) {
+                    foreach (array_keys($oldOptions['attr']) as $k => $option) {
+                        $newAlias = $aliases[stristr($oldAlias, '_', true) ] . '_' . $v->getValue();
+
+                        if (isset($oldOptions['attr'][$option])) {
+                            $oldOptions['attr'][$option] = $this->pregAlias($oldOptions['attr'][$option], $aliases);
+                        }
+                    }
+                }
+
+                $columns[] = new Column($newAlias, $oldValue, $oldOptions);
+            } else {
+                $g->addError('Column \'' . $oldAlias . '\' maps to alias not present in query');
+            }
+
+            $g->setAliases($oldAliases);
+
+            // if the column starts with a tilde, use a value from the field specified
+            // this is when you have several objects of the same category
+            // and you want that category to be the column header
+
+            // e.g. a Fiscal Year label for a budgeting application
+
+            // $gm->addField('g' . $k, 'value', array('title' => '~b' . $k . '.fiscalYear'));
+            // in this case gridmaker would grab the value of b0.fiscalYear when it hydrated
+            // the grid, making the column heading for g0.value column be the value b0.fiscalYear
+
+            // the column must be specified as a hidden column in your grid.
+        }
+
         foreach ($this->getGrid()->getActions() as $actionKey => $action) {
             if ($action->getRoute()) {
                 $routeConfig = $action->getRoute();
@@ -404,56 +455,6 @@ class GridMaker
             }
         }
 
-        foreach ($g->getColumns() as $k => $v) {;
-            $oldAlias = $v->getAlias();
-            $oldValue = $v->getValue();
-            $oldOptions = $v->getOptions();
-
-            // if the alias is missing from our query,
-            // don't do all this other stuff
-            if (isset($aliases[stristr($oldAlias, '_', true) ])) {
-
-                // tilde mapping
-                $newAlias = $aliases[stristr($oldAlias, '_', true) ] . '_' . $v->getValue();
-
-                $tildes = ['title', 'parentId', 'entityId'];
-
-                foreach ($tildes as $k => $option) {
-                    $newAlias = $aliases[stristr($oldAlias, '_', true) ] . '_' . $v->getValue();
-                    if (isset($oldOptions[$option])) {
-                        $this->pregAlias($oldOptions[$option], $aliases);
-                    }
-                }
-
-                if (isset($oldOptions['attr'])) {
-                    foreach (array_keys($oldOptions['attr']) as $k => $option) {
-                        $newAlias = $aliases[stristr($oldAlias, '_', true) ] . '_' . $v->getValue();
-
-                        if (isset($oldOptions['attr'][$option])) {
-                            $this->pregAlias($oldOptions['attr'][$option], $aliases);
-                        }
-                    }
-                }
-
-                $columns[] = new Column($newAlias, $oldValue, $oldOptions);
-            } else {
-                $g->addError('Column \'' . $oldAlias . '\' maps to alias not present in query');
-            }
-
-            // if the column starts with a tilde, use a value from the field specified
-            // this is when you have several objects of the same category
-            // and you want that category to be the column header
-
-            // e.g. a Fiscal Year label for a budgeting application
-
-            // $gm->addField('g' . $k, 'value', array('title' => '~b' . $k . '.fiscalYear'));
-            // in this case gridmaker would grab the value of b0.fiscalYear when it hydrated
-            // the grid, making the column heading for g0.value column be the value b0.fiscalYear
-
-            // the column must be specified as a hidden column in your grid.
-
-
-        }
 
         $g->setColumns($columns);
 
@@ -550,7 +551,7 @@ class GridMaker
         // Need to do the following loops twice because select removes all fields
         // While addSelect just adds more
 
-        // This bit is to make sure added columns are added to teh query as partials
+        // This bit is to make sure added columns are added to the query as partials
         foreach ($partials as $entity => $fields) {
             if ($qb->getRootAlias() == $entity) {
                 if ($key = array_search('id', $fields)) {

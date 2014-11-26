@@ -15,18 +15,23 @@ class Action
     private $route;
     private $security;
     private $severity;
+    private $columns;
+
 
     public function __construct($options = array())
     {
 
         // default action is always present
         // default severity is btn-default
+        // default security is an anonymous function or a boolean
+        // columns are fields used by security's function
         $options = array_merge(array(
             'attr' => null,
             'icon' => null,
             'name' => null,
             'route' => null,
             'security' => true,
+            'columns' => null,
             'severity' => 'btn-default',
             'title' => null,
         ) , $options);
@@ -35,6 +40,7 @@ class Action
         $this->name = $options['name'];
         $this->route = $options['route'];
         $this->security = $options['security'];
+        $this->columns = $options['columns'];
         $this->severity = $options['severity'];
         $this->title = $options['title'];
     }
@@ -96,6 +102,15 @@ class Action
     public function setSecurity($security)
     {
         $this->security = $security;
+        return $this;
+    }
+
+    public function getColumns() {
+         return $this->columns;
+    }
+
+    public function setColumns( $columns ) {
+        $this->columns = $columns;
         return $this;
     }
 
