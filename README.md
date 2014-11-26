@@ -22,6 +22,8 @@ Eg:
         $qb->addOrderBy('f.lastName');
         $qb->addOrderBy('f.firstName');
 
+Note: This query will be rewritten significantly, to fetch only partial entities based on the columns indicated in step 3.
+
 Step 2.  Initialize your grid.
 
         $query = $qb->getQuery();
@@ -76,14 +78,54 @@ Step 3.  Start adding fields/columns.
             <School Name>
             to the table header cell.
 
-Step 4. Hydrate the grid and pass it to a twig
+Step 4.  Add Actions.
+
+        $gm->addAction(array(
+            'icon' => 'fa-rocket',
+            'route' => array(
+                'student_show' => array(
+                    'id' => '~t.id~'
+                )
+            ) ,
+            'security' => function($result, $columns){
+                return 'F' == $result[$columns['g.shortName']];
+            },
+            'attr' => array(
+                'title' => 'Star3'
+            )
+        ));
+
+Note: actions are rendered as <a> tags
+
+    Features:
+        'icon'          A font awesome icon for the button.  Note: Font Awesome not installed  Without
+                        font-awesome, this feature puts a <span class="fa [icon]"></span> tag into the
+                        <a> for the button
+        'name'          Text for the button.  Works with icon, with icon being leftmost.  If no name is
+                        specified, empty space is rendered so the button has some width
+        'security'      A primitive, or an anonymous function.  If the value evaluates to true, the
+                        button is rendered.  Default is true.  For the anonymous function, the result
+                        tuple for the current row is sent as the first parameter, and an alias translation
+                        table for the original alias and the new alias in the query is sent as the second
+                        parameter.  The tildes function as columns forming indexes, to base the appearance
+                        on portions of the tuple.
+        'severity'      adds a bootstrap class such as btn-primary to the <a>
+        'attr'          sets the html attributes
+        'title'         sets the title of the <a>
+        'route'         Either raw text for the route, or an array of data with the key being a symfony
+                        alias for a route, and the value being an array of parameters for said route
+
+
+Step 5.  Hydrate the grid and pass it to a twig
 
         $gm->hydrateGrid($request);
         return $this->render('MesdOrmedBundle:Test:test3.html.twig', array(
             'grid' => $gm->getGrid() ,
         ));
 
-Step 5. In your twig:
+Note: A lot of information is rendered with the table, including classnames and ids for other processing via javascript or other ajax.
+
+Step 5.  In your twig:
         {% include 'LighthartGridBundle:Grid:grid.html.twig' %}
 
         or

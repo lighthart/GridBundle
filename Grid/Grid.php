@@ -704,9 +704,18 @@ class Grid
                                     $tildeAttr[$k] = $attrib;
                                 }
                             }
-                            foreach ($tildeAttr as $attrib) {
-                                $this->tildes(array(&$attrib
-                                ) , $result);
+
+                            foreach ($tildeAttr as $tildeKey => $attrib) {
+                                $tildeAttr[$tildeKey] = $this->tilde($attrib, $result);
+                            }
+
+                            $attr = array_merge($attr, $tildeAttr);
+
+                            if (array_key_exists('title', $attr) && $attr['title'] ) {
+                            } else {
+                                if (!is_object($value)) {
+                                    $attr['title'] = $value;
+                                }
                             }
 
                             $options = [];
@@ -714,7 +723,6 @@ class Grid
                             if ($boolean) {
                                 $options['boolean'] = true;
                             }
-
                             $cell = new Cell(array(
                                 'value' => $value,
                                 'title' => $title,
@@ -840,7 +848,7 @@ class Grid
             } else {
                 $what = $match[1] . implode(' ', array_map(function ($m) use (&$result)
                 {
-                    if (isset($result[$m])) {
+                    if (array_key_exists($m, $result)) {
                         return $result[$m];
                     } else {
                         return $m;
@@ -864,7 +872,7 @@ class Grid
                 } else {
                     $what = $match[1] . implode(' ', array_map(function ($m) use (&$result)
                     {
-                        if (isset($result[$m])) {
+                        if (array_key_exists($m, $result)) {
                             return $result[$m];
                         } else {
                             if (false === strpos($m, '___')) {
@@ -878,8 +886,10 @@ class Grid
                     }
                     , $matches)) . $match[5];
                 }
+
                 $tildes[$tildeKey] = $what;
             }
         }
+        return $tildes;
     }
 }

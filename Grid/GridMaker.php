@@ -441,7 +441,7 @@ class GridMaker
 
         foreach ($this->getGrid()->getActions() as $actionKey => $action) {
             if ($action->getRoute()) {
-                if ('#' == $action->getRoute()) {
+                if ('string' == gettype($action->getRoute())) {
                     } else {
                     $routeConfig = $action->getRoute();
                     if (1 === count($routeConfig)) {

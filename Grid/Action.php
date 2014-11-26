@@ -31,16 +31,14 @@ class Action
             'name' => null,
             'route' => null,
             'security' => true,
-            'columns' => null,
             'severity' => 'btn-default',
             'title' => null,
         ) , $options);
         $this->attr = $options['attr'];
-        $this->icon = ($options['icon'] ? : 'fa-rocket');
+        $this->icon = ($options['icon'] );
         $this->name = $options['name'];
         $this->route = $options['route'];
         $this->security = $options['security'];
-        $this->columns = $options['columns'];
         $this->severity = $options['severity'];
         $this->title = $options['title'];
     }
@@ -102,15 +100,6 @@ class Action
     public function setSecurity($security)
     {
         $this->security = $security;
-        return $this;
-    }
-
-    public function getColumns() {
-         return $this->columns;
-    }
-
-    public function setColumns( $columns ) {
-        $this->columns = $columns;
         return $this;
     }
 
