@@ -59,13 +59,13 @@ Step 3.  Start adding fields/columns.
                     It also specifies the kind of filter, eg date, number or string
         'filter'    evaluating to true will add a filter box to the column which restricts only on the current column.
                     It also specifies the kind of filter, eg date, number or string
-        'attr'      sets the html attributes
+        'attr'      sets the html attributes.
         'html'      indicates the title should be interpreted as html, ie, the raw filter is applied
         'entityId'  evaluating to true stores the entity id on the individual cell.
                     This is mostly useful for javascript related associated entities
         'parentId'  evaluating to true stores the parent id on the row header.
                     This is mostly useful for javascript related associated entities
-        'title'     sets the title of the cell
+        'title'     sets the title of the column.  Note: the title key of the 'attr' field sets the hover-over title
         'hidden'    evaluating to true hides the column
 
 
@@ -110,8 +110,7 @@ Note: actions are rendered as <a> tags
                         parameter.  The tildes function as columns forming indexes, to base the appearance
                         on portions of the tuple.
         'severity'      adds a bootstrap class such as btn-primary to the <a>
-        'attr'          sets the html attributes
-        'title'         sets the title of the <a>
+        'attr'          sets the html attributes.  Note: the title key of the 'attr' field sets the hover-over title
         'route'         Either raw text for the route, or an array of data with the key being a symfony
                         alias for a route, and the value being an array of parameters for said route
 
