@@ -27,6 +27,8 @@ class Grid
     private $massAction;
     private $router;
     private $aliases;
+    private $export;
+
 
     public function __toString()
     {
@@ -45,6 +47,9 @@ class Grid
         $this->table->setGrid($this);
         $this->errors = array();
         if (isset($options['massAction']) && $options['massAction']) {
+            $this->massAction = true;
+        }
+        if (isset($options['export']) && $options['export']) {
             $this->massAction = true;
         }
     }
@@ -152,6 +157,14 @@ class Grid
         return $this;
     }
 
+    public function getExport() {
+         return $this->export;
+    }
+
+    public function setExport( $export = true ) {
+        $this->export = $export;
+        return $this;
+    }
 
     public function addColumn(Column $column)
     {
@@ -161,12 +174,9 @@ class Grid
 
     public function removeColumn(Column $column)
     {
-
         // not sure how to implement yet
         // $this->columns[] = $columns;
         // return $this;
-
-
     }
 
     public function setColumns(array $columns)
@@ -380,7 +390,7 @@ class Grid
         ));
 
         //Not ready to implement this
-        if ($this->massAction) {
+        if ($this->massAction && !$this->export) {
             $row->addCell(new Cell(array(
                 'title' => '',
                 'type' => 'th',
@@ -392,7 +402,7 @@ class Grid
             )));
         }
 
-        if (array() != $this->getActions()) {
+        if ((array() != $this->getActions()) && !$this->export) {
             $actionCell = new Cell(array(
                 'title' => 'Actions',
                 'type' => 'th',
@@ -400,7 +410,7 @@ class Grid
             $row->addCell($actionCell);
         }
 
-        if (array() != $this->getStatuses()) {
+        if ((array() != $this->getStatuses()) && !$this->export) {
             $statusCell = new Cell(array(
                 'title' => 'Status',
                 'type' => 'th',
@@ -497,7 +507,7 @@ class Grid
             }
         }
         $thead->addRow($row);
-        if (array() == array_filter($columns, function($c) {return $c->getOption('filter');})) {
+        if ((array() == array_filter($columns, function($c) {return $c->getOption('filter');})) || $this->export) {
         } else {
             $this->fillFilters($filters);
         }
@@ -605,7 +615,7 @@ class Grid
                     ));
                 }
 
-                if ($this->massAction) {
+                if ($this->massAction && !$this->export) {
                     $row->addCell(new Cell(array(
                         'title' => '',
                         'type' => 'td',
@@ -616,7 +626,7 @@ class Grid
                 }
 
                 $cellActions = [];
-                if (array() != $this->getActions()) {
+                if ((array() != $this->getActions()) && !$this->export) {
                     foreach ($this->getActions() as $slug => $action) {
 
                         // figure out a bial out clause
@@ -661,7 +671,7 @@ class Grid
                     $row->addCell($actionCell);
                 }
 
-                if (array() != $this->getStatuses()) {
+                if ((array() != $this->getStatuses()) && !$this->export) {
                     $statusCell = new StatusCell(array(
                         'title' => 'Status',
                         'type' => 'td',
@@ -780,14 +790,14 @@ class Grid
         ));
 
         //Not ready to implement this
-        if ($this->massAction) {
+        if ($this->massAction && !$this->export) {
             $row->addCell(new Cell(array(
                 'title' => '',
                 'type' => 'td',
                 'attr' => array()
             )));
         }
-        if (array() != $this->getActions()) {
+        if ((array() != $this->getActions()) && !$this->export) {
             $actionCell = new Cell(array(
                 'title' => 'Actions',
                 'type' => 'td',
@@ -795,7 +805,7 @@ class Grid
             $row->addCell($actionCell);
         }
 
-        if (array() != $this->getStatuses()) {
+        if ((array() != $this->getStatuses()) && !$this->export) {
             $statusCell = new Cell(array(
                 'title' => 'Status',
                 'type' => 'td',

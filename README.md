@@ -118,7 +118,7 @@ Note: actions are rendered as <a> tags
 Step 5.  Hydrate the grid and pass it to a twig
 
         $gm->hydrateGrid($request);
-        return $this->render('MesdOrmedBundle:Test:test3.html.twig', array(
+        return $this->render('ApplicationBundle:Test:test3.html.twig', array(
             'grid' => $gm->getGrid() ,
         ));
 
@@ -132,3 +132,12 @@ Step 5.  In your twig:
         {% embed 'LighthartGridBundle:Grid:grid.html.twig' %}
         < over-write certain blocks >
         {% endembed %}
+
+Step 6.  Configure export routes:
+
+    test3:
+        pattern:  /test3/{export}
+        defaults: { _controller: "ApplicationBundle:Test:test3", export: grid }
+
+    The export value of 'export' is hard coded to return a grid without buttons, such that
+    /test3 gives the html grid with buttons, while /test3/export gives without buttons

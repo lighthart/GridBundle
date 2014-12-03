@@ -163,17 +163,9 @@ class GridMaker
         }
 
         if ($metadata) {
-            return array(
-                'class' => $class,
-                'metadata' => $metadata,
-                'error' => null,
-            );
+            return array('class' => $class, 'metadata' => $metadata, 'error' => null,);
         } else {
-            array(
-                'class' => null,
-                'metadata' => null,
-                'error' => $error,
-            );
+            array('class' => null, 'metadata' => null, 'error' => $error,);
         }
     }
 
@@ -199,14 +191,19 @@ class GridMaker
         $this->getGrid()->addStatus(new Status($options));
     }
 
-    public function hydrateGrid(Request $request, $fromQB = false)
+    public function hydrateGrid(Request $request, $options = array() )
     {
-
+        set_time_limit(0);
+        $defaultOptions = array('fromQB' => false, 'export' => false);
+        $options = array_merge($defaultOptions, $options );
+        $fromQB = $options['fromQB'];
+        $export = $options['export'];
+        if ($export) { $this->setExport(); }
         $debug = $request->query->get('debug');
         $filters = !!$request->cookies->get('lg-filter-toggle');
 
         // this is for autogeneration of grid from QB instead of column specifications
-        // it is not really built as og Sep 2014
+        // it is not really built as of Sep 2014
         if ($fromQB) {
             $this->mapFieldsFromQB();
         } else {
@@ -235,16 +232,12 @@ class GridMaker
         $offset = ($offset < 0) ? 0 : $offset;
         $offset = floor($offset / $pageSize) * $pageSize;
 
-        $this->getGrid()->setPageSize($pageSize);
-        $this->getGrid()->setOffset($offset);
 
         $this->getGrid()->setSearch($search);
 
         if ($this->getGrid()->getOption('singlePage')) {
         }
 
-        $this->QB()->setFirstResult($offset);
-        $this->QB()->setMaxResults($pageSize);
 
         $orderBys = $this->QB()->getDQLPart('orderBy');
         $this->QB()->resetDQLPart('orderBy');
@@ -262,7 +255,22 @@ class GridMaker
             $this->QB()->add('orderBy', $part, true);
         }
 
-        $q = $this->QB()->getQuery()->setDql($this->mapAliases());
+        $q = $this->QB()->getQuery();
+        $q->setDql($this->mapAliases());
+
+        if (!$export) {
+            $this->getGrid()->setPageSize($pageSize);
+            $this->getGrid()->setOffset($offset);
+            $this->QB()->setFirstResult($offset);
+            $this->QB()->setMaxResults($pageSize);
+        } else {
+            // this needs to be changed to something for iteration
+
+            $this->getGrid()->setPageSize($pageSize);
+            $this->getGrid()->setOffset($offset);
+            $this->QB()->setFirstResult($offset);
+            $this->QB()->setMaxResults($pageSize);
+        }
 
         $results = $q->getResult(Query::HYDRATE_SCALAR);
         if (array() == $results) {
@@ -275,7 +283,9 @@ class GridMaker
         $html = $this->getGrid()->getOption('html');
         if ($html) {
             if ($this->getGrid()->getOption('aggregateOnly')) {
+
                 // aggregate only
+
             } else {
                 $this->getGrid()->fillTh($results, $filters);
                 $this->getGrid()->fillTr($results, $root);
@@ -283,12 +293,13 @@ class GridMaker
             if ($this->getGrid()->hasErrors()) {
                 $this->getGrid()->fillErrors($results, $filters);
             }
-            $sums = array_filter($this->getGrid()->getColumns() , function ($c)
+
+            $sums = array_filter($this->getGrid()->getColumns(), function ($c)
             {
                 return in_array('aggregate', array_keys($c->getOptions()));
             });
 
-            if (array() !== $results) {
+            if (array() !== $results && array() != $sums ) {
                 $this->getGrid()->fillAggregate($this->aggregateQuery());
             } else {
             }
@@ -303,7 +314,7 @@ class GridMaker
             foreach ($matches as $key => $col) {
                 if (preg_match('/\<(.*?)\>/', $col)) {
                 } else {
-                    $oldField = substr(stristr($col, '.') , 1);
+                    $oldField = substr(stristr($col, '.'), 1);
                     $oldSubAlias = stristr($col, '.', true);
                     if (false !== $oldSubAlias) {
                         $matches[$key] = $aliases[$oldSubAlias] . '_' . $oldField;
@@ -341,12 +352,12 @@ class GridMaker
         $joins = $qb->getDqlPart('join') [$oldRoot];
         foreach ($joins as $k => $join) {
 
-            if (false === strpos($join->getJoin() , '\\')) {
-                $entity = stristr($join->getJoin() , '.', true);
-                $field = substr(stristr($join->getJoin() , '.', false) , 1);
+            if (false === strpos($join->getJoin(), '\\')) {
+                $entity = stristr($join->getJoin(), '.', true);
+                $field = substr(stristr($join->getJoin(), '.', false), 1);
                 $alias = $join->getAlias();
 
-                if (!in_array($join->getAlias() , array_keys($aliases))) {
+                if (!in_array($join->getAlias(), array_keys($aliases))) {
                     $mappings = $em->getMetadataFactory()->getMetadataFor($entities[$entity])->getAssociationMappings();
                     $aliases[$join->getAlias() ] = $alias . '___' . str_replace('\\', '_', $mappings[$field]['targetEntity'] . '_');
                     $entities[$join->getAlias() ] = $mappings[$field]['targetEntity'];
@@ -355,10 +366,10 @@ class GridMaker
 
                 // for backside joins
                 $entity = $join->getJoin();
-                $field = stristr($join->getCondition() , '=', true);
-                $field = trim(substr(stristr($field, '.', false) , 1));
+                $field = stristr($join->getCondition(), '=', true);
+                $field = trim(substr(stristr($field, '.', false), 1));
                 $alias = $join->getAlias();
-                if (!in_array($join->getAlias() , array_keys($aliases))) {
+                if (!in_array($join->getAlias(), array_keys($aliases))) {
                     $mappings = $em->getMetadataFactory()->getMetadataFor($entity)->getAssociationMappings();
                     $aliases[$join->getAlias() ] = $alias . '___' . str_replace('\\', '_', $entity . '_');
                     $entities[$join->getAlias() ] = $entity;
@@ -399,7 +410,7 @@ class GridMaker
 
                 // tilde mapping
                 $newAlias = $aliases[stristr($oldAlias, '_', true) ] . '_' . $v->getValue();
-                $oldAliases[str_replace('_', '.', $oldAlias)] = $newAlias;
+                $oldAliases[str_replace('_', '.', $oldAlias) ] = $newAlias;
                 $tildes = ['title', 'parentId', 'entityId'];
 
                 foreach ($tildes as $k => $option) {
@@ -437,12 +448,13 @@ class GridMaker
             // the grid, making the column heading for g0.value column be the value b0.fiscalYear
 
             // the column must be specified as a hidden column in your grid.
+
         }
 
         foreach ($this->getGrid()->getActions() as $actionKey => $action) {
             if ($action->getRoute()) {
                 if ('string' == gettype($action->getRoute())) {
-                    } else {
+                } else {
                     $routeConfig = $action->getRoute();
                     if (1 === count($routeConfig)) {
                         foreach ($routeConfig as $routeKey => $params) {
@@ -465,6 +477,7 @@ class GridMaker
 
     public function aggregateQuery()
     {
+
         // we don't want to change the original query so we clone it.
         $qb = clone $this->queryBuilder;
         $qb->resetDQLPart('select');
@@ -473,7 +486,7 @@ class GridMaker
             if (!$column->getOption('hidden')) {
                 if ($column->getOption('aggregate')) {
                     if (strpos($column->getOption('aggregate'), '#') !== false) {
-                        $qb->addSelect('\''.substr($column->getOption('aggregate'),1).'\'');
+                        $qb->addSelect('\'' . substr($column->getOption('aggregate'), 1) . '\'');
                     } else {
                         $qb->addSelect($column->getOption('aggregate'));
                     }
@@ -493,21 +506,17 @@ class GridMaker
             if (preg_match('|partial (.*?)\.\{(.*?)\}|', $select->getParts() [0], $matches)) {
                 $partials[$matches[1]][] = $matches[2];
             } else {
-                $partials[$select->getParts() [0]] = array(
-                    'id'
-                );
+                $partials[$select->getParts() [0]] = array('id');
             }
         }
 
-        $entities = array_merge(array_map(function ($f)
-        {
-            return $f->getAlias();
-        }
-        , $qb->getDQLPart('from')) , array_map(function ($f)
-        {
-            return $f->getAlias();
-        }
-        , $qb->getDQLPart('join') [$qb->getDQLParts() ['from'][0]->getAlias() ]));
+        $entities = array_merge(
+            array_map(
+                function ($f) {return $f->getAlias();}, $qb->getDQLPart('from')),
+            array_map(
+                function ($f) {return $f->getAlias();},
+                $qb->getDQLPart('join') [$qb->getDQLParts() ['from'][0]->getAlias() ])
+            );
 
         // While addSelect just adds more
         foreach ($partials as $entity => $fields) {
@@ -618,8 +627,7 @@ class GridMaker
         $searchFields = array_map(function ($c)
         {
             return $c->getOption('search');
-        }
-        , array_filter($this->getGrid()->getColumns() , function ($c)
+        }, array_filter($this->getGrid()->getColumns(), function ($c)
         {
             return $c->getOption('search');
         }));
@@ -649,9 +657,7 @@ class GridMaker
             return !!$e;
         });
 
-        if (array(
-            ''
-        ) == $search || array() == $search) {
+        if (array('') == $search || array() == $search) {
 
             // just bail out if there is nothing to search for
             return $qb;
@@ -682,10 +688,7 @@ class GridMaker
                 }
             }
 
-            $qb->andWhere(call_user_func_array(array(
-                $qb->expr() ,
-                "orx"
-            ) , $cqb));
+            $qb->andWhere(call_user_func_array(array($qb->expr(), "orx"), $cqb));
         }
 
         return $qb;
@@ -697,8 +700,7 @@ class GridMaker
         $filterFields = array_map(function ($c)
         {
             return $c->getOption('filter');
-        }
-        , array_filter($this->getGrid()->getColumns() , function ($c)
+        }, array_filter($this->getGrid()->getColumns(), function ($c)
         {
             return $c->getOption('filter');
         }));
@@ -737,9 +739,7 @@ class GridMaker
             return !!$e;
         });
 
-        if (array(
-            ''
-        ) == $filter || array() == $filter) {
+        if (array('') == $filter || array() == $filter) {
 
             // just bail out if there is nothing to filter for
             return $qb;
@@ -751,7 +751,7 @@ class GridMaker
             $value = str_replace(",", "", $value);
             $value = str_replace(";", "", $value);
             $key = preg_replace('/___(.*?)__/', '.', $key);
-            if ( $value == 'null') {
+            if ($value == 'null') {
                 $qb->andWhere($qb->expr()->isNull($key));
             } else {
                 if (in_array($key, $numbers)) {
@@ -762,5 +762,9 @@ class GridMaker
             }
         }
         return $qb;
+    }
+
+    public function setExport($export = true) {
+        $this->getGrid()->setExport($export);
     }
 }
