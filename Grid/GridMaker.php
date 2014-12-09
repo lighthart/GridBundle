@@ -212,6 +212,7 @@ class GridMaker
 
         $this->mapMethodsFromQB();
 
+        var_dump(__LINE__);
         $cookies = $request->cookies;
         $pageSize = $request->cookies->get('lg-results-per-page') ? : 10;
         $pageOffset = $request->cookies->get("lg-" . $request->attributes->get('_route') . "-offset");
@@ -255,8 +256,8 @@ class GridMaker
             $this->QB()->add('orderBy', $part, true);
         }
 
-        $q = $this->QB()->getQuery();
-        $q->setDql($this->mapAliases());
+
+
 
         if (!$export) {
             $this->getGrid()->setPageSize($pageSize);
@@ -272,7 +273,15 @@ class GridMaker
             $this->QB()->setMaxResults($pageSize);
         }
 
+        $q = $this->QB()->getQuery();
+        $q->setDql($this->mapAliases());
+
+        var_dump($pageSize);
+
+        var_dump(__LINE__);
+        print_r($q->getSQL());
         $results = $q->getResult(Query::HYDRATE_SCALAR);
+        var_dump($results);die;
         if (array() == $results) {
             $root = 'root';
         } else {
