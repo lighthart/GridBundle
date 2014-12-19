@@ -56,9 +56,13 @@ class Column
         return $this->value;
     }
 
-    public function getOptions()
+    public function getOptions($option = null)
     {
-        return $this->options;
+        if ($option === null) {
+            return $this->options;
+        } else {
+            return $this->getOption($option);
+        }
     }
 
     public function setOptions($options)

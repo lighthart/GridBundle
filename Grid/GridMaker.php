@@ -6,7 +6,11 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
+use Symfony\Component\HttpFoundation\ResponseHeaderBag;
+
 use Doctrine\ORM\Query;
+use Doctrine\ORM\Query\ResultSetMapping;
 use Doctrine\ORM\Query\Expr;
 
 class GridMaker
@@ -191,14 +195,16 @@ class GridMaker
         $this->getGrid()->addStatus(new Status($options));
     }
 
-    public function hydrateGrid(Request $request, $options = array() )
+    public function hydrateGrid(Request $request, $options = array())
     {
         set_time_limit(0);
         $defaultOptions = array('fromQB' => false, 'export' => false);
-        $options = array_merge($defaultOptions, $options );
+        $options = array_merge($defaultOptions, $options);
         $fromQB = $options['fromQB'];
         $export = $options['export'];
-        if ($export) { $this->setExport(); }
+        if ($export) {
+            $this->setExport();
+        }
         $debug = $request->query->get('debug');
         $filters = !!$request->cookies->get('lg-filter-toggle');
 
@@ -212,7 +218,6 @@ class GridMaker
 
         $this->mapMethodsFromQB();
 
-        var_dump(__LINE__);
         $cookies = $request->cookies;
         $pageSize = $request->cookies->get('lg-results-per-page') ? : 10;
         $pageOffset = $request->cookies->get("lg-" . $request->attributes->get('_route') . "-offset");
@@ -233,12 +238,10 @@ class GridMaker
         $offset = ($offset < 0) ? 0 : $offset;
         $offset = floor($offset / $pageSize) * $pageSize;
 
-
         $this->getGrid()->setSearch($search);
 
         if ($this->getGrid()->getOption('singlePage')) {
         }
-
 
         $orderBys = $this->QB()->getDQLPart('orderBy');
         $this->QB()->resetDQLPart('orderBy');
@@ -256,61 +259,90 @@ class GridMaker
             $this->QB()->add('orderBy', $part, true);
         }
 
+        if ($export) {
+            $offset = 0;
+            $pageSize= 500;
+
+            $this->QB()->setFirstResult($offset);
+            $this->QB()->setMaxResults($pageSize);
+
+            $now = new \DateTime();
+            $now = $now->format('Ymdhis');
+            $micro = substr(explode(" ", microtime()) [0], 2, 6);
+            $filename = 'export' . $now . $micro . '.csv';
+            $file = fopen($filename, 'w');
 
 
+            fputcsv($file, $this->getGrid()->exportTh());
 
-        if (!$export) {
+            $this->QB()->setFirstResult($offset);
+            $results = $this->QB()->getQuery()->getResult(Query::HYDRATE_SCALAR);
+
+            while (array() != $results) {
+                $this->QB()->setFirstResult($offset);
+                $results = $this->QB()->getQuery()->getResult(Query::HYDRATE_SCALAR);
+                $offset+= $pageSize;
+
+                // Write this next line to file
+                foreach ($this->getGrid()->exportTr($results) as $key => $line) {
+                    fputcsv($file, $line);
+                }
+            }
+
+            fclose($file);
+            // $response = new Response();
+            $response = new BinaryFileResponse($filename);
+            $d = $response->headers->makeDisposition(ResponseHeaderBag::DISPOSITION_ATTACHMENT, $filename);
+            $response->headers->set('Content-Disposition', $d);
+
+            // $response->send();
+            // $response->headers->set('Content-Type', 'text/plain');
+            // $response->setContentDisposition(ResponseHeaderBag::DISPOSITION_ATTACHMENT, );
+            return $response;
+
+
+        } else {
+
             $this->getGrid()->setPageSize($pageSize);
             $this->getGrid()->setOffset($offset);
             $this->QB()->setFirstResult($offset);
             $this->QB()->setMaxResults($pageSize);
-        } else {
-            // this needs to be changed to something for iteration
+            $q = $this->QB()->getQuery();
+            $q->setDql($this->mapAliases());
 
-            $this->getGrid()->setPageSize($pageSize);
-            $this->getGrid()->setOffset($offset);
-            $this->QB()->setFirstResult($offset);
-            $this->QB()->setMaxResults($pageSize);
-        }
+            $results = $q->getResult(Query::HYDRATE_SCALAR);
 
-        $q = $this->QB()->getQuery();
-        $q->setDql($this->mapAliases());
-
-        var_dump($pageSize);
-
-        var_dump(__LINE__);
-        print_r($q->getSQL());
-        $results = $q->getResult(Query::HYDRATE_SCALAR);
-        var_dump($results);die;
-        if (array() == $results) {
-            $root = 'root';
-        } else {
-            $root = preg_grep('/root\_\_\_(.*?)\_\_id/', array_keys($results[0]));
-            $root = $root[array_keys($root) [0]];
-        }
-
-        $html = $this->getGrid()->getOption('html');
-        if ($html) {
-            if ($this->getGrid()->getOption('aggregateOnly')) {
-
-                // aggregate only
-
+            if (array() == $results) {
+                $root = 'root';
             } else {
-                $this->getGrid()->fillTh($results, $filters);
-                $this->getGrid()->fillTr($results, $root);
-            }
-            if ($this->getGrid()->hasErrors()) {
-                $this->getGrid()->fillErrors($results, $filters);
+                $root = preg_grep('/root\_\_\_(.*?)\_\_id/', array_keys($results[0]));
+                $root = $root[array_keys($root) [0]];
             }
 
-            $sums = array_filter($this->getGrid()->getColumns(), function ($c)
-            {
-                return in_array('aggregate', array_keys($c->getOptions()));
-            });
+            $html = $this->getGrid()->getOption('html');
+            if ($html) {
+                if ($this->getGrid()->getOption('aggregateOnly')) {
 
-            if (array() !== $results && array() != $sums ) {
-                $this->getGrid()->fillAggregate($this->aggregateQuery());
-            } else {
+                    // aggregate only
+
+
+                } else {
+                    $this->getGrid()->fillTh($results, $filters);
+                    $this->getGrid()->fillTr($results, $root);
+                }
+                if ($this->getGrid()->hasErrors()) {
+                    $this->getGrid()->fillErrors($results, $filters);
+                }
+
+                $sums = array_filter($this->getGrid()->getColumns(), function ($c)
+                {
+                    return in_array('aggregate', array_keys($c->getOptions()));
+                });
+
+                if (array() !== $results && array() != $sums) {
+                    $this->getGrid()->fillAggregate($this->aggregateQuery());
+                } else {
+                }
             }
         }
     }
@@ -458,6 +490,7 @@ class GridMaker
 
             // the column must be specified as a hidden column in your grid.
 
+
         }
 
         foreach ($this->getGrid()->getActions() as $actionKey => $action) {
@@ -519,13 +552,13 @@ class GridMaker
             }
         }
 
-        $entities = array_merge(
-            array_map(
-                function ($f) {return $f->getAlias();}, $qb->getDQLPart('from')),
-            array_map(
-                function ($f) {return $f->getAlias();},
-                $qb->getDQLPart('join') [$qb->getDQLParts() ['from'][0]->getAlias() ])
-            );
+        $entities = array_merge(array_map(function ($f)
+        {
+            return $f->getAlias();
+        }, $qb->getDQLPart('from')), array_map(function ($f)
+        {
+            return $f->getAlias();
+        }, $qb->getDQLPart('join') [$qb->getDQLParts() ['from'][0]->getAlias() ]));
 
         // While addSelect just adds more
         foreach ($partials as $entity => $fields) {
@@ -773,7 +806,8 @@ class GridMaker
         return $qb;
     }
 
-    public function setExport($export = true) {
+    public function setExport($export = true)
+    {
         $this->getGrid()->setExport($export);
     }
 }

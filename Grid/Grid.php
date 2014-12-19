@@ -593,13 +593,39 @@ class Grid
         $thead->addRow($row);
     }
 
+    public function exportTh()
+    {
+        $columns = $this->getColumns();
+        return array_map(function($col){return $col->getOption('title');},$columns);
+    }
+
+
+    public function exportTr(array $results = array() , $root = null)
+    {
+        $newResults = array();
+        $columns = $this->getColumns();
+        $booleans = array_keys(array_filter($this->getColumns(), function($col) {return $col->getOption('boolean');}));
+        if (array() != $results) {
+            foreach ($results as $tuple => $result) {
+                $result = array_intersect_key($result,array_flip(array_keys($columns)));
+                $result = array_map(function($col) {return (($col instanceof \DateTime) ? $col->format('Y-m-d') : $col);}, $result);
+                foreach ($result as $resultKey => $res){
+                    if (in_array($resultKey, $booleans)) {
+                        $result[$resultKey] = (($res === null) ? '' : ($res ? "true" : "false"));
+                    }
+                }
+                $newResults[] = $result;
+            }
+        }
+        return $newResults;
+    }
+
     public function fillTr(array $results = array() , $root = null)
     {
         $tbody = $this->getTable()->getTbody();
         $columns = $this->getColumns();
 
         if (array() != $results) {
-
             foreach ($results as $tuple => $result) {
                 $result = array_merge($columns, $result);
                 if ($root) {
