@@ -261,7 +261,7 @@ class GridMaker
 
         if ($export) {
             $offset = 0;
-            $pageSize= 500;
+            $pageSize= 5000;
 
             $this->QB()->setFirstResult($offset);
             $this->QB()->setMaxResults($pageSize);
@@ -272,13 +272,12 @@ class GridMaker
             $filename = 'export' . $now . $micro . '.csv';
             $file = fopen($filename, 'w');
 
-
             fputcsv($file, $this->getGrid()->exportTh());
 
             $this->QB()->setFirstResult($offset);
             $results = $this->QB()->getQuery()->getResult(Query::HYDRATE_SCALAR);
 
-            while (array() != $results) {
+            while (array() != $results ) {
                 $this->QB()->setFirstResult($offset);
                 $results = $this->QB()->getQuery()->getResult(Query::HYDRATE_SCALAR);
                 $offset+= $pageSize;
@@ -294,12 +293,7 @@ class GridMaker
             $response = new BinaryFileResponse($filename);
             $d = $response->headers->makeDisposition(ResponseHeaderBag::DISPOSITION_ATTACHMENT, $filename);
             $response->headers->set('Content-Disposition', $d);
-
-            // $response->send();
-            // $response->headers->set('Content-Type', 'text/plain');
-            // $response->setContentDisposition(ResponseHeaderBag::DISPOSITION_ATTACHMENT, );
             return $response;
-
 
         } else {
 
