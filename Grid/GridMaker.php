@@ -277,7 +277,7 @@ class GridMaker
             $this->QB()->setFirstResult($offset);
             $results = $this->QB()->getQuery()->getResult(Query::HYDRATE_SCALAR);
 
-            while (array() != $results ) {
+            while (array() != $results) {
                 $this->QB()->setFirstResult($offset);
                 $results = $this->QB()->getQuery()->getResult(Query::HYDRATE_SCALAR);
                 $offset+= $pageSize;
