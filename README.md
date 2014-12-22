@@ -28,7 +28,7 @@ Note: This query will be rewritten significantly, to fetch only partial entities
 Step 2.  Initialize your grid.
 
         $query = $qb->getQuery();
-        $gm = $this->get('grid.maker');
+        $gm = $this->get('lg.maker');
         $gm->initialize(array(
             'table' => 'table table-bordered table-condensed table-hover table-striped',
             'html' => true,
