@@ -354,14 +354,16 @@ class GridMaker
         $filters = !!$request->cookies->get('lg-filter-toggle');
 
         // this is for autogeneration of grid from QB instead of column specifications
-        // it is not really built as of Sep 2014
+        // it is not really built as of Dec 2014
         if ($fromQB) {
             $this->mapFieldsFromQB();
         } else {
             $this->mapFieldsFromColumns();
         }
 
-        $this->mapMethodsFromQB();
+        // this is for autogeneration of grid from QB instead of column specifications
+        // it is not really built as of Dec 2014
+        // $this->mapMethodsFromQB();
 
         $cookies = $request->cookies;
         $pageSize = $request->cookies->get('lg-results-per-page') ? : 10;
@@ -563,20 +565,30 @@ class GridMaker
             }
         };
 
+
         foreach ($aliases as $k => $v) {
 
             // mark root
             if ($k == $oldRoot) {
                 $v = '##';
             }
-            $pattern = '/ ' . $k . '([,\. ])/';
-            $replace = ' ' . $v . "$1";
+
+            // space before or parenthesis before
+            // and command, dot, backslash or space after
+            $pattern = '/([\( ])' . $k . '([,\. ])/';
+            $replace = '$1' . $v . "$2";
             $dql = preg_replace($pattern, $replace, $dql);
 
             // for searches
             $pattern = '/CONCAT\(' . $k . '/';
             $replace = 'CONCAT(' . $v . "$1";
             $dql = preg_replace($pattern, $replace, $dql);
+
+            $pattern = '/\(' . $k .' IN/';
+            $replace = '/\(' . $v .' IN/';
+            $dql = preg_replace($pattern, $replace, $dql);
+
+
         }
 
         // remark root
