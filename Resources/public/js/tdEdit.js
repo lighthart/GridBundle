@@ -6,7 +6,6 @@ $(document).ready(function() {
 
 function makeClickable(object) {
     object.on('click', function() {
-        console.log('makeclickable');
         var th = object.closest('table').find('th').eq(object.index());
         if (typeof th.attr('data-role-lg-editable') != 'undefined' && th.attr('data-role-lg-editable')) {
             makeEditable(object);
@@ -16,7 +15,6 @@ function makeClickable(object) {
 
 function makeEditable(object) {
     // this function loads the input field and associated controls
-    console.log('begin Make Editable');
     var original = object.text().trim();
     object.off('click');
     input=object.children('input');
@@ -114,12 +112,10 @@ function makeEditable(object) {
             object.children('input').focus();
         }
     });
-   console.log('end Make Editable');
 }
 
 function update(object, original, val) {
     object.removeClass('lg-editing');
-    console.log('update');
     var th = object.closest('table').find('th').eq(object.index());
     if (val == original) {
         object.text(val);
@@ -127,7 +123,6 @@ function update(object, original, val) {
         // This over writes the input field
         object.text(val);
         if (object.attr('data-role-lg-new')) {
-            console.log('create in update');
             url = makeURLfromTD(object, 'create');
             $.ajax({
                 type: 'POST',
@@ -136,11 +131,7 @@ function update(object, original, val) {
                     data: val
                 },
                 success: function(responseText, textStatus, XMLHttpRequest) {
-                    console.log('update success');
                     url = makeURLfromTD(object, 'value');
-                    console.log('update post makeURL');
-                    console.log(url);
-                    console.log(object);
 
                     $('.lg-table').addClass('text-muted');
                     location.reload(true);
@@ -149,10 +140,7 @@ function update(object, original, val) {
             });
 
         } else {
-            console.log('update in update');
             url = makeURLfromTD(object, 'update');
-            console.log('update else');
-            console.log(url);
             $.ajax({
                 type: 'POST',
                 url: url,
@@ -160,11 +148,7 @@ function update(object, original, val) {
                     data: val
                 },
                 success: function(responseText, textStatus, XMLHttpRequest) {
-                    console.log('update success');
                     url = makeURLfromTD(object, 'value');
-                    console.log('update post makeURL');
-                    console.log(url);
-                    console.log(object);
 
                     object.load(url, null);
                 }
@@ -177,7 +161,6 @@ function update(object, original, val) {
 }
 
 function makeURLfromTD(td, action) {
-    console.log('Make URL: '+ action);
     var th = td.closest('table').find('th').eq(td.index());
     var thid = th.attr('data-role-lg-parent-entity-id');
     // td must have data-role-entity-id
@@ -190,31 +173,18 @@ function makeURLfromTD(td, action) {
     var tr = td.closest('tr');
     var trid = tr.attr('data-role-lg-parent-entity-id');
     var tdid = td.attr('data-role-lg-entity-id');
-    console.log(td);
-    console.log('tdid: '+tdid);
-    console.log('trid: '+trid);
-    console.log('thid: '+thid);
     if (action == 'new') {
-        console.log('new make url');
         url = getLgAppRoot() + 'cell/' + action + '/' + th.attr('data-role-lg-class') + '/' + th.attr('data-role-lg-field');
     } else if (action == 'update' && td.attr('data-role-lg-update')) {
-        console.log('data-role-update');
         url = td.attr('data-role-lg-update').replace('~entity_id~', td.attr('data-role-lg-entity-id')).replace('~col_id~', thid).replace('~row_id~', trid);
-        console.log('update make url');
-        console.log(url);
     } else if (action == 'create' && td.attr('data-role-lg-new')) {
-        console.log('create make url');
         url = td.attr('data-role-lg-new').replace('~entity_id~', td.attr('data-role-lg-entity-id')).replace('~col_id~', thid).replace('~row_id~', trid);
     } else if (typeof tdid != 'undefined' && tdid) {
      // otherwise try to figure it out yourself
-        console.log('tdid is not undefined');
 
         url = getLgAppRoot() + 'cell/' + action + '/' + th.attr('data-role-lg-class') + '/' + th.attr('data-role-lg-field') + '/' + tdid;
-        console.log(url);
     } else {
-        console.log('tdid is undefined');
         url = getLgAppRoot() + 'cell/' + action + '/' + th.attr('data-role-lg-class') + '/' + th.attr('data-role-lg-field') + '/' + trid;
-        console.log(url);
     }
 
     if (url.indexOf('___') != -1){

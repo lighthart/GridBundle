@@ -30,9 +30,6 @@ function getMaxPages() {
 }
 
 function highlightSearches() {
-    console.log('prehiglight');
-    console.log($('input#lg-search-input'));
-    console.log($('input#lg-search-input').val());
     if ($('input#lg-search-input') && undefined != $('input#lg-search-input').val()) {
         $('td.lg-searchable').highlight($('input#lg-search-input').val().split(' '), {
             className: 'lg-highlight-searches'

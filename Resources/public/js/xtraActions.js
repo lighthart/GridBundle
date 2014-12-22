@@ -17,6 +17,7 @@ function showHiddenActions(control) {
     control.siblings('.lg-xtra-action').each(function() {
         $(this).removeClass('hide');
     });
+    control.parent().attr('style','width:'+control.parent().children().length*24+'px;');
 }
 
 function hideVisibleActions(control) {
@@ -26,4 +27,5 @@ function hideVisibleActions(control) {
     control.siblings('.lg-xtra-action').each(function() {
         $(this).addClass('hide');
     });
+    control.parent().attr('style','width:'+4*24+'px;');
 }
