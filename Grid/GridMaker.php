@@ -565,18 +565,14 @@ class GridMaker
             }
         };
 
-
         foreach ($aliases as $k => $v) {
 
             // mark root
             if ($k == $oldRoot) {
                 $v = '##';
             }
-
-            // space before or parenthesis before
-            // and command, dot, backslash or space after
-            $pattern = '/([\( ])' . $k . '([,\. ])/';
-            $replace = '$1' . $v . "$2";
+            $pattern = '/ ' . $k . '([,\. ])/';
+            $replace = ' ' . $v . "$1";
             $dql = preg_replace($pattern, $replace, $dql);
 
             // for searches
@@ -584,11 +580,9 @@ class GridMaker
             $replace = 'CONCAT(' . $v . "$1";
             $dql = preg_replace($pattern, $replace, $dql);
 
-            $pattern = '/\(' . $k .' IN/';
-            $replace = '/\(' . $v .' IN/';
+            $pattern = '/\(' . $k . '(\..*?)\)/';
+            $replace = '(' . $v . '$1)';
             $dql = preg_replace($pattern, $replace, $dql);
-
-
         }
 
         // remark root
