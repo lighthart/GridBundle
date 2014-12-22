@@ -115,6 +115,9 @@ Note: actions are rendered as <a> tags
         'route'         Either raw text for the route, or an array of data with the key being a symfony
                         alias for a route, and the value being an array of parameters for said route
 
+FAQ: Why is my button missing?
+FOA: If the router fails, the exception will be caught and the button silently omitted.
+
 
 Step 5.  Hydrate the grid and pass it to a twig
 
