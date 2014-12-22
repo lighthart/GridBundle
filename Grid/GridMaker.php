@@ -24,45 +24,81 @@ class GridMaker
     private $queryBuilder;
     private $grid;
 
+    /**
+     * This should never be used -- method is so there is not an exception thrown
+     * @return string
+     */
     public function __toString()
     {
         return "Grid Maker -- Don't print this";
     }
 
+    /**
+     * Dependency injection constructor
+     * @param Doctrine Service
+     * @param Router Service
+     */
     public function __construct($doctrine, $router)
     {
         $this->doctrine = $doctrine;
         $this->router = $router;
     }
 
+    /**
+     * Getter Method
+     * @return Symfony\Component\HttpFoundation\Request
+     */
     public function getRequest()
     {
         return $this->request;
     }
 
+    /**
+     * Setter Method
+     * @param Request
+     * @return self
+     */
     public function setRequest(Request $request)
     {
         $this->request = $request;
         return $this;
     }
 
+    /**
+     * Getter Method
+     * @return Grid
+     */
     public function getGrid()
     {
         return $this->grid;
     }
 
+    /**
+     * Setter Method
+     * @param Grid
+     * @return self
+     */
     public function setGrid(Grid $grid)
     {
         $this->grid = $grid;
         return $this;
     }
 
+    /**
+     * Over write existing grid with blank one
+     * @return self
+     */
     public function newGrid()
     {
         $this->grid = new Grid();
         return $this;
     }
 
+
+    /**
+     * Getter Method-- This allows a DQL over write of the queryBuilder's query
+     * @return Grid
+     */
     public function getDQL()
     {
         if ($this->dql) {
@@ -72,70 +108,136 @@ class GridMaker
         }
     }
 
+    /**
+     * Setter Method
+     * @return self
+     */
     public function setDQL($dql)
     {
         $this->dql = $dql;
         return $this;
     }
 
+    /**
+     * Getter Method
+     * @return Doctrine\ORM\Query
+     */
     public function getQuery()
     {
         return $this->query;
     }
 
+    /**
+     * Setter Method
+     * @return self
+     */
     public function setQuery($query)
     {
         $this->query = $query;
         return $this;
     }
 
+    /**
+     * Getter Method - redundant shortcut
+     * @return Doctrine\ORM\Query
+     */
     public function Q()
     {
         return $this->getQuery();
     }
 
+    /**
+     * Getter Method - redundant shortcut
+     * @return Doctrine\ORM\Query
+     */
     public function getQ()
     {
         return $this->getQuery();
     }
 
+    /**
+     * Setter Method - redundant shortcut
+     * @return self
+     */
     public function setQ($query)
     {
-        return $this->setQuery($query);
+        $this->setQuery($query);
+        return $this;
     }
 
+    /**
+     * Getter Method
+     * @return Doctrine\ORM\QueryBuilder
+     */
     public function getQueryBuilder()
     {
         return $this->queryBuilder;
     }
 
+    /**
+     * Setter Method
+     * @return self
+     */
     public function setQueryBuilder($queryBuilder)
     {
         $this->queryBuilder = $queryBuilder;
         return $this;
     }
 
-    public function QB()
+    /**
+     * Getter/Setter Method - redundant shortcut
+     * @return Doctrine\ORM\QueryBuilder
+     */
+    public function QB($queryBuilder = null)
     {
-        return $this->getQueryBuilder();
+        if ($queryBuilder){
+            $this->queryBuilder = $queryBuilder;
+            return $this;
+        } else {
+            return $this->getQueryBuilder();
+        }
     }
 
+    /**
+     * Getter Method - redundant shortcut
+     * @return Doctrine\ORM\QueryBuilder
+     */
     public function getQB()
     {
         return $this->getQueryBuilder();
     }
 
+    /**
+     * Setter Method - redundant shortcut
+     * @return self
+     */
     public function setQB($queryBuilder)
     {
         return $this->setQueryBuilder($queryBuilder);
     }
 
+    /**
+     * [initialize description]
+     * @param  array
+     * @return [type]
+     */
     public function initialize($options = array())
     {
         $this->grid = new Grid($options);
         $this->grid->setRouter($this->router);
     }
 
+    /**
+     * Determines class is present in ORMs.  Returns array, sets grid errors if
+     * metadata is not present
+     *
+     * Slash boolean controls whether to interpret as underscore encoded class
+     * encoded class switches backslashes (\) for underscores (_) so function may
+     * be used to generate a url
+     * @param  String classname
+     * @param  Boolean slash
+     * @return Array
+     */
     public function verifyClass(String $class, $slash = null)
     {
 
@@ -173,11 +275,23 @@ class GridMaker
         }
     }
 
+    /**
+     * Adds a column based on an entity field
+     * Actions will be part of their own column
+     * @param self
+     */
     public function addField($entity, $value = 'id', array $options = array())
     {
         $this->getGrid()->addColumn(new Column($entity . '_' . $value, $value, $options));
     }
 
+    /**
+     * In progress --- meant to return a function call based on entity code which is more than just
+     * getter/setter
+     * @param [type]
+     * @param [type]
+     * @param array
+     */
     public function addMethod($entity, $method, array $options = array())
     {
         if (method_exists($entity, $method)) {
@@ -185,16 +299,47 @@ class GridMaker
         }
     }
 
+    /**
+     * Adds an action
+     * Actions will be part of their own column
+     * @param self
+     */
     public function addAction($options)
     {
         $this->getGrid()->addAction(new Action($options));
+        return $this;
     }
 
+    /**
+     * Adds a status
+     * Statuses will be part of their own column
+     * @param self
+     */
     public function addStatus($options)
     {
         $this->getGrid()->addStatus(new Status($options));
+        return $this;
     }
 
+    /**
+     * Heavy Lifter.  Possible candidate for further encapsulation
+     * return differing based on export or not suggests should be broken up
+     *
+     * Takes the request, gets query parameters based on cookies,
+     * modifies request based on pagination
+     *
+     * Makes count query
+     *
+     * Calls rewrite methods which modify query to just partials
+     *
+     * Creates export file if appropriate
+     *
+     * Calls row filling methods
+     *
+     * @param  Request
+     * @param  array
+     * @return self of response
+     */
     public function hydrateGrid(Request $request, $options = array())
     {
         set_time_limit(0);
@@ -340,6 +485,8 @@ class GridMaker
                 }
             }
         }
+
+        return $this;
     }
 
     public function pregAlias($alias, $aliases)
@@ -353,6 +500,9 @@ class GridMaker
                     $oldField = substr(stristr($col, '.'), 1);
                     $oldSubAlias = stristr($col, '.', true);
                     if (false !== $oldSubAlias) {
+                        if (!isset($aliases[$oldSubAlias])) {
+                            throw new \Exception('Column alias does not match query alias: '.$oldSubAlias.' is in error');
+                        }
                         $matches[$key] = $aliases[$oldSubAlias] . '_' . $oldField;
                     }
                 }

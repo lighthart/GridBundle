@@ -29,7 +29,10 @@ class Grid
     private $aliases;
     private $export;
 
-
+    /**
+     * This should never be used -- method is so there is not an exception thrown
+     * @return string
+     */
     public function __toString()
     {
         return "Grid -- Don't print this -- print the table instead";
@@ -41,9 +44,7 @@ class Grid
         $this->actions = array();
         $this->statuses = array();
         $this->options = $options;
-        $this->table = new Table(array(
-            'attr' => $options['table']
-        ) , !!(isset($options['html']) && $options['html']));
+        $this->table = new Table(array('attr' => $options['table']), !!(isset($options['html']) && $options['html']));
         $this->table->setGrid($this);
         $this->errors = array();
         if (isset($options['massAction']) && $options['massAction']) {
@@ -148,20 +149,24 @@ class Grid
         return $this;
     }
 
-    public function getAliases() {
-         return $this->aliases;
+    public function getAliases()
+    {
+        return $this->aliases;
     }
 
-    public function setAliases( $aliases ) {
+    public function setAliases($aliases)
+    {
         $this->aliases = $aliases;
         return $this;
     }
 
-    public function getExport() {
-         return $this->export;
+    public function getExport()
+    {
+        return $this->export;
     }
 
-    public function setExport( $export = true ) {
+    public function setExport($export = true)
+    {
         $this->export = $export;
         return $this;
     }
@@ -174,9 +179,11 @@ class Grid
 
     public function removeColumn(Column $column)
     {
+
         // not sure how to implement yet
         // $this->columns[] = $columns;
         // return $this;
+
     }
 
     public function setColumns(array $columns)
@@ -216,12 +223,9 @@ class Grid
         $tr = new Tr();
         array_map(function ($col) use (&$tr)
         {
-            $th = new Th(array(
-                'title' => $col
-            ));
+            $th = new Th(array('title' => $col));
             $tr->addTh($th);
-        }
-        , $this->getColumns()->getOrder());
+        }, $this->getColumns()->getOrder());
         $thead->addTr($tr);
     }
 
@@ -250,7 +254,6 @@ class Grid
         $this->options[$option] = $value;
         return $this;
     }
-
 
     public function getActions()
     {
@@ -300,9 +303,7 @@ class Grid
 
     public function addMethod(Column $column)
     {
-        $column->setOptions(array_merge($column->getOptions() , array(
-            'method' => true
-        )));
+        $column->setOptions(array_merge($column->getOptions(), array('method' => true)));
         $this->columns[$column->getAlias() ] = $column;
         return $this;
     }
@@ -338,17 +339,9 @@ class Grid
         }
 
         if ($metadata) {
-            return array(
-                'class' => $class,
-                'metadata' => $metadata,
-                'error' => null,
-            );
+            return array('class' => $class, 'metadata' => $metadata, 'error' => null,);
         } else {
-            array(
-                'class' => null,
-                'metadata' => null,
-                'error' => $error,
-            );
+            array('class' => null, 'metadata' => null, 'error' => $error,);
         }
     }
 
@@ -356,68 +349,34 @@ class Grid
     {
         $thead = $this->getTable()->getThead();
         $columns = $this->getColumns();
-        $row = new Row(array(
-            'type' => 'tr'
-        ));
-        $row->addCell(new Cell(array(
-            'title' => 'Grid Errors',
-            'html' => true,
-            'type' => 'th',
-            'attr' => array(
-                'class' => 'alert-danger alert'
-            )
-        )));
+        $row = new Row(array('type' => 'tr'));
+        $row->addCell(new Cell(array('title' => 'Grid Errors', 'html' => true, 'type' => 'th', 'attr' => array('class' => 'alert-danger alert'))));
         $thead->addRow($row);
         foreach ($this->errors as $error) {
-            $row = new Row(array(
-                'type' => 'tr'
-            ));
-            $row->addCell(new Cell(array(
-                'title' => $error,
-                'type' => 'th',
-                'attr' => array()
-            )));
+            $row = new Row(array('type' => 'tr'));
+            $row->addCell(new Cell(array('title' => $error, 'type' => 'th', 'attr' => array())));
             $thead->addRow($row);
         }
     }
 
-    public function fillTh(array $result = array() , $filters = true)
+    public function fillTh(array $result = array(), $filters = true)
     {
         $thead = $this->getTable()->getThead();
         $columns = $this->getColumns();
-        $row = new Row(array(
-            'type' => 'tr'
-        ));
+        $row = new Row(array('type' => 'tr'));
 
         //Not ready to implement this
         if ($this->massAction && !$this->export) {
-            $row->addCell(new Cell(array(
-                'title' => '',
-                'type' => 'th',
-                'attr' => array(
-                    'checkbox' => true,
-                    'class' => '',
-                    'width' => '1em',
-                )
-            )));
+            $row->addCell(new Cell(array('title' => '', 'type' => 'th', 'attr' => array('checkbox' => true, 'class' => '', 'width' => '1em',))));
         }
 
         if ((array() != $this->getActions()) && !$this->export) {
-            $actionCell = new Cell(array(
-                'title' => 'Actions',
-                'type' => 'th',
-            ));
+            $actionCell = new Cell(array('title' => 'Actions', 'type' => 'th',));
             $row->addCell($actionCell);
         }
 
         if ((array() != $this->getStatuses()) && !$this->export) {
-            $statusCell = new Cell(array(
-                'title' => 'Status',
-                'type' => 'th',
-                'attr' => array(
-                    'class' => 'lg-filterable lg-filter'
-                )
-            ));
+            $statusCell = new Cell(array('title' => 'Status', 'type' => 'th', 'attr' => array('class' => 'lg-filterable lg-filter')));
             $row->addCell($statusCell);
         }
 
@@ -449,8 +408,7 @@ class Grid
                     // a result from another column in the query
                     // currently only handles one field
 
-                    $this->tildes(array(&$title
-                    ) , $result);
+                    $this->tildes(array(&$title), $result);
                     $parentId = ($columns[$key]->getOption('parentId') ? : null);
 
                     if ($parentId) {
@@ -491,12 +449,7 @@ class Grid
                     }
 
                     $attr['title'] = $title;
-                    $cell = new Cell(array(
-                        'title' => $title,
-                        'type' => 'th',
-                        'attr' => $attr,
-                        'options' => $options,
-                    ));
+                    $cell = new Cell(array('title' => $title, 'type' => 'th', 'attr' => $attr, 'options' => $options,));
                     $row->addCell($cell);
                 }
             } else {
@@ -507,7 +460,10 @@ class Grid
             }
         }
         $thead->addRow($row);
-        if ((array() == array_filter($columns, function($c) {return $c->getOption('filter');})) || $this->export) {
+        if ((array() == array_filter($columns, function ($c)
+        {
+            return $c->getOption('filter');
+        })) || $this->export) {
         } else {
             $this->fillFilters($filters);
         }
@@ -517,41 +473,21 @@ class Grid
     {
         $thead = $this->getTable()->getThead();
         $columns = $this->getColumns();
-        $row = new Row(array(
-            'type' => 'tr',
-        ));
+        $row = new Row(array('type' => 'tr',));
 
         //Not ready to implement this
         if ($this->massAction) {
-            $row->addCell(new Cell(array(
-                'title' => ' ',
-                'type' => 'th',
-                'attr' => array(
-                    'class' => 'lg-filterable lg-filter'.($filters?'':' hide')
-                )
-            )));
+            $row->addCell(new Cell(array('title' => ' ', 'type' => 'th', 'attr' => array('class' => 'lg-filterable lg-filter' . ($filters ? '' : ' hide')))));
         }
 
         if (array() != $this->getActions()) {
-            $actionCell = new Cell(array(
-                'title' => ' ',
-                'type' => 'th',
-                'attr' => array(
-                    'class' => 'lg-filterable lg-filter'.($filters?'':' hide')
-                ) ,
-            ));
+            $actionCell = new Cell(array('title' => ' ', 'type' => 'th', 'attr' => array('class' => 'lg-filterable lg-filter' . ($filters ? '' : ' hide')),));
 
             $row->addCell($actionCell);
         }
 
         if (array() != $this->getStatuses()) {
-            $statusCell = new Cell(array(
-                'title' => '',
-                'type' => 'th',
-                'attr' => array(
-                    'class' => 'lg-filterable lg-filter'
-                ) ,
-            ));
+            $statusCell = new Cell(array('title' => '', 'type' => 'th', 'attr' => array('class' => 'lg-filterable lg-filter'),));
             $row->addCell($statusCell);
         }
 
@@ -572,20 +508,12 @@ class Grid
                     if (!$filters) {
                         $attr['class'].= ' hide';
                     }
-                    $cell = new Cell(array(
-                        'title' => 'Filter' . $column->getOptions() ['filter'],
-                        'type' => 'th',
-                        'attr' => $attr
-                    ));
+                    $cell = new Cell(array('title' => 'Filter' . $column->getOptions() ['filter'], 'type' => 'th', 'attr' => $attr));
                 } else {
                     $attr['title'] = '';
 
                     // blank this out incase it was processed from column
-                    $cell = new Cell(array(
-                        'title' => '',
-                        'type' => 'th',
-                        'attr' => $attr
-                    ));
+                    $cell = new Cell(array('title' => '', 'type' => 'th', 'attr' => $attr));
                 }
                 $row->addCell($cell);
             }
@@ -596,20 +524,28 @@ class Grid
     public function exportTh()
     {
         $columns = $this->getColumns();
-        return array_map(function($col){return $col->getOption('title');},$columns);
+        return array_map(function ($col)
+        {
+            return $col->getOption('title');
+        }, $columns);
     }
 
-
-    public function exportTr(array $results = array() , $root = null)
+    public function exportTr(array $results = array(), $root = null)
     {
         $newResults = array();
         $columns = $this->getColumns();
-        $booleans = array_keys(array_filter($this->getColumns(), function($col) {return $col->getOption('boolean');}));
+        $booleans = array_keys(array_filter($this->getColumns(), function ($col)
+        {
+            return $col->getOption('boolean');
+        }));
         if (array() != $results) {
             foreach ($results as $tuple => $result) {
-                $result = array_intersect_key($result,array_flip(array_keys($columns)));
-                $result = array_map(function($col) {return (($col instanceof \DateTime) ? $col->format('Y-m-d') : $col);}, $result);
-                foreach ($result as $resultKey => $res){
+                $result = array_intersect_key($result, array_flip(array_keys($columns)));
+                $result = array_map(function ($col)
+                {
+                    return (($col instanceof \DateTime) ? $col->format('Y-m-d') : $col);
+                }, $result);
+                foreach ($result as $resultKey => $res) {
                     if (in_array($resultKey, $booleans)) {
                         $result[$resultKey] = (($res === null) ? '' : ($res ? "true" : "false"));
                     }
@@ -620,7 +556,7 @@ class Grid
         return $newResults;
     }
 
-    public function fillTr(array $results = array() , $root = null)
+    public function fillTr(array $results = array(), $root = null)
     {
         $tbody = $this->getTable()->getTbody();
         $columns = $this->getColumns();
@@ -629,80 +565,62 @@ class Grid
             foreach ($results as $tuple => $result) {
                 $result = array_merge($columns, $result);
                 if ($root) {
-                    $row = new Row(array(
-                        'type' => 'tr',
-                        'attr' => array(
-                            'data-role-lg-parent-entity-id' => $result[$root]
-                        )
-                    ));
+                    $row = new Row(array('type' => 'tr', 'attr' => array('data-role-lg-parent-entity-id' => $result[$root])));
                 } else {
-                    $row = new Row(array(
-                        'type' => 'tr'
-                    ));
+                    $row = new Row(array('type' => 'tr'));
                 }
 
                 if ($this->massAction && !$this->export) {
-                    $row->addCell(new Cell(array(
-                        'title' => '',
-                        'type' => 'td',
-                        'attr' => array(
-                            'checkbox' => true
-                        )
-                    )));
+                    $row->addCell(new Cell(array('title' => '', 'type' => 'td', 'attr' => array('checkbox' => true))));
                 }
 
                 $cellActions = [];
                 if ((array() != $this->getActions()) && !$this->export) {
                     foreach ($this->getActions() as $slug => $action) {
 
-                        // figure out a bial out clause
+                        // figure out a bail out clause
                         // which uses tildes
                         $newAction = clone $action;
                         $security = $action->getSecurity();
                         if (is_bool($security)) {
+
                             // default is true, set in the Action constructor
+
                         } else {
                             $security = $action->getSecurity();
                             $security = $security($result, $this->aliases);
                         }
 
-                            if ($newAction->getRoute()) {
-                                $routeConfig = $newAction->getRoute();
-                                if ('array' == gettype($routeConfig)) {
-                                    foreach ($routeConfig as $routeKey => $params) {
-                                        foreach ($params as $paramKey => $param) {
-                                            $routeConfig[$routeKey][$paramKey] = $this->tilde($param, $result);
-                                        }
-                                        try {
-                                            $newAction->setRoute($this->router->generate($routeKey, $routeConfig[$routeKey]));
-                                        } catch (\Exception $e) {
-                                            $newAction= null;
-                                        }
+                        if ($newAction->getRoute()) {
+                            $routeConfig = $newAction->getRoute();
+                            if ('array' == gettype($routeConfig)) {
+                                foreach ($routeConfig as $routeKey => $params) {
+                                    foreach ($params as $paramKey => $param) {
+                                        $routeConfig[$routeKey][$paramKey] = $this->tilde($param, $result);
+                                    }
+                                    try {
+                                        $newAction->setRoute($this->router->generate($routeKey, $routeConfig[$routeKey]));
+                                    }
+                                    catch(\Exception $e) {
+                                        $newAction = null;
                                     }
                                 }
-                            } else {
-                                $newAction= null;
                             }
+                        } else {
+                            $newAction = null;
+                        }
 
-                        if ( $security  && $newAction){
+                        if ($security && $newAction) {
                             $cellActions[] = $newAction;
                         }
                     }
 
-                    $actionCell = new ActionCell(array(
-                        'title' => 'Actions',
-                        'type' => 'td',
-                        'actions' => $cellActions,
-                    ));
+                    $actionCell = new ActionCell(array('title' => 'Actions', 'type' => 'td', 'actions' => $cellActions,));
                     $row->addCell($actionCell);
                 }
 
                 if ((array() != $this->getStatuses()) && !$this->export) {
-                    $statusCell = new StatusCell(array(
-                        'title' => 'Status',
-                        'type' => 'td',
-                        'statuses' => $this->getStatuses() ,
-                    ));
+                    $statusCell = new StatusCell(array('title' => 'Status', 'type' => 'td', 'statuses' => $this->getStatuses(),));
                     $row->addCell($statusCell);
                 }
 
@@ -734,7 +652,7 @@ class Grid
                             // a result from another column in the query
                             // currently only handles one field
                             $tildeAttr = [];
-                            $this->tildes(array(&$title, &$value) , $result);
+                            $this->tildes(array(&$title, &$value), $result);
                             foreach ($attr as $k => $attrib) {
                                 if (false !== strpos($attrib, '~')) {
                                     $tildeAttr[$k] = $attrib;
@@ -747,7 +665,7 @@ class Grid
 
                             $attr = array_merge($attr, $tildeAttr);
 
-                            if (array_key_exists('title', $attr) && $attr['title'] ) {
+                            if (array_key_exists('title', $attr) && $attr['title']) {
                             } else {
                                 if (!is_object($value)) {
                                     $attr['title'] = $value;
@@ -759,13 +677,7 @@ class Grid
                             if ($boolean) {
                                 $options['boolean'] = true;
                             }
-                            $cell = new Cell(array(
-                                'value' => $value,
-                                'title' => $title,
-                                'type' => 'td',
-                                'attr' => $attr,
-                                'options' => $options,
-                            ));
+                            $cell = new Cell(array('value' => $value, 'title' => $title, 'type' => 'td', 'attr' => $attr, 'options' => $options,));
 
                             $row->addCell($cell);
                             $this->columnOptions($columns[$key]);
@@ -780,20 +692,13 @@ class Grid
                 $tbody->addRow($row);
             }
         } else {
-            $row = new Row(array(
-                'type' => 'tr'
-            ));
+            $row = new Row(array('type' => 'tr'));
             $attr = [];
             $attr['colspan'] = count(array_filter($columns, function ($c)
             {
                 return !isset($c->getOptions() ['hidden']);
             }));
-            $cell = new Cell(array(
-                'value' => 'No Results',
-                'title' => 'No Results',
-                'type' => 'td',
-                'attr' => $attr,
-            ));
+            $cell = new Cell(array('value' => 'No Results', 'title' => 'No Results', 'type' => 'td', 'attr' => $attr,));
             $row->addCell($cell);
             $tbody->addRow($row);
         }
@@ -811,31 +716,19 @@ class Grid
             return !$c->getOption('hidden');
         });
 
-        $row = new Row(array(
-            'type' => 'tr'
-        ));
+        $row = new Row(array('type' => 'tr'));
 
         //Not ready to implement this
         if ($this->massAction && !$this->export) {
-            $row->addCell(new Cell(array(
-                'title' => '',
-                'type' => 'td',
-                'attr' => array()
-            )));
+            $row->addCell(new Cell(array('title' => '', 'type' => 'td', 'attr' => array())));
         }
         if ((array() != $this->getActions()) && !$this->export) {
-            $actionCell = new Cell(array(
-                'title' => 'Actions',
-                'type' => 'td',
-            ));
+            $actionCell = new Cell(array('title' => 'Actions', 'type' => 'td',));
             $row->addCell($actionCell);
         }
 
         if ((array() != $this->getStatuses()) && !$this->export) {
-            $statusCell = new Cell(array(
-                'title' => 'Status',
-                'type' => 'td',
-            ));
+            $statusCell = new Cell(array('title' => 'Status', 'type' => 'td',));
             $row->addCell($statusCell);
         }
 
@@ -851,12 +744,7 @@ class Grid
                 $attr['class'] = preg_replace('/\s*lg-editable\s*/', '', $attr['class']);
                 $attr['emphasis'] = 'strong';
 
-                $cell = new Cell(array(
-                    'value' => $value,
-                    'title' => "Summary for " . $visible[array_keys($visible) [$key - 1]]->getValue() ,
-                    'type' => 'td',
-                    'attr' => $attr,
-                ));
+                $cell = new Cell(array('value' => $value, 'title' => "Summary for " . $visible[array_keys($visible) [$key - 1]]->getValue(), 'type' => 'td', 'attr' => $attr,));
                 $row->addCell($cell);
             }
             $tbody->addRow($row);
@@ -876,6 +764,7 @@ class Grid
 
     public function tilde($what, &$result)
     {
+
         // converts ~column.def~ into the value from the result
         if ('string' == gettype($what) && preg_match('/(.*?)~(((.*?)~)+)(.*?)/', $what, $match)) {
             $matches = array_filter(explode('~', $match[2]));
@@ -889,8 +778,7 @@ class Grid
                     } else {
                         return $m;
                     }
-                }
-                , $matches)) . $match[5];
+                }, $matches)) . $match[5];
             }
         }
         return $what;
@@ -919,8 +807,7 @@ class Grid
                                 return '';
                             }
                         }
-                    }
-                    , $matches)) . $match[5];
+                    }, $matches)) . $match[5];
                 }
 
                 $tildes[$tildeKey] = $what;
