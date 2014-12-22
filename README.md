@@ -11,6 +11,7 @@ Step 1.  Write a query.
 The alias for the root entity must be 'root', but otherwise, you may use any other entities you want.
 
 Eg:
+
         $em = $this->getDoctrine()->getManager();
         $rep = $em->getRepository('ApplicationBundle:Student');
         $root = 'root';
