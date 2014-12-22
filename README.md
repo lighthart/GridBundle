@@ -11,6 +11,7 @@ Step 1.  Write a query.
 The alias for the root entity must be 'root', but otherwise, you may use any other entities you want.
 
 Eg:
+
         $em = $this->getDoctrine()->getManager();
         $rep = $em->getRepository('ApplicationBundle:Student');
         $root = 'root';
@@ -27,7 +28,7 @@ Note: This query will be rewritten significantly, to fetch only partial entities
 Step 2.  Initialize your grid.
 
         $query = $qb->getQuery();
-        $gm = $this->get('grid.maker');
+        $gm = $this->get('lg.maker');
         $gm->initialize(array(
             'table' => 'table table-bordered table-condensed table-hover table-striped',
             'html' => true,
@@ -113,6 +114,9 @@ Note: actions are rendered as <a> tags
         'attr'          sets the html attributes.  Note: the title key of the 'attr' field sets the hover-over title
         'route'         Either raw text for the route, or an array of data with the key being a symfony
                         alias for a route, and the value being an array of parameters for said route
+
+FAQ: Why is my button missing?
+FOA: If the router fails, the exception will be caught and the button silently omitted.
 
 
 Step 5.  Hydrate the grid and pass it to a twig
