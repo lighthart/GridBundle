@@ -5,6 +5,34 @@ The twigs read the application's globals:
 gridTwig:       extended in grid
 gridBlock:      block in the gridTwig to put the grid in
 
+Configure:
+
+Step 1 Register Bundle.
+
+In AppKernel.php:
+
+    public function registerBundles()
+    {
+        $bundles = array(
+                ...
+            new Lighthart\GridBundle\LighthartGridBundle(),
+        );
+    ...
+    }
+   
+Step 2.  Wire up assetic.
+
+In config.yml:
+
+        assetic:
+        ...
+            bundles:
+                        ...
+                - LighthartGridBundle
+            ...
+
+    
+Make a Grid:
 
 Step 1.  Write a query.
 
