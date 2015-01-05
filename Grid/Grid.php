@@ -173,7 +173,7 @@ class Grid
 
     public function addColumn(Column $column)
     {
-        $this->columns[$column->getAlias() ] = $column;
+        $this->columns[$column->getAlias()] = $column;
         return $this;
     }
 
@@ -560,10 +560,14 @@ class Grid
     {
         $tbody = $this->getTable()->getTbody();
         $columns = $this->getColumns();
-
         if (array() != $results) {
             foreach ($results as $tuple => $result) {
+
                 $result = array_merge($columns, $result);
+
+                // accomodates left joins with map_aliases on results.
+                $result = array_map(function($res) { if (is_object($res) && "Lighthart\GridBundle\Grid\Column" == get_class($res)) { return null; }else {return $res;}},$result);
+
                 if ($root) {
                     $row = new Row(array('type' => 'tr', 'attr' => array('data-role-lg-parent-entity-id' => $result[$root])));
                 } else {
@@ -623,9 +627,7 @@ class Grid
                     $statusCell = new StatusCell(array('title' => 'Status', 'type' => 'td', 'statuses' => $this->getStatuses(),));
                     $row->addCell($statusCell);
                 }
-
                 foreach ($result as $key => $value) {
-
                     if (isset($columns[$key])) {
                         $attr = $columns[$key]->getOption('attr');
                         if ($columns[$key]->getOption('entityId')) {
@@ -685,8 +687,6 @@ class Grid
                     } else {
 
                         // no column!
-
-
                     }
                 }
                 $tbody->addRow($row);
