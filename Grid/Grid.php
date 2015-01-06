@@ -566,7 +566,7 @@ class Grid
                 $result = array_merge($columns, $result);
 
                 // accomodates left joins with map_aliases on results.
-                $result = array_map(function($res) { if (is_object($res) && "Lighthart\GridBundle\Grid\Column" == get_class($res)) { return null; }else {return $res;}},$result);
+                // $result = array_map(function($res) { if (is_object($res) && "Lighthart\GridBundle\Grid\Column" == get_class($res)) { return null; }else {return $res;}},$result);
 
                 if ($root) {
                     $row = new Row(array('type' => 'tr', 'attr' => array('data-role-lg-parent-entity-id' => $result[$root])));

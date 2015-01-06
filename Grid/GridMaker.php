@@ -401,7 +401,7 @@ class GridMaker
     public function hydrateGrid(Request $request, $options = array())
     {
         set_time_limit(0);
-        $defaultOptions = array('fromQB' => false, 'export' => false, 'results' => false);
+        $defaultOptions = array('fromQB' => false, 'export' => false, 'result' => false);
         $options = array_merge($defaultOptions, $options);
         $fromQB = $options['fromQB'];
         $export = $options['export'];
@@ -670,7 +670,7 @@ class GridMaker
 
                 if ($result) {
                     foreach ($result as $keyResult => $valueResult) {
-                        if (isset($result[$keyResult][$oldAlias])){
+                        if (array_key_exists($oldAlias, $result[$keyResult])){
                             $result[$keyResult][$newAlias] = $result[$keyResult][$oldAlias];
                             unset($result[$keyResult][$oldAlias]);
                         }

@@ -79,6 +79,8 @@ input.lg-input-non-field {
 }
 .lg-right {
     padding-right: 0 !important;
+    margin-right: 0 !important;
+
 }
 .lg-btn-top {
     vertical-align: top;
