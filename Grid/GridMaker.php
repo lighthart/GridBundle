@@ -480,9 +480,6 @@ class GridMaker
                 $root = 'root';
             } else {
                 $root = preg_grep('/^root\_\_\_(.*?)\_\_id$/', array_keys($results[0]));
-                // var_dump($results[0]);
-                // var_dump(array_keys($results[0]));
-                // var_dump(preg_grep('/^root\_\_\_(.*?)\_\_id$/', array_keys($results[0])));
                 // die;
                 $root = $root[array_keys($root) [0]];
             }
@@ -563,7 +560,7 @@ class GridMaker
 
         // rewrite rootaliases in result
         //
-        if ($result != array() && is_array($result)) {
+        if (is_array($result)) {
             foreach ($result as $keyResult => $valueResult) {
                 foreach ($valueResult as $keySingle => $valueSingle) {
                     if (strpos($keySingle, 'root_') !== false) {
@@ -668,8 +665,7 @@ class GridMaker
                     }
                 }
                 $columns[] = new Column($newAlias, $oldValue, $oldOptions);
-
-                if ($result) {
+        if ($result) {
                     foreach ($result as $keyResult => $valueResult) {
                         if (array_key_exists($oldAlias, $result[$keyResult])){
                             $result[$keyResult][$newAlias] = $result[$keyResult][$oldAlias];
@@ -718,8 +714,7 @@ class GridMaker
         }
 
         $g->setColumns($columns);
-
-        if ($result) {
+        if (is_array($result)) {
             return $result;
         } else {
             return $dql;
@@ -819,7 +814,7 @@ class GridMaker
                 if ($key = array_search('id', $fields)) {
                     unset($fields[$key]);
                 }
-                $qb->select('partial ' . $entity . '.{id,' . implode(',', $fields) . '}');
+                $qb->select('partial ' . $entity . '.{' . implode(',', $fields) . '}');
             } else {
             }
         }
@@ -830,7 +825,7 @@ class GridMaker
                 if ($key = array_search('id', $fields)) {
                     unset($fields[$key]);
                 }
-                $qb->addSelect('partial ' . $entity . '.{id,' . implode(',', $fields) . '}');
+                $qb->addSelect('partial ' . $entity . '.{' . implode(',', $fields) . '}');
             }
         }
     }
