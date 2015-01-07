@@ -1,7 +1,7 @@
 {% block exportControl %}
     <div class="btn-group export-control">
-        <a class="btn btn-xs btn-default" href="{{ path(app.request.attributes.get('_route'),
-         app.request.attributes.get('_route_params')) }}/export">Export (CSV) <span class="fa fa-caret-down"></span></a>
+        <a class="btn btn-xs btn-default" href="{{ path(app.request.attributes.get('_route'), {
+         'export': 'export'}) }}">Export (CSV) <span class="fa fa-caret-down"></span></a>
 {#         <button class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">
             <span class="fa fa-caret-down"></span>
         </button>

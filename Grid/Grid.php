@@ -207,6 +207,11 @@ class Grid
         return $this->columns;
     }
 
+    public function getColumn($column)
+    {
+        return $this->columns[$column];
+    }
+
     public function getOrder()
     {
         return array_keys($this->columns);
@@ -608,6 +613,10 @@ class Grid
     public function exportTh()
     {
         $columns = $this->getColumns();
+        $columns = array_filter($this->getColumns() , function ($col)
+        {
+            return (!array_key_exists('hidden', $col->getOptions()) || !$col->getOption('hidden'));
+        });
         return array_map(function ($col)
         {
             return $col->getOption('title');
@@ -618,25 +627,23 @@ class Grid
     public function exportTr(array $results = array() , $root = null)
     {
         $newResults = array();
-        $columns = $this->getColumns();
+        $headers = $this->exportTh();
         $booleans = array_keys(array_filter($this->getColumns() , function ($col)
         {
             return $col->getOption('boolean');
         }));
+        //
         if (array() != $results) {
             foreach ($results as $tuple => $result) {
-                $result = array_intersect_key($result, array_flip(array_keys($columns)));
-                $result = array_map(function ($col)
-                {
-                    return (($col instanceof \DateTime) ? $col->format('Y-m-d') : $col);
-                }
-                , $result);
-                foreach ($result as $resultKey => $res) {
-                    if (in_array($resultKey, $booleans)) {
-                        $result[$resultKey] = (($res === null) ? '' : ($res ? "true" : "false"));
+                foreach ($headers as $headerKey => $headerValue){
+                    if (in_array($headerKey, $booleans)) {
+                        $newResult[$headerKey] = (($result[$headerKey] === null) ? '' : ($res ? "true" : "false"));
+                    } else {
+                        $newResult[$headerKey] = (($result[$headerKey] instanceof \DateTime) ? $result[$headerKey]->format('Y-m-d') : $result[$headerKey]);;
                     }
                 }
-                $newResults[] = $result;
+
+                $newResults[] = $newResult;
             }
         }
         return $newResults;

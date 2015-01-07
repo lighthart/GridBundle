@@ -415,17 +415,17 @@ class GridMaker
         set_time_limit(0);
         $defaultOptions = array(
             'fromQB' => false,
-            'export' => false,
             'result' => false
         );
         $options = array_merge($defaultOptions, $options);
         $fromQB = $options['fromQB'];
-        $export = $options['export'];
         $results = $options['result'];
+        $debug = $request->query->get('debug');
+
+        $export = ('export' == $request->query->get('export'));
         if ($export) {
             $this->setExport();
         }
-        $debug = $request->query->get('debug');
 
         // this is for displaying filter boxes
         $filters = !!$request->cookies->get('lg-filter-toggle');
@@ -461,20 +461,30 @@ class GridMaker
             $fullfilename = '/tmp/' . $filename;
             $file = fopen($fullfilename, 'w');
 
-            fputcsv($file, $this->getGrid()->exportTh());
 
             $this->QB()->setFirstResult($offset);
-            $results = $this->QB()->getQuery()->getResult(Query::HYDRATE_SCALAR);
-
-            while (array() != $results) {
-                $this->QB()->setFirstResult($offset);
-                $results = $this->QB()->getQuery()->getResult(Query::HYDRATE_SCALAR);
-                $offset+= $pageSize;
-
-                // Write this next line to file
+            if ($results){
+                fputcsv($file, $this->getGrid()->exportTh());
+                // var_dump($this->getGrid()->exportTh());
+                // var_dump($this->getGrid()->getColumns());
+                // var_dump($this->getGrid()->exportTr($results) );die;
                 foreach ($this->getGrid()->exportTr($results) as $key => $line) {
                     fputcsv($file, $line);
                 }
+            } else {
+                fputcsv($file, $this->getGrid()->exportTh());
+                $results = $this->QB()->getQuery()->getResult(Query::HYDRATE_SCALAR);
+                while (array() != $results) {
+                    $this->QB()->setFirstResult($offset);
+                    $results = $this->QB()->getQuery()->getResult(Query::HYDRATE_SCALAR);
+                    $offset+= $pageSize;
+
+                    // Write this next line to file
+                    foreach ($this->getGrid()->exportTr($results) as $key => $line) {
+                        fputcsv($file, $line);
+                    }
+            }
+
             }
 
             fclose($file);
