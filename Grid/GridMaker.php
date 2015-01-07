@@ -561,8 +561,9 @@ class GridMaker
         $entities[$oldRoot] = $rootClassPath;
 
 
-        // rewrite rootaliases in query
-        if ($result) {
+        // rewrite rootaliases in result
+        //
+        if ($result != array() && is_array($result)) {
             foreach ($result as $keyResult => $valueResult) {
                 foreach ($valueResult as $keySingle => $valueSingle) {
                     if (strpos($keySingle, 'root_') !== false) {
