@@ -31,7 +31,7 @@ class Cell
         // instead automatically add lg for general formatting on each cell
 
         $attr = $this->attr;
-        $attr['class'] = $attr['class'] ? $attr['class']." lg" : "lg";
+        $attr['class'] = ((isset($attr['class']) && $attr['class']) ? $attr['class'].' lg' : 'lg');
         return $attr;
     }
 
