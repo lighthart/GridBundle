@@ -24,14 +24,13 @@ class Status
             'attr' => null,
             'icon' => null,
             'name' => null,
-            'route' => null,
             'security' => true,
             'severity' => 'label-default',
+            'title' => null,
         ) , $options);
         $this->attr = $options['attr'];
-        $this->icon = ($options['icon'] ? : 'fa-rocket');
+        // $this->icon = ($options['icon'] ? : 'fa-rocket');
         $this->name = $options['name'];
-        $this->route = $options['route'];
         $this->security = $options['security'];
         $this->severity = $options['severity'];
         $this->title = $options['title'];
