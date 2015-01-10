@@ -1,6 +1,6 @@
 function pagingInputControl() {
     $('.lg-last-page').unbind('change');
-    $('input.lg-page-input').on('change', function(e) {
+    $('input.lg-page-input').on('change keyup', function(e) {
         e.preventDefault();
         cookies = getCookies();
         cookies.offset = cookies.offset ? cookies.offset : 0;

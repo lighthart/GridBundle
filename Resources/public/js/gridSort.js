@@ -11,7 +11,6 @@ function gridSortControl() {
     $('span.lg-sort').on('click', function(e) {
         control = $(this);
         e.preventDefault();
-        console.log(getAllSorts());
         delay(function() {
             gridSortReload(control);
         }, quiet);
@@ -33,10 +32,8 @@ function gridSortReload(control) {
     control.children('input').val(order);
 
     var cookies = getCookies();
-    console.log(cookies.sort);
     cookies.offset = 0;
     cookies.sort = getAllSorts();
-    console.log(cookies.sort);
     setCookies(cookies);
 
     var th = control.closest('th');

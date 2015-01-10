@@ -28,7 +28,7 @@ function gridFilterToggleControl() {
     $('#lg-toggle-filter').one('click', function(e) {
         e.preventDefault();
         var filterToggleCookie = 'lg-filter-toggle';
-        if ($('.lg-filter:first').hasClass('hide')) {
+        if ($('.lg-filter').hasClass('hide')) {
             // Open
             $.cookie(filterToggleCookie, 1);
             $('#lg-toggle-filter > span').removeClass('fa-chevron-right');

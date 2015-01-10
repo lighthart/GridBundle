@@ -136,15 +136,4 @@ class GridController extends Controller
             );
         }
     }
-
-    public function qbGridAction( Request $request, $qb ) {
-        if ( !'Doctrine\ORM\QueryBuilder' != get_class( $qb ) ) {
-            throw new \Exception('QueryBuilder object is required for qbGrid action');
-        }
-
-        $gm = $this->get('gridmaker');
-        var_dump($gm->__toString());
-        die;
-    }
-
 }

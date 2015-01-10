@@ -26,7 +26,13 @@ class Cell
 
     public function getAttr()
     {
-        return $this->attr;
+        // return $this->attr;
+
+        // instead automatically add lg for general formatting on each cell
+
+        $attr = $this->attr;
+        $attr['class'] = ((isset($attr['class']) && $attr['class']) ? $attr['class'].' lg' : 'lg');
+        return $attr;
     }
 
     public function setAttr($attr)

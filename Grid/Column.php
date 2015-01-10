@@ -16,6 +16,7 @@ class Column
      // from the query
     private $options;
 
+
     public function __construct($alias, $value = 'id', array $options = array())
     {
         $this->alias = $alias;
@@ -55,9 +56,13 @@ class Column
         return $this->value;
     }
 
-    public function getOptions()
+    public function getOptions($option = null)
     {
-        return $this->options;
+        if ($option === null) {
+            return $this->options;
+        } else {
+            return $this->getOption($option);
+        }
     }
 
     public function setOptions($options)

@@ -1,0 +1,9 @@
+{% block newButton -%}
+    {%- if newPath is defined -%}
+        <a href="{{newPath}}" class="btn btn-xs btn-default" id="lg-new-button">
+            {%- if newIcon is defined -%}
+                {{- newIcon|raw -}}
+            {%- endif %} New
+        </a>
+    {%- endif -%}
+{%- endblock newButton %}

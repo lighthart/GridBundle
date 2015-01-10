@@ -1,0 +1,8 @@
+{% block lgGridTable %}
+    {% set table = grid.table %}
+        {% block sections %}
+            {% for section in table.section %}
+                {% include 'LighthartGridBundle:Section:section.csv.twig' with {'section' : section } %}
+            {% endfor %}
+    {% endblock sections %}
+{% endblock lgGridTable %}

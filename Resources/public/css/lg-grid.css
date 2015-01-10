@@ -79,6 +79,8 @@ input.lg-input-non-field {
 }
 .lg-right {
     padding-right: 0 !important;
+    margin-right: 0 !important;
+
 }
 .lg-btn-top {
     vertical-align: top;
@@ -126,4 +128,12 @@ span.money.positive {
 
 span.money.negative {
   color: rgba(255,0,0,1);
+th.lg, td.lg {
+}
+
+th.lg-abstract, td.lg-abstract {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 150px;
 }

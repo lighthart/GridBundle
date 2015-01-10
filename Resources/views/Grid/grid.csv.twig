@@ -1,0 +1,12 @@
+{% block lgGrid %}
+    {# used in blocks below #}
+    {% spaceless %}
+            {% block lgGridheader %}
+            {% endblock lgGridheader %}
+            {% block lgGridTable %}
+                {% include 'LighthartGridBundle:Grid:table.csv.twig' %}
+            {% endblock lgGridTable %}
+            {% block lgGridfooter %}
+            {% endblock lgGridfooter %}
+    {% endspaceless %}
+{% endblock lgGrid %}

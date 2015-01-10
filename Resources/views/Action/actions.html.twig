@@ -1,4 +1,4 @@
-<div class="btn-group">
+<div class="btn-group" style="width:{% if cell.actions|length > 4 %}{{ 24 * 4}}{% else %}{{ 24 * cell.actions|length}}{% endif %}px;">
     {% if cell.actions|length > 4 %}
         {% for action in cell.actions %}
             {% if loop.index0 <= 2 %}

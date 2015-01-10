@@ -15,12 +15,16 @@ class Action
     private $route;
     private $security;
     private $severity;
+    private $columns;
+
 
     public function __construct($options = array())
     {
 
         // default action is always present
         // default severity is btn-default
+        // default security is an anonymous function or a boolean
+        // columns are fields used by security's function
         $options = array_merge(array(
             'attr' => null,
             'icon' => null,
@@ -31,7 +35,7 @@ class Action
             'title' => null,
         ) , $options);
         $this->attr = $options['attr'];
-        $this->icon = ($options['icon'] ? : 'fa-rocket');
+        $this->icon = ($options['icon'] );
         $this->name = $options['name'];
         $this->route = $options['route'];
         $this->security = $options['security'];
