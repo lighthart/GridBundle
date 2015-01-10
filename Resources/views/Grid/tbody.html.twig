@@ -1,0 +1,9 @@
+{% block lgGridTable %}
+    {% set table = grid.table %}
+    {# classes my not be smoothly loading from gridmaker-- double check #}
+    <table class="{% include 'LighthartGridBundle:Grid:tableClasses.html.twig' %}" {%- for flavor, attribs in table.attr %}{{-' '-}}{{ flavor }}="{{ attribs }}"{%- endfor -%}>
+        {% block sections %}
+            {% include 'LighthartGridBundle:Section:section.html.twig' with {'section' : table.tbody } %}
+        {% endblock sections %}
+        </{{ table.type }}>
+{% endblock lgGridTable %}
