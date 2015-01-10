@@ -685,6 +685,11 @@ class Grid
                                 $options['boolean'] = true;
                             }
 
+                            $money = ($columns[$key]->getOption('money') ? : null);
+                            if ($money) {
+                                $options['money'] = true;
+                            }
+
                             $cell = new Cell(array(
                                 'value' => $value,
                                 'title' => $title,

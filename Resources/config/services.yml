@@ -18,3 +18,9 @@ services:
         arguments: [ @twig ]
         tags:
             - { name: twig.extension }
+
+    lg.money.extension:
+        class: Lighthart\GridBundle\Twig\MoneyExtension
+        arguments: [ @twig ]
+        tags:
+            - { name: twig.extension }

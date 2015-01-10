@@ -1,10 +1,13 @@
 {% set boolean = cell.options.boolean is defined %}
+{% set money = cell.options.money is defined %}
 {%- if cell.value.timestamp is defined -%}
     {% set value = cell.value|date('Y-m-d') %}
 {%- elseif cell.html is defined -%}
     {% set value = cell.value|raw %}
 {%- elseif boolean -%}
     {% set value = cell.value|boolean %}
+{%- elseif money -%}
+    {% set value = cell.value|money %}
 {%- else -%}
     {% set value = cell.value|trim %}
 {%- endif -%}
