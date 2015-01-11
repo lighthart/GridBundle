@@ -25,7 +25,9 @@ class MoneyExtension extends \Twig_Extension
     {
         if ($html) {
             $positive = ($value >= 0);
-            $value = number_format($value);
+            // Below should be in a config setting
+            setlocale(LC_MONETARY, 'en_US');
+            $value = money_format('%!(10.0n',$value);
             if ($positive) {
                 return $this->twig->render('LighthartGridBundle:Money:positive.html.twig', array('value' =>$value));
             } else {
