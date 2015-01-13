@@ -3,7 +3,7 @@
         <span class="fa {% if app.request.cookies.get('lg-filter-toggle') %}fa-chevron-down{% else %}fa-chevron-right{% endif %}"></span>
     </button>
     <div class="form-group lg-search-input-margin">
-        <input type="text" id="lg-search-input"{% if grid.search %} class="lg-filtered lg-search-input" {% else %} class="lg-search-input" {% endif %}placeholder="Search"/>
+        <input type="text" id="lg-search-input"{% if grid.search %} class="lg-filtered lg-search" {% else %} class="lg-search" {% endif %}placeholder="Search"/>
     </div>
     {% if grid.newButton is defined %}
         <button class="btn btn-xs btn-default">

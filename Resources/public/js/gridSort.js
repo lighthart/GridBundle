@@ -1,7 +1,7 @@
 function getAllSorts() {
     var sorts = "";
-    $('.lg-sort').each(function(i, e) {
-        sorts += $(this).parent().attr('data-role-lg-class') + '__' + $(this).parent().attr('data-role-lg-field') + ':' + $(this).children('input').val() + ';';
+    $('span.lg-sort').each(function(i, e) {
+            sorts += $(this).parent().attr('data-role-lg-class') + '__' + $(this).parent().attr('data-role-lg-field') + ':' + $(this).children('input').val() + ';';
     });
     return sorts;
 }
