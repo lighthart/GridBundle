@@ -31,4 +31,5 @@ function activateControls() {
     highlightSearches();
     gridExtraActionsControl();
     gridSortControl();
+    gridResetControl();
 }
