@@ -511,9 +511,7 @@ class GridMaker
 
             // $this->mapActions();
             $this->mapColumns();
-            var_dump($results);
             $results = $this->mapResults($results);
-            var_dump($results);die;
 
             if (array() == $results) {
                 $root = 'root';
@@ -524,9 +522,6 @@ class GridMaker
             }
 
             $html = $this->getGrid()->getOption('html');
-
-            var_dump($results);
-            $results = $this->mapResults($results);
 
             if ($html) {
                 if ($this->getGrid()->getOption('aggregateOnly')) {
@@ -747,8 +742,6 @@ class GridMaker
 
         }
 
-        var_dump($oldAliases);
-
         $g->setAliases($oldAliases);
 
     }
@@ -757,7 +750,6 @@ class GridMaker
         $columns = [];
         $g = $this->getGrid();
         foreach ($g->getColumns() as $k => $v) {
-            var_dump(__LINE__);
             $oldAlias = $v->getAlias();
             $oldValue = $v->getValue();
             $oldOptions = $v->getOptions();
@@ -768,7 +760,6 @@ class GridMaker
     }
 
     public function mapResults(array $result){
-        var_dump(__LINE__);
         $newResult = [];
         $g = $this->getGrid();
         foreach ($result as $key => $value){
