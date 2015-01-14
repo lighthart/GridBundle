@@ -4,7 +4,7 @@ function getSearch() {
 }
 
 function gridSearchControl() {
-    $('input#lg-search').on('keydown keyup change', function() {
+    $('input#lg-search-input').on('keydown keyup change', function() {
         delay(function() {
             gridSearchReload();
         }, quiet);
