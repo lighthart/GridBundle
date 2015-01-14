@@ -509,7 +509,7 @@ class GridMaker
                 $results = $q->getResult(Query::HYDRATE_SCALAR);
             }
 
-            // $this->mapActions();
+            $this->mapActions();
             $this->mapColumns();
             $results = $this->mapResults($results);
 
@@ -563,10 +563,11 @@ class GridMaker
                     $oldField = substr(stristr($col, '.') , 1);
                     $oldSubAlias = stristr($col, '.', true);
                     if (false !== $oldSubAlias) {
-                        if (!isset($aliases[$oldSubAlias])) {
+                        if (!isset($aliases[$col])) {
                             throw new \Exception('Column alias does not match query alias: ' . $oldSubAlias . ' is in error');
                         }
-                        $matches[$key] = $aliases[$oldSubAlias] . '_' . $oldField;
+                        $matches[$key] = $aliases[$col];
+                         // . '_' . $oldField;
                     }
                 }
             }
@@ -782,6 +783,7 @@ class GridMaker
                     if (1 === count($routeConfig)) {
                         foreach ($routeConfig as $routeKey => $params) {
                             foreach ($params as $paramKey => $param) {
+
                                 $routeConfig[$routeKey][$paramKey] = $this->pregAlias($param, $this->getGrid()->getAliases());
                             }
                         }
