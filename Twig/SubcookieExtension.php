@@ -5,17 +5,18 @@ class SubcookieExtension extends \Twig_Extension
 {
     public function getFilters()
     {
-        return array(
-            new \Twig_SimpleFilter('subcookie', array(
+        return [
+            new \Twig_SimpleFilter('subcookie', [
                 $this,
-                'subcookieFilter'
-            )) ,
-        );
+                'subcookieFilter',
+            ]) ,
+        ];
     }
 
     public function subcookieFilter($cookie, $tag, $delimiter = ';', $separator = ':')
     {
-        $return = strrev(strstr(strrev(strstr(strrev(strstr(strrev($cookie) , strrev($tag) , true)) , $delimiter, true)) , $separator, true));
+        $return = strrev(strstr(strrev(strstr(strrev(strstr(strrev($cookie), strrev($tag), true)), $delimiter, true)), $separator, true));
+
         return $return;
     }
 

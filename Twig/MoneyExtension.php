@@ -3,7 +3,6 @@ namespace Lighthart\GridBundle\Twig;
 
 class MoneyExtension extends \Twig_Extension
 {
-
     private $twig;
 
     public function __construct($twig)
@@ -13,12 +12,12 @@ class MoneyExtension extends \Twig_Extension
 
     public function getFilters()
     {
-        return array(
-            new \Twig_SimpleFilter('money', array(
+        return [
+            new \Twig_SimpleFilter('money', [
                 $this,
-                'moneyFilter'
-            )) ,
-        );
+                'moneyFilter',
+            ]) ,
+        ];
     }
 
     public function moneyFilter($value, $html = true)
@@ -27,11 +26,11 @@ class MoneyExtension extends \Twig_Extension
             $positive = ($value >= 0);
             // Below should be in a config setting
             setlocale(LC_MONETARY, 'en_US');
-            $value = money_format('%!(10.0n',$value);
+            $value = money_format('%!(10.0n', $value);
             if ($positive) {
-                return $this->twig->render('LighthartGridBundle:Money:positive.html.twig', array('value' =>$value));
+                return $this->twig->render('LighthartGridBundle:Money:positive.html.twig', ['value' => $value]);
             } else {
-                return $this->twig->render('LighthartGridBundle:Money:negative.html.twig', array('value' =>$value));
+                return $this->twig->render('LighthartGridBundle:Money:negative.html.twig', ['value' => $value]);
             }
         } else {
         }

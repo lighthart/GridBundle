@@ -3,7 +3,6 @@ namespace Lighthart\GridBundle\Twig;
 
 class BooleanExtension extends \Twig_Extension
 {
-
     private $twig;
 
     public function __construct($twig)
@@ -13,12 +12,12 @@ class BooleanExtension extends \Twig_Extension
 
     public function getFilters()
     {
-        return array(
-            new \Twig_SimpleFilter('boolean', array(
+        return [
+            new \Twig_SimpleFilter('boolean', [
                 $this,
-                'booleanFilter'
-            )) ,
-        );
+                'booleanFilter',
+            ]) ,
+        ];
     }
 
     public function booleanFilter($boolean, $html = true)

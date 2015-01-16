@@ -1,15 +1,9 @@
 <?php
 namespace Lighthart\GridBundle\Grid;
 
-use Knp\Component\Pager\Paginator;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 
 class ActionCell
 {
-
     private $actions;
     protected $attr;
      // html attributes on <td>
@@ -23,7 +17,7 @@ class ActionCell
     protected $value;
      // the contents of the cell
 
-    public function __construct($prop = array())
+    public function __construct($prop = [])
     {
         foreach ($prop as $k => $p) {
             $this->$k = $p;
@@ -38,6 +32,7 @@ class ActionCell
     public function setActions($actions)
     {
         $this->actions = $actions;
+
         return $this;
     }
 
@@ -49,6 +44,7 @@ class ActionCell
     public function setAttr($attr)
     {
         $this->attr = $attr;
+
         return $this;
     }
 
@@ -60,6 +56,7 @@ class ActionCell
     public function setOptions($options)
     {
         $this->options = $options;
+
         return $this;
     }
 
@@ -71,6 +68,7 @@ class ActionCell
     public function setRow($row)
     {
         $this->tr = $row;
+
         return $this;
     }
 
@@ -82,6 +80,7 @@ class ActionCell
     public function setType($type)
     {
         $this->type = $type;
+
         return $this;
     }
 
@@ -93,6 +92,7 @@ class ActionCell
     public function setValue($value)
     {
         $this->value = $value;
+
         return $this;
     }
 
@@ -104,6 +104,7 @@ class ActionCell
     public function setTitle($title)
     {
         $this->title = $title;
+
         return $this;
     }
 
@@ -111,7 +112,7 @@ class ActionCell
 
     public function td()
     {
-        return "" . "<" . $this->type . " class=\"" . ($this->attr ? : "") . "\" data-role-lg-header=\"" . ($this->title ? : "") . "\">" . ((is_object($this->value) && 'DateTime' == get_class($this->value)) ? $this->value->format('Y-m-d') : $this->value) . "</" . $this->type . ">";
+        return "" . "<" . $this->type . " class=\"" . ($this->attr ?: "") . "\" data-role-lg-header=\"" . ($this->title ?: "") . "\">" . ((is_object($this->value) && 'DateTime' == get_class($this->value)) ? $this->value->format('Y-m-d') : $this->value) . "</" . $this->type . ">";
     }
 
     public function th()

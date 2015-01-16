@@ -1,11 +1,6 @@
 <?php
 namespace Lighthart\GridBundle\Grid;
 
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
-use Doctrine\ORM\Query;
 
 class Action
 {
@@ -17,30 +12,28 @@ class Action
     private $severity;
     private $columns;
 
-
-    public function __construct($options = array())
+    public function __construct($options = [])
     {
-
         // default action is always present
         // default severity is btn-default
         // default security is an anonymous function or a boolean
         // columns are fields used by security's function
-        $options = array_merge(array(
-            'attr' => null,
-            'icon' => null,
-            'name' => null,
-            'route' => null,
+        $options = array_merge([
+            'attr'     => null,
+            'icon'     => null,
+            'name'     => null,
+            'route'    => null,
             'security' => true,
             'severity' => 'btn-default',
-            'title' => null,
-        ) , $options);
-        $this->attr = $options['attr'];
-        $this->icon = ($options['icon'] );
-        $this->name = $options['name'];
-        $this->route = $options['route'];
+            'title'    => null,
+        ], $options);
+        $this->attr     = $options['attr'];
+        $this->icon     = ($options['icon']);
+        $this->name     = $options['name'];
+        $this->route    = $options['route'];
         $this->security = $options['security'];
         $this->severity = $options['severity'];
-        $this->title = $options['title'];
+        $this->title    = $options['title'];
     }
 
     public function __toString()
@@ -56,6 +49,7 @@ class Action
     public function setAttr($attr)
     {
         $this->attr = $attr;
+
         return $this;
     }
 
@@ -67,6 +61,7 @@ class Action
     public function setIcon($icon)
     {
         $this->icon = $icon;
+
         return $this;
     }
 
@@ -78,6 +73,7 @@ class Action
     public function setName($name)
     {
         $this->name = $name;
+
         return $this;
     }
 
@@ -89,6 +85,7 @@ class Action
     public function setRoute($route)
     {
         $this->route = $route;
+
         return $this;
     }
 
@@ -100,6 +97,7 @@ class Action
     public function setSecurity($security)
     {
         $this->security = $security;
+
         return $this;
     }
 
@@ -111,6 +109,7 @@ class Action
     public function setSeverity($severity)
     {
         $this->severity = $severity;
+
         return $this;
     }
 }

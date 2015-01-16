@@ -1,26 +1,20 @@
 <?php
 namespace Lighthart\GridBundle\Grid;
 
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 use Doctrine\ORM\Query;
 
 class Column
 {
-
     private $alias;
      // from the query
     private $value;
      // from the query
     private $options;
 
-
-    public function __construct($alias, $value = 'id', array $options = array())
+    public function __construct($alias, $value = 'id', array $options = [])
     {
-        $this->alias = $alias;
-        $this->value = $value;
+        $this->alias   = $alias;
+        $this->value   = $value;
         $this->options = $options;
     }
 
@@ -32,6 +26,7 @@ class Column
     public function setAlias($alias)
     {
         $this->alias = $alias;
+
         return $this;
     }
 
@@ -48,6 +43,7 @@ class Column
     public function setValue($value)
     {
         $this->value = $value;
+
         return $this;
     }
 
@@ -68,6 +64,7 @@ class Column
     public function setOptions($options)
     {
         $this->options = $options;
+
         return $this;
     }
 

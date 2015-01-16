@@ -1,23 +1,17 @@
 <?php
 namespace Lighthart\GridBundle\Grid;
 
-use Knp\Component\Pager\Paginator;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 
 class Cell
 {
-
     protected $attr;     // html attributes on <td>
-    private   $options;
+    private $options;
     protected $row;      // which row we belong in
-    private   $type;     // td or th
+    private $type;     // td or th
     protected $title;    // column reference
     protected $value;    // the contents of the cell
 
-    public function __construct($prop = array())
+    public function __construct($prop = [])
     {
         foreach ($prop as $k => $p) {
             $this->$k = $p;
@@ -30,14 +24,16 @@ class Cell
 
         // instead automatically add lg for general formatting on each cell
 
-        $attr = $this->attr;
-        $attr['class'] = ((isset($attr['class']) && $attr['class']) ? $attr['class'].' lg' : 'lg');
+        $attr          = $this->attr;
+        $attr['class'] = ((isset($attr['class']) && $attr['class']) ? $attr['class'] . ' lg' : 'lg');
+
         return $attr;
     }
 
     public function setAttr($attr)
     {
         $this->attr = $attr;
+
         return $this;
     }
 
@@ -49,6 +45,7 @@ class Cell
     public function setOptions($options)
     {
         $this->options = $options;
+
         return $this;
     }
 
@@ -60,6 +57,7 @@ class Cell
     public function setRow($row)
     {
         $this->tr = $row;
+
         return $this;
     }
 
@@ -71,6 +69,7 @@ class Cell
     public function setType($type)
     {
         $this->type = $type;
+
         return $this;
     }
 
@@ -82,6 +81,7 @@ class Cell
     public function setValue($value)
     {
         $this->value = $value;
+
         return $this;
     }
 
@@ -93,6 +93,7 @@ class Cell
     public function setTitle($title)
     {
         $this->title = $title;
+
         return $this;
     }
 
@@ -100,7 +101,7 @@ class Cell
 
     public function td()
     {
-        return "" . "<" . $this->type . " class=\"" . ($this->attr ? : "") . "\" data-role-lg-header=\"" . ($this->title ? : "") . "\">" . ((is_object($this->value) && 'DateTime' == get_class($this->value)) ? $this->value->format('Y-m-d') : $this->value) . "</" . $this->type . ">";
+        return "" . "<" . $this->type . " class=\"" . ($this->attr ?: "") . "\" data-role-lg-header=\"" . ($this->title ?: "") . "\">" . ((is_object($this->value) && 'DateTime' == get_class($this->value)) ? $this->value->format('Y-m-d') : $this->value) . "</" . $this->type . ">";
     }
 
     public function th()
