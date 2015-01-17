@@ -1,4 +1,7 @@
 {% block header %}
+    {% block flags %}
+        {% include 'LighthartGridBundle:Grid:flags.html.twig' %}
+    {% endblock flags %}
     {% set place = 'header' %}
     <div id="lg-{{place}}" class="container lg-{{place}}">
         <nav class="navbar navbar-default lg-navbar" role="navigation">
