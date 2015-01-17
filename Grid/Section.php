@@ -2,7 +2,6 @@
 
 namespace Lighthart\GridBundle\Grid;
 
-
 class Section
 {
     private $attr; // html attributes on <thead>

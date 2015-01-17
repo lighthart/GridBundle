@@ -2,7 +2,6 @@
 
 namespace Lighthart\GridBundle\Grid;
 
-
 class Table
 {
     private $attr;    // html attributes on <table>

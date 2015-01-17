@@ -1,7 +1,6 @@
 <?php
 namespace Lighthart\GridBundle\Grid;
 
-
 class Cell
 {
     protected $attr;     // html attributes on <td>

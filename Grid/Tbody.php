@@ -2,7 +2,6 @@
 
 namespace Lighthart\GridBundle\Grid;
 
-
 class Tbody extends Section
 {
     public function __construct()

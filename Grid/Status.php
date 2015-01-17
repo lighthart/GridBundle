@@ -1,7 +1,6 @@
 <?php
 namespace Lighthart\GridBundle\Grid;
 
-
 class Status
 {
     private $attr;

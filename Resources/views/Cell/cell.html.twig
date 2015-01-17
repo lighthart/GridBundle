@@ -1,3 +1,6 @@
+{% if cell.attr['width'] is defined %}
+    {% set width = cell.attr['width'] %}
+{% endif %}
 {% set boolean = cell.options.boolean is defined %}
 {% set money = cell.options.money is defined %}
 {%- if cell.value.timestamp is defined -%}
@@ -11,7 +14,7 @@
 {%- else -%}
     {% set value = cell.value|trim %}
 {%- endif -%}
-<{{- cell.type }} {% for attrib, value in cell.attr -%}{{- attrib -}}="{{- value|trim -}}" {%- endfor -%} {% if cell.attr['width'] is defined %}style="width:{{cell.attr['width']}};"{% endif %} {% if cell.attr['title'] is defined and 'td' == cell.type -%}{%- elseif boolean -%} title="{{cell.value|boolean(false)}}"{%- else -%} title="{{- value -}}"{%- endif %}{% if boolean %}{% endif %}{% if boolean %}width = "2em"{% endif %}>{{-''-}}
+<{{- cell.type }} {% for attrib, value in cell.attr -%}{{- attrib -}}="{{- value|trim -}}" {%- endfor -%} {% if width is defined %}style="width:{{width}};"{% endif %} {% if cell.attr['title'] is defined and 'td' == cell.type -%}{%- elseif boolean -%} title="{{cell.value|boolean(false)}}"{%- else -%} title="{{- value -}}"{%- endif %}{% if boolean %}{% endif %}{% if boolean %}width = "2em"{% endif %}>{{-''-}}
 {%- if cell.actions is defined -%}
     {% include 'LighthartGridBundle:Action:actions.html.twig' with {'actions': cell.actions} %}
 {%- elseif cell.statuses is defined -%}

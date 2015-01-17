@@ -2,7 +2,6 @@
 
 namespace Lighthart\GridBundle\Grid;
 
-
 class Td extends Cell
 {
     public function __construct($prop = [])

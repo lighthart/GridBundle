@@ -2,7 +2,6 @@
 
 namespace Lighthart\GridBundle\Grid;
 
-
 class Row
 {
     private $attr; // html attributes on <thead>
