@@ -558,10 +558,14 @@ class GridMaker
                     $oldField    = substr(stristr($col, '.'), 1);
                     $oldSubAlias = stristr($col, '.', true);
                     if (false !== $oldSubAlias) {
-                        if (!isset($aliases[$col])) {
+                        if (isset($aliases[$oldSubAlias])) {
+                            $matches[$key] = $aliases[$oldSubAlias];
+                        } elseif (isset($aliases[$col])) {
+                            // why is this needed? something is not getting mapped properly
+                            $matches[$key] = $aliases[$col];
+                        } else {
                             throw new \Exception('Column alias does not match query alias: ' . $oldSubAlias . ' is in error');
                         }
-                        $matches[$key] = $aliases[$col];
                          // . '_' . $oldField;
                     }
                 }
@@ -598,6 +602,14 @@ class GridMaker
         $root               = 'root___' . str_replace('\\', '_', $rootClassPath . '_');
         $aliases[$oldRoot]  = $root;
         $entities[$oldRoot] = $rootClassPath;
+        $rootSelect = array_filter($qb->getDqlPart('select'), function($s) {
+            return $s->getParts()[0]=='partial root.{id}';
+        })[0];
+        $rootSelectParts = explode(',',substr(stristr(stristr($rootSelect,'{'),'}', true),1));
+
+        foreach ($rootSelectParts as $k => $v) {
+            $oldAliases['root.'.$v] = $root.'_'.$v;
+        }
 
         // rewrite rootaliases in result
         //
@@ -669,11 +681,12 @@ class GridMaker
             $dql     = preg_replace($pattern, $replace, $dql);
         }
 
+
         // remark root
         $dql = str_replace('##', $root, $dql);
 
         $g = $this->getGrid();
-
+// need to add root.id here
         foreach ($g->getColumns() as $k => $v) {
             $oldAlias   = $v->getAlias();
             $oldValue   = $v->getValue();
