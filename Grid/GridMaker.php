@@ -728,7 +728,6 @@ class GridMaker
             } else {
                 $g->addError('Column \'' . $oldAlias . '\' maps to alias not present in query');
             }
-
             // if the column starts with a tilde, use a value from the field specified
             // this is when you have several objects of the same category
             // and you want that category to be the column header
@@ -741,21 +740,34 @@ class GridMaker
 
             // the column must be specified as a hidden column in your grid.
         }
-
         $g->setAliases($oldAliases);
     }
 
     public function mapColumns()
     {
+        $aliases = $this->getGrid()->getAliases();
         $columns = [];
         $g       = $this->getGrid();
         foreach ($g->getColumns() as $k => $v) {
             $oldAlias   = $v->getAlias();
             $oldValue   = $v->getValue();
             $oldOptions = $v->getOptions();
-            $newAlias   = $g->getAliases()[str_replace('_', '.', $oldAlias)];
-            $columns[]  = new Column($newAlias, $oldValue, $oldOptions);
+
+            $tildes     = ['title', 'parentId', 'entityId'];
+
+            foreach ($tildes as $k => $option) {
+                $newAlias = $aliases[str_replace('_','.',$oldAlias)];
+                if (isset($oldOptions[$option])) {
+                    $oldOptions[$option] = $this->pregAlias($oldOptions[$option], $aliases);
+                }
+            }
+
+            foreach ($oldOptions as $optionKey => $optionValue) {
+                $newAlias   = $g->getAliases()[str_replace('_', '.', $oldAlias)];
+                $columns[]  = new Column($newAlias, $oldValue, $oldOptions);
+            }
         }
+
         $g->setColumns($columns);
     }
 
