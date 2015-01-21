@@ -5,9 +5,9 @@ function gridResetControl() {
         e.preventDefault();
         $('input.lg-filter').each(function(){
             $(this).val('');
-            console.log($(this));
         });
         $('input.lg-search').val('');
+        $('.lg-grid-flag').each(function(){this.checked = false;});
 
         delay(function() {
             gridResetReload(control);
@@ -27,8 +27,10 @@ function gridResetReload(control) {
     $.removeCookie(filterCookie);
     $.removeCookie(offsetCookie);
 
-    var cookies = getCookies();
-    console.table(cookies);
+    $.map(getFlags(), function(value, flag) {
+        var flagCookie = "lg-" + getLgCurrentRoute() + "-flag-" + flag;
+        $.removeCookie(flagCookie);
+    });
 
     gridReload();
 }

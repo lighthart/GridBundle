@@ -604,11 +604,15 @@ class GridMaker
         $entities[$oldRoot] = $rootClassPath;
         $rootSelect = array_filter($qb->getDqlPart('select'), function($s) {
             return $s->getParts()[0]=='partial root.{id}';
-        })[0];
-        $rootSelectParts = explode(',',substr(stristr(stristr($rootSelect,'{'),'}', true),1));
+        });
 
-        foreach ($rootSelectParts as $k => $v) {
-            $oldAliases['root.'.$v] = $root.'_'.$v;
+        if (isset($rootSelect[0]) && $rootSelect[0]){
+            // escaping the count query
+            $rootSelectParts = explode(',',substr(stristr(stristr($rootSelect,'{'),'}', true),1));
+
+            foreach ($rootSelectParts as $k => $v) {
+                $oldAliases['root.'.$v] = $root.'_'.$v;
+            }
         }
 
         // rewrite rootaliases in result
