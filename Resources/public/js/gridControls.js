@@ -33,4 +33,5 @@ function activateControls() {
     gridSortControl();
     gridFlagControl();
     gridResetControl();
+    markFlags();
 }

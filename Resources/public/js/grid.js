@@ -56,6 +56,16 @@ function highlightFilters() {
     });
 }
 
+function getFlagCookies() {
+    var cookies ={};
+    $.map(getFlags(), function(value, flag) {
+        var flagCookie = "lg-" + getLgCurrentRoute() + "-flag-" + flag;
+        cookies[flag] = $.cookie(flagCookie);
+    });
+
+    return cookies;
+}
+
 function getCookies() {
     var ajaxVersionCookie = "lg-" + getLgCurrentRoute() + "-version";
     var numPerPagecookie = 'lg-results-per-page';
@@ -63,15 +73,15 @@ function getCookies() {
     var offsetCookie = "lg-" + getLgCurrentRoute() + "-offset";
     var searchCookie = "lg-" + getLgCurrentRoute() + "-search";
     var sortCookie = "lg-" + getLgCurrentRoute() + "-sort";
-    //reset pagination upon filtering
     var cookies = {
         filter: $.cookie(filterCookie),
         offset: $.cookie(offsetCookie),
         pageSize: $.cookie(numPerPagecookie),
         search: $.cookie(searchCookie),
         sort: $.cookie(sortCookie),
-        version: $.cookie(ajaxVersionCookie)
+        version: $.cookie(ajaxVersionCookie),
     };
+
     // Setting Defaults
     if ('undefined' == typeof cookies.offset || isNaN(cookies.offset)) {
         cookies.offset = 0;
@@ -82,6 +92,13 @@ function getCookies() {
     return cookies;
 }
 
+function setFlagCookies() {
+    $.map(getFlags(), function(value, flag) {
+        var flagCookie = "lg-" + getLgCurrentRoute() + "-flag-" + flag;
+        $.cookie(flagCookie, value);
+    });
+}
+
 function setCookies(cookies) {
     var ajaxVersionCookie = "lg-" + getLgCurrentRoute() + "-version";
     var numPerPagecookie = 'lg-results-per-page';
@@ -89,12 +106,14 @@ function setCookies(cookies) {
     var offsetCookie = "lg-" + getLgCurrentRoute() + "-offset";
     var searchCookie = "lg-" + getLgCurrentRoute() + "-search";
     var sortCookie = "lg-" + getLgCurrentRoute() + "-sort";
+    // var flagCookie = "lg-" + getLgCurrentRoute() + "-flags";
     $.cookie(filterCookie, cookies.filter);
     $.cookie(offsetCookie, cookies.offset);
     $.cookie(searchCookie, cookies.search);
     $.cookie(sortCookie, cookies.sort);
     $.cookie(numPerPagecookie, cookies.pageSize);
     $.cookie(ajaxVersionCookie, cookies.version);
+    setFlagCookies();
 }
 
 function gridFocus() {
@@ -112,14 +131,23 @@ function gridReload() {
     var oldFocus = null;
     var oldVersion = null;
     cookies = getCookies();
-    $.ajax({
-        url: getLgCurrentURI(),
-        data: {
+    data = {
             pageSize: cookies.pageSize,
             pageOffset: cookies.offset,
             filter: cookies.filter,
             search: cookies.search,
-        },
+    };
+
+    $.map(getFlags(), function(value, flag) {
+        var flagCookie = flag;
+        if (value) {
+            data[flagCookie] = value;
+        }
+    });
+
+    $.ajax({
+        url: getLgCurrentURI(),
+        data: data,
         dataType: 'html',
         type: 'GET',
         cache: false,
@@ -144,6 +172,7 @@ function gridReload() {
             if (oldFocus) {
                 $(oldFocus).blur().focus().val($(oldFocus).val());
             }
+            markFlags();
         }
     });
 }
