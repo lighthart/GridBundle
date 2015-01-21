@@ -602,16 +602,16 @@ class GridMaker
         $root               = 'root___' . str_replace('\\', '_', $rootClassPath . '_');
         $aliases[$oldRoot]  = $root;
         $entities[$oldRoot] = $rootClassPath;
-        $rootSelect = array_filter($qb->getDqlPart('select'), function($s) {
-            return $s->getParts()[0]=='partial root.{id}';
+        $rootSelect         = array_filter($qb->getDqlPart('select'), function ($s) {
+            return $s->getParts()[0] == 'partial root.{id}';
         });
 
-        if (isset($rootSelect[0]) && $rootSelect[0]){
+        if (isset($rootSelect[0]) && $rootSelect[0]) {
             // escaping the count query
-            $rootSelectParts = explode(',',substr(stristr(stristr($rootSelect,'{'),'}', true),1));
+            $rootSelectParts = explode(',', substr(stristr(stristr($rootSelect, '{'), '}', true), 1));
 
             foreach ($rootSelectParts as $k => $v) {
-                $oldAliases['root.'.$v] = $root.'_'.$v;
+                $oldAliases['root.' . $v] = $root . '_' . $v;
             }
         }
 
@@ -684,7 +684,6 @@ class GridMaker
             $replace = '(' . $v . '$1)';
             $dql     = preg_replace($pattern, $replace, $dql);
         }
-
 
         // remark root
         $dql = str_replace('##', $root, $dql);
@@ -760,7 +759,7 @@ class GridMaker
             $tildes     = ['title', 'parentId', 'entityId'];
 
             foreach ($tildes as $k => $option) {
-                $newAlias = $aliases[str_replace('_','.',$oldAlias)];
+                $newAlias = $aliases[str_replace('_', '.', $oldAlias)];
                 if (isset($oldOptions[$option])) {
                     $oldOptions[$option] = $this->pregAlias($oldOptions[$option], $aliases);
                 }
