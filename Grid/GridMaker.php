@@ -608,7 +608,7 @@ class GridMaker
 
         if (isset($rootSelect[0]) && $rootSelect[0]) {
             // escaping the count query
-            $rootSelectParts = explode(',', substr(stristr(stristr($rootSelect, '{'), '}', true), 1));
+            $rootSelectParts = explode(',', substr(stristr(stristr($rootSelect[0], '{'), '}', true), 1));
 
             foreach ($rootSelectParts as $k => $v) {
                 $oldAliases['root.' . $v] = $root . '_' . $v;
