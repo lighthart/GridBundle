@@ -31,13 +31,13 @@ function gridFilterToggleControl() {
         if ($('.lg-filter').hasClass('hide')) {
             // Open
             $.cookie(filterToggleCookie, 1);
-            $('#lg-toggle-filter > span').removeClass('fa-chevron-right');
-            $('#lg-toggle-filter > span').addClass('fa-chevron-down');
+            $('#lg-toggle-filter > span').removeClass('fa-chevron-down');
+            $('#lg-toggle-filter > span').addClass('fa-chevron-up');
         } else {
             // Closed
             $.cookie(filterToggleCookie, 0);
-            $('#lg-toggle-filter > span').addClass('fa-chevron-right');
-            $('#lg-toggle-filter > span').removeClass('fa-chevron-down');
+            $('#lg-toggle-filter > span').addClass('fa-chevron-down');
+            $('#lg-toggle-filter > span').removeClass('fa-chevron-up');
         }
         $('.lg-filter').toggleClass('hide');
         activateControls();

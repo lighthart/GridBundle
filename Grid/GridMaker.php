@@ -436,7 +436,6 @@ class GridMaker
         if ($export) {
             $this->setExport();
         }
-
         // this is for displaying filter boxes
         $filters = !!$request->cookies->get('lg-filter-toggle');
 
@@ -454,6 +453,8 @@ class GridMaker
 
         if ($this->getGrid()->getOption('singlePage')) {
         }
+
+        $this->paginateGridFromCookies($request, $options);
 
         if ($export) {
             $offset   = 0;
@@ -493,7 +494,7 @@ class GridMaker
             fclose($file);
 
             // $response = new Response();
-            $this->paginateGridFromCookies($request, $options);
+
             $response = new BinaryFileResponse($fullfilename);
             $d        = $response->headers->makeDisposition(ResponseHeaderBag::DISPOSITION_ATTACHMENT, $filename);
             $response->headers->set('Content-Disposition', $d);
