@@ -432,10 +432,6 @@ class GridMaker
         $results = $options['result'];
         $debug   = $request->query->get('debug');
 
-        $export = ('export' == $request->query->get('export'));
-        if ($export) {
-            $this->setExport();
-        }
         // this is for displaying filter boxes
         $filters = !!$request->cookies->get('lg-filter-toggle');
 
@@ -455,10 +451,11 @@ class GridMaker
         }
 
         $this->paginateGridFromCookies($request, $options);
+        $export = intval($this->getExport());
 
         if ($export) {
             $offset   = 0;
-            $pageSize = 500;
+            $pageSize = 500 < $export ? 500: $export;
 
             $this->QB()->setFirstResult($offset);
             $this->QB()->setMaxResults($pageSize);
@@ -479,7 +476,7 @@ class GridMaker
             } else {
                 fputcsv($file, $this->getGrid()->exportTh());
                 $results = $this->QB()->getQuery()->getResult(Query::HYDRATE_SCALAR);
-                while ([] != $results) {
+                while (([] != $results) && ($offset < $export)) {
                     $this->QB()->setFirstResult($offset);
                     $results = $this->QB()->getQuery()->getResult(Query::HYDRATE_SCALAR);
                     $offset += $pageSize;
@@ -1099,8 +1096,15 @@ class GridMaker
         return $qb;
     }
 
-    public function setExport($export = true)
+    public function setExport($export = 1000)
     {
         $this->getGrid()->setExport($export);
+        return $this;
     }
+
+    public function getExport()
+    {
+        return $this->getGrid()->getExport();
+    }
+
 }

@@ -172,7 +172,7 @@ class Grid
         return $this->export;
     }
 
-    public function setExport($export = true)
+    public function setExport($export = 1000)
     {
         $this->export = $export;
 
