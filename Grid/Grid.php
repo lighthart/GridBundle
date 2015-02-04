@@ -787,6 +787,14 @@ class Grid
                                 $options['money'] = true;
                             }
 
+                            if ($columns[$key]->getOption('value')) {
+                                $valueOptions = explode('|',implode('',array_filter(explode('~', $columns[$key]->getOption('value')))));
+                                while (!$result[$valueOptions[0]]){
+                                    array_shift($valueOptions);
+                                }
+                                $value = $result[$valueOptions[0]];
+                            }
+
                             $cell = new Cell([
                                 'value'   => $value,
                                 'title'   => $title,
@@ -803,6 +811,8 @@ class Grid
                     }
                 }
                 $tbody->addRow($row);
+                // stops after one row.  convenient for debugging
+                // die;
             }
         } else {
             $row = new Row([
@@ -902,7 +912,6 @@ class Grid
         // converts ~column.def~ into the value from the result
         if ('string' == gettype($what)) {
             while(preg_match('/^(.*?)(~.*?~)(.*?)$/', $what, $match)) {
-            // var_dump($match);
             $matches = array_filter(explode('~', $match[2]));
                 if ([] == $result) {
                     $what = $match[1] . $match[3];
@@ -910,7 +919,10 @@ class Grid
                     $what = $match[1] . implode('', array_map(function ($m) use (&$result) {
                         if (false !== strpos($m, '|')) {
                             // grab the first truthy value
-                            $m = array_shift(array_filter(explode('|', $m), function($v) use ($result) {return $result[$v];}));
+                            $m = array_shift(array_filter(explode('|', $m), function($v) use ($result) {
+                                var_dump($result);die;
+                                return $result[$v];
+                            }));
                         }
                         if (array_key_exists($m, $result)) {
                             return $result[$m];
@@ -921,39 +933,48 @@ class Grid
                     }, $matches)) . $match[3];
                 }
             }
+            $what = str_replace('%', '~', $what);
         }
 
         // change marks back
-        $what = str_replace('%', '~', $what);
-
         return $what;
     }
+
+    // this probably should somehow be combined with above
 
     public function tildes(Array $tildes, &$result)
     {
         foreach ($tildes as $tildeKey => $what) {
-            if ('string' == gettype($what) && preg_match('/(.*?)~(((.*?)~)+)(.*?)/', $what, $match)) {
-                // array filter strips out extra empties from explode
+            if ('string' == gettype($what)) {
+                while(preg_match('/^(.*?)(~.*?~)(.*?)$/', $what, $match)) {
                 $matches = array_filter(explode('~', $match[2]));
-                if ([] == $result) {
-                    $what = $match[1] . $match[5];
-                } else {
-                    $what = $match[1] . implode(' ', array_map(function ($m) use (&$result) {
-                        if (array_key_exists($m, $result)) {
-                            return $result[$m];
-                        } else {
-                            if (false === strpos($m, '___')) {
-                                return $m;
-                            } else {
-                                // in this case no match was found-- remove the tilde tag
-                                return '';
+                    if ([] == $result) {
+                        $what = $match[1] . $match[3];
+                    } else {
+                        $what = $match[1] . implode('', array_map(function ($m) use (&$result) {
+                            if (false !== strpos($m, '|')) {
+                                // grab the first truthy value
+                                $m = array_shift(array_filter(explode('|', $m), function($v) use ($result) {return $result[$v];}));
                             }
-                        }
-                    }, $matches)) . $match[5];
+                            if (array_key_exists($m, $result)) {
+                                return $result[$m];
+                            } else {
+                                    // mark them different so we don't recurse forever
+                                if (false === strpos($m, '___')) {
+                                    return '%'.$m.'%';
+                                } else {
+                                    // in this case no match was found-- remove the tilde tag
+                                    return '';
+                                }
+                            }
+                        }, $matches)) . $match[3];
+                    }
                 }
+                $what = str_replace('%', '~', $what);
 
                 $tildes[$tildeKey] = $what;
             }
+
         }
 
         return $tildes;

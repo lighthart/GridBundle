@@ -553,24 +553,26 @@ class GridMaker
             foreach ($matches as $key => $col) {
                 if (preg_match('/\<(.*?)\>/', $col)) {
                 } else {
-                    $oldField    = substr(stristr($col, '.'), 1);
-                    $oldSubAlias = stristr($col, '.', true);
-                    if (false !== $oldSubAlias) {
-                        if (isset($aliases[$oldSubAlias])) {
-                            $matches[$key] = $aliases[$oldSubAlias];
-                        } elseif (isset($aliases[$col])) {
-                            // why is this needed? something is not getting mapped properly
-                            $matches[$key] = $aliases[$col];
-                        } else {
-                            throw new \Exception('Column alias does not match query alias: ' . $oldSubAlias . ' is in error');
+                    $fields = explode('|', $col);
+                    foreach ($fields as $fieldKey => $field) {
+                        $oldField    = substr(stristr($field, '.'), 1);
+                        $oldSubAlias = stristr($field, '.', true);
+                        if (false !== $oldSubAlias) {
+                            if (isset($aliases[$oldSubAlias])) {
+                                $fields[$fieldKey] = $aliases[$oldSubAlias].'_'.$oldField;
+                            } elseif (isset($aliases[$field])) {
+                                // why is this needed? something is not getting mapped properly
+                                $fields[$fieldKey] = $aliases[$field];
+                            } else {
+                                throw new \Exception('Column alias does not match query alias: ' . $oldSubAlias . ' is in error');
+                            }
+                             // . '_' . $oldField;
                         }
-                         // . '_' . $oldField;
                     }
                 }
             }
-            $alias = $match[1] . '~' . implode('~', $matches) . '~' . $match[5];
+            $alias = $match[1] . '~' . implode('|', $fields) . '~' . $match[5];
         }
-
         return $alias;
     }
 
@@ -699,7 +701,7 @@ class GridMaker
                 // tilde mapping
                 $newAlias                                      = $aliases[stristr($oldAlias, '_', true) ] . '_' . $v->getValue();
                 $oldAliases[str_replace('_', '.', $oldAlias) ] = $newAlias;
-                $tildes                                        = ['title', 'parentId', 'entityId'];
+                $tildes                                        = ['title', 'parentId', 'entityId', 'value'];
 
                 foreach ($tildes as $k => $option) {
                     $newAlias = $aliases[stristr($oldAlias, '_', true) ] . '_' . $v->getValue();
@@ -754,7 +756,7 @@ class GridMaker
             $oldValue   = $v->getValue();
             $oldOptions = $v->getOptions();
 
-            $tildes     = ['title', 'parentId', 'entityId'];
+            $tildes     = ['title', 'parentId', 'entityId', 'value'];
 
             foreach ($tildes as $k => $option) {
                 $newAlias = $aliases[str_replace('_', '.', $oldAlias)];
