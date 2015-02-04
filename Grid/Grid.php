@@ -900,20 +900,31 @@ class Grid
     public function tilde($what, &$result)
     {
         // converts ~column.def~ into the value from the result
-        if ('string' == gettype($what) && preg_match('/(.*?)~(((.*?)~)+)(.*?)/', $what, $match)) {
+        if ('string' == gettype($what)) {
+            while(preg_match('/^(.*?)(~.*?~)(.*?)$/', $what, $match)) {
+            // var_dump($match);
             $matches = array_filter(explode('~', $match[2]));
-            if ([] == $result) {
-                $what = $match[1] . $match[5];
-            } else {
-                $what = $match[1] . implode(' ', array_map(function ($m) use (&$result) {
-                    if (array_key_exists($m, $result)) {
-                        return $result[$m];
-                    } else {
-                        return $m;
-                    }
-                }, $matches)) . $match[5];
+                if ([] == $result) {
+                    $what = $match[1] . $match[3];
+                } else {
+                    $what = $match[1] . implode('', array_map(function ($m) use (&$result) {
+                        if (false !== strpos($m, '|')) {
+                            // grab the first truthy value
+                            $m = array_shift(array_filter(explode('|', $m), function($v) use ($result) {return $result[$v];}));
+                        }
+                        if (array_key_exists($m, $result)) {
+                            return $result[$m];
+                        } else {
+                            // mark them different so we don't recurse forever
+                            return '%'.$m.'%';
+                        }
+                    }, $matches)) . $match[3];
+                }
             }
         }
+
+        // change marks back
+        $what = str_replace('%', '~', $what);
 
         return $what;
     }
