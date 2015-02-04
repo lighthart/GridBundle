@@ -631,8 +631,28 @@ class Grid
         if ([] != $results) {
             foreach ($results as $tuple => $result) {
                 foreach ($headers as $headerKey => $headerValue) {
-                    if (in_array($headerKey, $booleans)) {
-                        $newResult[$headerKey] = (($result[$headerKey] === null) ? '' : ($res ? "true" : "false"));
+                    if ($this->getColumn($headerKey)->getOption('value')) {
+                        $coalesce = array_map(
+                            function($c){
+                                return str_replace('.','_',$c);
+                            },
+                            explode('|',
+                                implode('',
+                                    array_filter(
+                                        explode('~', $this->getColumn($headerKey)->getOption('value'))
+                                        )
+                                    )
+                                )
+                            );
+                        while (!$result[$coalesce[0]]){
+                            array_shift($coalesce);
+                        }
+                        $value = $result[$coalesce[0]];
+                        $newResult[$headerKey] = $value;
+                        // var_dump($this->getColumn($headerKey));
+                    } elseif (in_array($headerKey, $booleans)) {
+                        $newResult[$headerKey] = (($result[$headerKey] === null) ? '' : ($result ? "true" : "false"));
+
                     } else {
                         $newResult[$headerKey] = (($result[$headerKey] instanceof \DateTime) ? $result[$headerKey]->format('Y-m-d') : $result[$headerKey]);
                     }
@@ -788,11 +808,11 @@ class Grid
                             }
 
                             if ($columns[$key]->getOption('value')) {
-                                $valueOptions = explode('|',implode('',array_filter(explode('~', $columns[$key]->getOption('value')))));
-                                while (!$result[$valueOptions[0]]){
-                                    array_shift($valueOptions);
+                                $coalesce = explode('|',implode('',array_filter(explode('~', $columns[$key]->getOption('value')))));
+                                while (!$result[$coalesce[0]]){
+                                    array_shift($coalesce);
                                 }
-                                $value = $result[$valueOptions[0]];
+                                $value = $result[$coalesce[0]];
                             }
 
                             $cell = new Cell([
