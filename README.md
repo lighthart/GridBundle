@@ -161,6 +161,7 @@ Step 5.  Hydrate the grid and pass it to a twig
             'grid'    => $gm->getGrid() ,
             'flags'   => $flags,
             'newPath' => $url,
+            'export'  => 1000,
         ));
 
     Features:
@@ -173,6 +174,7 @@ Step 5.  Hydrate the grid and pass it to a twig
                             $flagname    = $request->query->get('flagName');
                             $anotherFlag = $request->query->get('anotherFlag');
                         in a Symfony controller if specified as 'flags' => ['flagName', 'anotherFlag']
+        'export'        Adds export limited to the number of lines specified by the value
 
 Note: A lot of information is rendered with the table, including classnames and ids for other processing via javascript or other ajax.
 
