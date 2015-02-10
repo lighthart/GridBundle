@@ -151,8 +151,21 @@ Step 5.  Hydrate the grid and pass it to a twig
 
         $gm->hydrateGrid($request);
         return $this->render('ApplicationBundle:Test:test3.html.twig', array(
-            'grid' => $gm->getGrid() ,
+            'grid'    => $gm->getGrid() ,
+            'flags'   => $flags,
+            'newPath' => $url,
         ));
+
+    Features:
+        'newPath'       Path for 'new' to add something to the grid.
+        'newIcon'       A font awesome icon for the new button.  Note: Font Awesome not installed: Without
+                        font-awesome, this feature puts a <span class="fa [icon]"></span> tag into the
+                        <a> for the button
+        'flags'         An array of labels for flags to be rendered as checkboxes above grid, to be used to
+                        modify the grid query.  These are fetched by, for example:
+                            $flagname    = $request->query->get('flagName');
+                            $anotherFlag = $request->query->get('anotherFlag');
+                        in a Symfony controller if specified as 'flags' => ['flagName', 'anotherFlag']
 
 Note: A lot of information is rendered with the table, including classnames and ids for other processing via javascript or other ajax.
 
