@@ -96,7 +96,12 @@ Step 3.  Start adding fields/columns.
                     This is mostly useful for javascript related associated entities
         'title'     sets the title of the column.  Note: the title key of the 'attr' field sets the hover-over title
         'hidden'    evaluating to true hides the column
-
+        'security'  A primitive boolean, or an anonymous function.  If the value evaluates to 
+                    true, the button is rendered.  Default is true.  For the anonymous function, the result
+                    tuple for the current row is sent as the first parameter, and an alias translation
+                    table for the original alias and the new alias in the query is sent as the second
+                    parameter.  The tildes (see below) function as columns forming indexes, to base the
+                    appearance on portions of the tuple.
 
         tildes:
             for 'entityId', 'parentId', 'title' and all elements of 'attr', enclosing any portion of that string
@@ -107,12 +112,7 @@ Step 3.  Start adding fields/columns.
             <School Name>
             to the table header cell.
     
-        'security'      A primitive boolean, or an anonymous function.  If the value evaluates to 
-            true, the button is rendered.  Default is true.  For the anonymous function, the result
-            tuple for the current row is sent as the first parameter, and an alias translation
-            table for the original alias and the new alias in the query is sent as the second
-            parameter.  The tildes function as columns forming indexes, to base the appearance
-            on portions of the tuple.
+
 
 Step 4.  Add Actions.
 
