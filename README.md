@@ -174,7 +174,8 @@ Step 5.  Hydrate the grid and pass it to a twig
                             $flagname    = $request->query->get('flagName');
                             $anotherFlag = $request->query->get('anotherFlag');
                         in a Symfony controller if specified as 'flags' => ['flagName', 'anotherFlag']
-        'export'        Adds export limited to the number of lines specified by the value
+        'export'        Adds export limited to the number of lines specified by the value.  'all' returns 
+                        all results for export
 
 Note: A lot of information is rendered with the table, including classnames and ids for other processing via javascript or other ajax.
 
