@@ -106,6 +106,13 @@ Step 3.  Start adding fields/columns.
             <District Name>
             <School Name>
             to the table header cell.
+    
+        'security'      A primitive boolean, or an anonymous function.  If the value evaluates to 
+            true, the button is rendered.  Default is true.  For the anonymous function, the result
+            tuple for the current row is sent as the first parameter, and an alias translation
+            table for the original alias and the new alias in the query is sent as the second
+            parameter.  The tildes function as columns forming indexes, to base the appearance
+            on portions of the tuple.
 
 Step 4.  Add Actions.
 
@@ -132,8 +139,8 @@ Note: actions are rendered as <a> tags
                         <a> for the button
         'name'          Text for the button.  Works with icon, with icon being leftmost.  If no name is
                         specified, empty space is rendered so the button has some width
-        'security'      A primitive, or an anonymous function.  If the value evaluates to true, the
-                        button is rendered.  Default is true.  For the anonymous function, the result
+        'security'      A primitive boolean, or an anonymous function.  If the value evaluates to 
+                        true, the button is rendered.  Default is true.  For the anonymous function, the result
                         tuple for the current row is sent as the first parameter, and an alias translation
                         table for the original alias and the new alias in the query is sent as the second
                         parameter.  The tildes function as columns forming indexes, to base the appearance
