@@ -4,6 +4,6 @@
             <a class="btn btn-xs btn-default" href="{{ path(app.request.attributes.get('_route'), app.request.attributes.get('_route_params')|merge({'export': export})) }}">
                 Export (CSV) <span class="fa fa-caret-down"></span>
             </a>
-        </div>
+        </div>&nbsp;
     {% endif %}
 {% endblock exportControl %}

@@ -40,6 +40,7 @@ function gridFilterToggleControl() {
             $('#lg-toggle-filter > span').removeClass('fa-chevron-up');
         }
         $('.lg-filter').parent().toggleClass('hide');
+        $('.lg-filter').toggleClass('hide');
         activateControls();
     });
 }
