@@ -2,7 +2,7 @@
     {%- if newPath is defined -%}
         <a href="{{newPath}}" class="btn btn-xs btn-default" id="lg-new-button">
             {%- if newIcon is defined -%}
-                {{- newIcon|raw -}}
+                <span class="fa {{newIcon}}"></span>
             {%- endif %} New
         </a>
     {%- endif -%}
