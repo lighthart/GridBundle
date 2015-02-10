@@ -156,27 +156,12 @@ FOA: If the router fails, the exception will be caught and the button silently o
 
 Step 5.  Hydrate the grid and pass it to a twig
 
-        $export = $request->query->get('export');
-        if ('export' == $export) {
-            $response = $gm->hydrateGrid($request, ['export' => true]);
-            $response->sendContent();
-
-            return $response;
-        } else {
-            $gm->hydrateGrid($request);
-
-            return $this->render('MesdOrmedBundle:Student:grid.html.twig', [
-                'grid'    => $gm->getGrid() ,
-                'flags'   => $flags,
-                'newPath' => $url,
-                'newIcon' => 'fa-plus',
-                'export'  => 1000,
-            ]);
-        }
-
         $gm->hydrateGrid($request);
         return $this->render('ApplicationBundle:Test:test3.html.twig', array(
-
+            'grid'    => $gm->getGrid() ,
+            'flags'   => $flags,
+            'newPath' => $url,
+            'export'  => 1000,
         ));
 
     Features:
@@ -189,8 +174,7 @@ Step 5.  Hydrate the grid and pass it to a twig
                             $flagname    = $request->query->get('flagName');
                             $anotherFlag = $request->query->get('anotherFlag');
                         in a Symfony controller if specified as 'flags' => ['flagName', 'anotherFlag']
-        'export'        Adds export limited to the number of lines specified by the value.  The export
-                        code above needs to be in the controller for this to work
+        'export'        Adds export limited to the number of lines specified by the value
 
 Note: A lot of information is rendered with the table, including classnames and ids for other processing via javascript or other ajax.
 
@@ -203,11 +187,9 @@ Step 5.  In your twig:
         < over-write certain blocks >
         {% endembed %}
 
-Step 6.  Configure export routes:
+Step 6.  Configure routes:
 
     test3:
-        pattern:  /test3/{export}
-        defaults: { _controller: "ApplicationBundle:Test:test3", export: grid }
+        pattern:  /test3/
+        defaults: { _controller: "ApplicationBundle:Test:test3" }
 
-    The export value of 'export' is hard coded to return a grid without buttons, such that
-    /test3 gives the html grid with buttons, while /test3/export gives without buttons
