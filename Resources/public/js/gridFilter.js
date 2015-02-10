@@ -39,7 +39,7 @@ function gridFilterToggleControl() {
             $('#lg-toggle-filter > span').addClass('fa-chevron-down');
             $('#lg-toggle-filter > span').removeClass('fa-chevron-up');
         }
-        $('.lg-filter').toggleClass('hide');
+        $('.lg-filter').parent().toggleClass('hide');
         activateControls();
     });
 }

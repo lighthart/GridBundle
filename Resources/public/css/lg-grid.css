@@ -147,3 +147,15 @@ th.lg-date, td.lg-date {
 .lg-filter-input {
     width: 100%;
 }
+
+.lg-toggle-filter {
+    margin-left: 3px;
+}
+
+.lg-paging-controls {
+    margin-right: 3px;
+}
+
+.export-control {
+    margin-left: 3px;
+}
