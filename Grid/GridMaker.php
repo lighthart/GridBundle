@@ -430,6 +430,7 @@ class GridMaker
         $options = array_merge($defaultOptions, $options);
         $fromQB  = $options['fromQB'];
         $results = $options['result'];
+        $export   = $request->query->get('export');
         $debug   = $request->query->get('debug');
 
         // this is for displaying filter boxes
@@ -451,11 +452,18 @@ class GridMaker
         }
 
         $this->paginateGridFromCookies($request, $options);
-        $export = intval($this->getExport());
+        if ('all' == $export){
+        } else {
+            $export = intval($export);
+        }
 
         if ($export) {
             $offset   = 0;
-            $pageSize = 500 < $export ? 500: $export;
+            if ('all' == $export) {
+                $pageSize = 500;
+            } else {
+                $pageSize = 500 < $export ? 500 : $export;
+            }
 
             $this->QB()->setFirstResult($offset);
             $this->QB()->setMaxResults($pageSize);
@@ -476,7 +484,7 @@ class GridMaker
             } else {
                 fputcsv($file, $this->getGrid()->exportTh());
                 $results = $this->QB()->getQuery()->getResult(Query::HYDRATE_SCALAR);
-                while (([] != $results) && ($offset < $export)) {
+                while (([] != $results) && ('all' == $export || $offset < $export)) {
                     $this->QB()->setFirstResult($offset);
                     $results = $this->QB()->getQuery()->getResult(Query::HYDRATE_SCALAR);
                     $offset += $pageSize;
