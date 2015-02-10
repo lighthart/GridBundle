@@ -452,7 +452,8 @@ class GridMaker
         }
 
         $this->paginateGridFromCookies($request, $options);
-        if ('all' == $export){
+        if ('all' == strtolower($export)){
+            $export = strtolower($export);
         } else {
             $export = intval($export);
         }
