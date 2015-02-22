@@ -686,7 +686,6 @@ class Grid
                         if (is_bool($security)) {
                             // default is true, set in the Action constructor
                         } else {
-                            $security = $action->getSecurity();
                             $security = $security($result, $this->aliases);
                         }
 
@@ -748,6 +747,12 @@ class Grid
 
                         $title = ($columns[$key]->getOption('title') ?: $key);
 
+                        $security = $columns[$key]->getSecurity();
+                        if (is_bool($security)) {
+                            // default is true, set in the Action constructor
+                        } else {
+                            $security = $security($result, $this->aliases);
+                        }
                         if ($columns[$key]->getOption('hidden')) {
                         } else {
                             // tilde mapping
@@ -786,6 +791,8 @@ class Grid
                             if ($money) {
                                 $options['money'] = true;
                             }
+
+                            if(!$security) { $value = null;}
 
                             $cell = new Cell([
                                 'value'   => $value,

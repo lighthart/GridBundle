@@ -15,6 +15,9 @@ class Column
     {
         $this->alias   = $alias;
         $this->value   = $value;
+        $options = array_merge([
+            'security' => true,
+        ], $options);
         $this->options = $options;
     }
 
@@ -72,4 +75,17 @@ class Column
     {
         return isset($this->options[$option]) ? $this->options[$option] : null;
     }
+
+    public function setSecurity($security)
+    {
+        $this->options['security'] = $security;
+
+        return $this;
+    }
+
+    public function getSecurity()
+    {
+        return $this->options['security'];
+    }
+
 }
