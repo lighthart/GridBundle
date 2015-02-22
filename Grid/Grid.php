@@ -903,7 +903,8 @@ class Grid
         $results = $aqb->getQuery()->getResult();
         if ([] != $results && [] != $results[0]) {
             foreach ($results[0] as $key => $value) {
-                $attr = $visible[array_keys($visible) [$key - 1]]->getOptions() ['attr'];
+                $options = $visible[array_keys($visible) [$key - 1]]->getOptions();
+                $attr = $options ['attr'];
 
                 // Can't edit aggregates
                 $attr['class']    = preg_replace('/\s*lg-editable\s*/', '', $attr['class']);
@@ -914,6 +915,8 @@ class Grid
                     'title' => "Summary for " . $visible[array_keys($visible) [$key - 1]]->getValue(),
                     'type'  => 'td',
                     'attr'  => $attr,
+                    // this next one might need some granularity
+                    'options' => $options,
                 ]);
                 $row->addCell($cell);
             }
