@@ -785,6 +785,8 @@ class GridMaker
 
     public function mapResults(array $result)
     {
+
+        // if query is out of sync with columns this blows chunks.  Basically, the root entities aren't getting into getAliases()
         $newResult = [];
         $g         = $this->getGrid();
         foreach ($result as $key => $value) {
