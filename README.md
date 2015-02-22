@@ -96,7 +96,12 @@ Step 3.  Start adding fields/columns.
                     This is mostly useful for javascript related associated entities
         'title'     sets the title of the column.  Note: the title key of the 'attr' field sets the hover-over title
         'hidden'    evaluating to true hides the column
-
+        'security'  A primitive boolean, or an anonymous function.  If the value evaluates to 
+                    true, the button is rendered.  Default is true.  For the anonymous function, the result
+                    tuple for the current row is sent as the first parameter, and an alias translation
+                    table for the original alias and the new alias in the query is sent as the second
+                    parameter.  The tildes (see below) function as columns forming indexes, to base the
+                    appearance on portions of the tuple.
 
         tildes:
             for 'entityId', 'parentId', 'title' and all elements of 'attr', enclosing any portion of that string
@@ -106,6 +111,8 @@ Step 3.  Start adding fields/columns.
             <District Name>
             <School Name>
             to the table header cell.
+    
+
 
 Step 4.  Add Actions.
 
@@ -132,8 +139,8 @@ Note: actions are rendered as <a> tags
                         <a> for the button
         'name'          Text for the button.  Works with icon, with icon being leftmost.  If no name is
                         specified, empty space is rendered so the button has some width
-        'security'      A primitive, or an anonymous function.  If the value evaluates to true, the
-                        button is rendered.  Default is true.  For the anonymous function, the result
+        'security'      A primitive boolean, or an anonymous function.  If the value evaluates to 
+                        true, the button is rendered.  Default is true.  For the anonymous function, the result
                         tuple for the current row is sent as the first parameter, and an alias translation
                         table for the original alias and the new alias in the query is sent as the second
                         parameter.  The tildes function as columns forming indexes, to base the appearance
@@ -151,8 +158,24 @@ Step 5.  Hydrate the grid and pass it to a twig
 
         $gm->hydrateGrid($request);
         return $this->render('ApplicationBundle:Test:test3.html.twig', array(
-            'grid' => $gm->getGrid() ,
+            'grid'    => $gm->getGrid() ,
+            'flags'   => $flags,
+            'newPath' => $url,
+            'export'  => 1000,
         ));
+
+    Features:
+        'newPath'       Path for 'new' to add something to the grid.
+        'newIcon'       A font awesome icon for the new button.  Note: Font Awesome not installed: Without
+                        font-awesome, this feature puts a <span class="fa [icon]"></span> tag into the
+                        <a> for the button
+        'flags'         An array of labels for flags to be rendered as checkboxes above grid, to be used to
+                        modify the grid query.  These are fetched by, for example:
+                            $flagname    = $request->query->get('flagName');
+                            $anotherFlag = $request->query->get('anotherFlag');
+                        in a Symfony controller if specified as 'flags' => ['flagName', 'anotherFlag']
+        'export'        Adds export limited to the number of lines specified by the value.  'all' returns 
+                        all results for export
 
 Note: A lot of information is rendered with the table, including classnames and ids for other processing via javascript or other ajax.
 
@@ -165,11 +188,9 @@ Step 5.  In your twig:
         < over-write certain blocks >
         {% endembed %}
 
-Step 6.  Configure export routes:
+Step 6.  Configure routes:
 
     test3:
-        pattern:  /test3/{export}
-        defaults: { _controller: "ApplicationBundle:Test:test3", export: grid }
+        pattern:  /test3/
+        defaults: { _controller: "ApplicationBundle:Test:test3" }
 
-    The export value of 'export' is hard coded to return a grid without buttons, such that
-    /test3 gives the html grid with buttons, while /test3/export gives without buttons
