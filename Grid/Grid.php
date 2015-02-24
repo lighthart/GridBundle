@@ -706,7 +706,6 @@ class Grid
                         if (is_bool($security)) {
                             // default is true, set in the Action constructor
                         } else {
-                            $security = $action->getSecurity();
                             $security = $security($result, $this->aliases);
                         }
 
@@ -768,6 +767,12 @@ class Grid
 
                         $title = ($columns[$key]->getOption('title') ?: $key);
 
+                        $security = $columns[$key]->getSecurity();
+                        if (is_bool($security)) {
+                            // default is true, set in the Action constructor
+                        } else {
+                            $security = $security($result, $this->aliases);
+                        }
                         if ($columns[$key]->getOption('hidden')) {
                         } else {
                             // tilde mapping
@@ -807,6 +812,7 @@ class Grid
                                 $options['money'] = true;
                             }
 
+                            if(!$security) { $value = null;}
                             if ($columns[$key]->getOption('value')) {
                                 $coalesce = explode('|',implode('',array_filter(explode('~', $columns[$key]->getOption('value')))));
                                 while (!$result[$coalesce[0]]){
@@ -897,7 +903,8 @@ class Grid
         $results = $aqb->getQuery()->getResult();
         if ([] != $results && [] != $results[0]) {
             foreach ($results[0] as $key => $value) {
-                $attr = $visible[array_keys($visible) [$key - 1]]->getOptions() ['attr'];
+                $options = $visible[array_keys($visible) [$key - 1]]->getOptions();
+                $attr = $options ['attr'];
 
                 // Can't edit aggregates
                 $attr['class']    = preg_replace('/\s*lg-editable\s*/', '', $attr['class']);
@@ -908,6 +915,8 @@ class Grid
                     'title' => "Summary for " . $visible[array_keys($visible) [$key - 1]]->getValue(),
                     'type'  => 'td',
                     'attr'  => $attr,
+                    // this next one might need some granularity
+                    'options' => $options,
                 ]);
                 $row->addCell($cell);
             }

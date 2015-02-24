@@ -117,12 +117,16 @@ function makeEditable(object) {
 function update(object, original, val) {
     object.removeClass('lg-editing');
     var th = object.closest('table').find('th').eq(object.index());
+    if ( val == '' || val ==null ) {
+        // not string safe...
+        val = 0;
+    }
     if (val == original) {
         object.text(val);
     } else {
         // This over writes the input field
         object.text(val);
-        if (object.attr('data-role-lg-new')) {
+        if (object.attr('data-role-lg-new') && !object.attr('data-role-lg-entity-id')) {
             url = makeURLfromTD(object, 'create');
             $.ajax({
                 type: 'POST',
@@ -144,11 +148,16 @@ function update(object, original, val) {
                 type: 'POST',
                 url: url,
                 data: {
+                    // possible as form fields?
+                    // eg data: {object.attr('data-role-lg-field'):val}
                     data: val
                 },
                 success: function(responseText, textStatus, XMLHttpRequest) {
-
-                    object.load(url, null);
+                    console.log(val);
+                    console.log(url);
+                    $('.lg-table').addClass('text-muted');
+                    location.reload(true);
+                    // object.load(url, null);
                 }
                 // dataType : dataType
             });
@@ -171,12 +180,12 @@ function makeURLfromTD(td, action) {
     var tr = td.closest('tr');
     var trid = tr.attr('data-role-lg-parent-entity-id');
     var tdid = td.attr('data-role-lg-entity-id');
-    if (action == 'new') {
-        url = getLgAppRoot() + 'cell/' + action + '/' + th.attr('data-role-lg-class') + '/' + th.attr('data-role-lg-field');
-    } else if (action == 'update' && td.attr('data-role-lg-update')) {
+    if (action == 'update' && td.attr('data-role-lg-update')) {
         url = td.attr('data-role-lg-update').replace('~entity_id~', td.attr('data-role-lg-entity-id')).replace('~col_id~', thid).replace('~row_id~', trid);
     } else if (action == 'create' && td.attr('data-role-lg-new')) {
         url = td.attr('data-role-lg-new').replace('~entity_id~', td.attr('data-role-lg-entity-id')).replace('~col_id~', thid).replace('~row_id~', trid);
+    } else if (action == 'new') {
+        url = getLgAppRoot() + 'cell/' + action + '/' + th.attr('data-role-lg-class') + '/' + th.attr('data-role-lg-field');
     } else if (typeof tdid != 'undefined' && tdid) {
      // otherwise try to figure it out yourself
 

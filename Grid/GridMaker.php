@@ -567,12 +567,12 @@ class GridMaker
 
     public function pregAlias($alias, $aliases)
     {
-        if (preg_match('/(.*?)~(((.*?)~)+)(.*)/', $alias, $match)) {
-            $matches = array_filter(explode('~', $match[2]));
-            foreach ($matches as $key => $col) {
-                if (preg_match('/\<(.*?)\>/', $col)) {
+        if (preg_match('/(.*?)~(((.*)~)+)(.*)/', $alias, $match)) {
+            $chunks = explode('~', $alias);
+            foreach ($chunks as $key => $chunk) {
+                if (preg_match('/\<(.*?)\>/', $chunk)) {
                 } else {
-                    $fields = explode('|', $col);
+                    $fields = explode('|', $chunk);
                     foreach ($fields as $fieldKey => $field) {
                         $oldField    = substr(stristr($field, '.'), 1);
                         $oldSubAlias = stristr($field, '.', true);
@@ -587,11 +587,13 @@ class GridMaker
                             }
                              // . '_' . $oldField;
                         }
+                    $chunks[$key] = implode('|', $fields);
                     }
                 }
             }
-            $alias = $match[1] . '~' . implode('|', $fields) . '~' . $match[5];
+            $alias = '' . implode('~', $chunks) . '';
         }
+
         return $alias;
     }
 
@@ -782,6 +784,8 @@ class GridMaker
             $oldValue   = $v->getValue();
             $oldOptions = $v->getOptions();
 
+            // if (isset($oldOptions['title'])) {var_dump($oldOptions['title']);}
+
             $tildes     = ['title', 'parentId', 'entityId', 'value'];
 
             foreach ($tildes as $k => $option) {
@@ -790,6 +794,8 @@ class GridMaker
                     $oldOptions[$option] = $this->pregAlias($oldOptions[$option], $aliases);
                 }
             }
+
+            // if (isset($oldOptions['title'])) {var_dump($oldOptions['title']);}
 
             foreach ($oldOptions as $optionKey => $optionValue) {
                 $newAlias   = $g->getAliases()[str_replace('_', '.', $oldAlias)];
@@ -802,6 +808,8 @@ class GridMaker
 
     public function mapResults(array $result)
     {
+
+        // if query is out of sync with columns this blows chunks.  Basically, the root entities aren't getting into getAliases()
         $newResult = [];
         $g         = $this->getGrid();
         foreach ($result as $key => $value) {
