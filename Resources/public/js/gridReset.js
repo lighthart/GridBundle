@@ -23,6 +23,8 @@ function gridResetReload(control) {
     var offsetCookie = "lg-" + getLgCurrentRoute() + "-offset";
     var searchCookie = "lg-" + getLgCurrentRoute() + "-search";
     var sortCookie = "lg-" + getLgCurrentRoute() + "-sort";
+    var filterToggleCookie = 'lg-filter-toggle';
+    $.cookie(filterToggleCookie, 1);
     $.removeCookie(searchCookie);
     $.removeCookie(filterCookie);
     $.removeCookie(offsetCookie);

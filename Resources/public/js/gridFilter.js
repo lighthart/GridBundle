@@ -28,19 +28,21 @@ function gridFilterToggleControl() {
     $('#lg-toggle-filter').one('click', function(e) {
         e.preventDefault();
         var filterToggleCookie = 'lg-filter-toggle';
-        if ($('.lg-filter').hasClass('hide')) {
+        if ($('.lg-filter').parent().hasClass('hide') || $('.lg-filter').hasClass('hide')) {
             // Open
             $.cookie(filterToggleCookie, 1);
             $('#lg-toggle-filter > span').removeClass('fa-chevron-down');
             $('#lg-toggle-filter > span').addClass('fa-chevron-up');
+            $('.lg-filter').parent().removeClass('hide');
+            $('.lg-filter').removeClass('hide');
         } else {
             // Closed
             $.cookie(filterToggleCookie, 0);
             $('#lg-toggle-filter > span').addClass('fa-chevron-down');
             $('#lg-toggle-filter > span').removeClass('fa-chevron-up');
+            $('.lg-filter').parent().addClass('hide');
+            $('.lg-filter').addClass('hide');
         }
-        $('.lg-filter').parent().toggleClass('hide');
-        $('.lg-filter').toggleClass('hide');
         activateControls();
     });
 }
