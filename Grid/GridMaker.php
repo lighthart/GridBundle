@@ -464,7 +464,7 @@ class GridMaker
             $export = intval($export);
         }
 
-        $this->QB()->distinct();
+        // $this->QB()->distinct();
 
         if ($export) {
             $offset   = 0;
@@ -626,7 +626,7 @@ class GridMaker
         $rootSelect         = array_filter($qb->getDqlPart('select'), function ($s) {
             return $s->getParts()[0] == 'partial root.{id}';
         });
-        $qb->addGroupBy('root');
+        // $qb->addGroupBy('root');
 
         if (isset($rootSelect[0]) && $rootSelect[0]) {
             // escaping the count query
@@ -671,7 +671,7 @@ class GridMaker
                 if (!in_array($join->getAlias(), array_keys($aliases))) {
                     $mappings                     = $em->getMetadataFactory()->getMetadataFor($entities[$entity])->getAssociationMappings();
                     if ($mappings[$field]['type'] <= 2 ) {
-                        $qb->addGroupBy($alias);
+                        // $qb->addGroupBy($alias);
                     }
                     $aliases[$join->getAlias() ]  = $alias . '___' . str_replace('\\', '_', $mappings[$field]['targetEntity'] . '_');
                     $entities[$join->getAlias() ] = $mappings[$field]['targetEntity'];
@@ -686,7 +686,7 @@ class GridMaker
                     $mappings                     = $em->getMetadataFactory()->getMetadataFor($entity)->getAssociationMappings();
 
                     if ($mappings[$field]['type'] <= 2 ) {
-                        $qb->addGroupBy($alias);
+                        // $qb->addGroupBy($alias);
                     }
                     $aliases[$join->getAlias() ]  = $alias . '___' . str_replace('\\', '_', $entity . '_');
                     $entities[$join->getAlias() ] = $entity;
