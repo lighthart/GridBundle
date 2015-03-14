@@ -787,12 +787,15 @@ class Grid
                                     $tildeAttr[$k] = $attrib;
                                 }
                             }
-
                             foreach ($tildeAttr as $tildeKey => $attrib) {
                                 $tildeAttr[$tildeKey] = $this->tilde($attrib, $result);
                             }
 
                             $attr = array_merge($attr, $tildeAttr);
+
+                            if ($columns[$key]->getOption('value')) {
+                                $value = $this->tilde($columns[$key]->getOption('value'), $result);
+                            }
 
                             if (array_key_exists('title', $attr) && $attr['title']) {
                             } else {
@@ -812,8 +815,10 @@ class Grid
                                 $options['money'] = true;
                             }
 
-                            if(!$security) { $value = null;}
-                            if ($columns[$key]->getOption('value')) {
+                            if(!$security) { $value = null; }
+
+                            if ($columns[$key]->getOption('coalesce')) {
+                                $value = $this->tilde($columns[$key]->getOption('coalesce'), $result);
                                 $coalesce = explode('|',implode('',array_filter(explode('~', $columns[$key]->getOption('value')))));
                                 while (!$result[$coalesce[0]]){
                                     array_shift($coalesce);

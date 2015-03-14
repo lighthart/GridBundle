@@ -7,4 +7,4 @@ entity_grid :
     defaults     : { _controller: "LighthartGridBundle:Grid:entityGrid" }
     requirements :
         class : \w+
-        field : \w+
+        # field : \w+

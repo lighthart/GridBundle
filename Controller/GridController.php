@@ -73,7 +73,7 @@ class GridController extends Controller
             ->findBy(
                 [], // $where
                 [], // $orderBy
-                10        // $limit
+                100        // $limit
                 // 0    , // $offset
             );
 
