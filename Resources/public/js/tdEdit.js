@@ -153,8 +153,8 @@ function update(object, original, val) {
                     data: val
                 },
                 success: function(responseText, textStatus, XMLHttpRequest) {
-                    console.log(val);
-                    console.log(url);
+                    // console.log(val);
+                    // console.log(url);
                     $('.lg-table').addClass('text-muted');
                     location.reload(true);
                     // object.load(url, null);
