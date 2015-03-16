@@ -130,9 +130,13 @@ $gm->addField('b', 'shortName', array(
                 below) function as columns forming indexes, to base the appearance on
                 portions of the tuple.
 
+    value:      Multiple fields may be added using tildes, as with example for title.
+                Passing an array (instead of a string )of values takes the first truthy
+                value, similar to a postgres concat operator.
+
 **Use of tildes**:
 
-For 'entityId', 'parentId', 'title' and all elements of 'attr', enclosing any
+For 'value', entityId', 'parentId', 'title' and all elements of 'attr', enclosing any
 portion of that string with tildes (~) will grab the appropriate column(s) from
 the query and insert that text.  This interpolation will ignore html tags.  The
 title text in the example above will add:
