@@ -567,31 +567,45 @@ class GridMaker
 
     public function pregAlias($alias, $aliases)
     {
-        if (preg_match('/(.*?)~(((.*)~)+)(.*)/', $alias, $match)) {
-            $chunks = explode('~', $alias);
-            foreach ($chunks as $key => $chunk) {
-                if (preg_match('/\<(.*?)\>/', $chunk)) {
-                } else {
-                    $fields = explode('|', $chunk);
-                    foreach ($fields as $fieldKey => $field) {
-                        $oldField    = substr(stristr($field, '.'), 1);
-                        $oldSubAlias = stristr($field, '.', true);
-                        if (false !== $oldSubAlias) {
-                            if (isset($aliases[$oldSubAlias])) {
-                                $fields[$fieldKey] = $aliases[$oldSubAlias].'_'.$oldField;
-                            } elseif (isset($aliases[$field])) {
-                                // why is this needed? something is not getting mapped properly
-                                $fields[$fieldKey] = $aliases[$field];
-                            } else {
-                                throw new \Exception('Column alias does not match query alias: ' . $oldSubAlias . ' is in error');
+        if ('array' == gettype($alias)) {
+            $arrayed = true;
+        } else {
+            $arrayed = false;
+            $alias = [$alias];
+        }
+
+        foreach ($alias as $aliasKey => $aliasValue){
+            if (preg_match('/(.*?)~(((.*)~)+)(.*)/', $aliasValue, $match)) {
+                $chunks = explode('~', $aliasValue);
+                foreach ($chunks as $key => $chunk) {
+                    if (preg_match('/\<(.*?)\>/', $chunk)) {
+                    } else {
+                        $fields = explode('|', $chunk);
+                        foreach ($fields as $fieldKey => $field) {
+                            $oldField    = substr(stristr($field, '.'), 1);
+                            $oldSubAlias = stristr($field, '.', true);
+                            if (false !== $oldSubAlias) {
+                                if (isset($aliases[$oldSubAlias])) {
+                                    $fields[$fieldKey] = $aliases[$oldSubAlias].'_'.$oldField;
+                                } elseif (isset($aliases[$field])) {
+                                    // why is this needed? something is not getting mapped properly
+                                    $fields[$fieldKey] = $aliases[$field];
+                                } else {
+                                    throw new \Exception('Column alias does not match query alias: ' . $oldSubAlias . ' is in error');
+                                }
+                                 // . '_' . $oldField;
                             }
-                             // . '_' . $oldField;
+                        $chunks[$key] = implode('|', $fields);
                         }
-                    $chunks[$key] = implode('|', $fields);
                     }
                 }
+                $alias[$aliasKey] = '' . implode('~', $chunks) . '';
             }
-            $alias = '' . implode('~', $chunks) . '';
+        }
+
+        if ($arrayed){
+        } else {
+            $alias = implode('', $alias);
         }
 
         return $alias;

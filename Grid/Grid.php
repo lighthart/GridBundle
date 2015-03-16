@@ -794,7 +794,26 @@ class Grid
                             $attr = array_merge($attr, $tildeAttr);
 
                             if ($columns[$key]->getOption('value')) {
-                                $value = $this->tilde($columns[$key]->getOption('value'), $result);
+                                if ('array' == gettype($columns[$key]->getOption('value'))) {
+                                    $values = $columns[$key]->getOption('value');
+                                } else {
+                                    $values = [$columns[$key]->getOption('value')];
+                                }
+
+                                $values = array_map(
+                                    function($v) use ($result) {
+                                        return $this->tilde($v, $result);
+                                    }, $values
+                                );
+
+                                // var_dump(!array_shift($values));
+                                // var_dump($values);
+
+                                while (isset($values[0]) && !$values[0]) {
+                                    $value = array_shift($values);
+                                }
+                                $value = array_shift($values);
+
                             }
 
                             if (array_key_exists('title', $attr) && $attr['title']) {
@@ -817,14 +836,7 @@ class Grid
 
                             if(!$security) { $value = null; }
 
-                            if ($columns[$key]->getOption('coalesce')) {
-                                $value = $this->tilde($columns[$key]->getOption('coalesce'), $result);
-                                $coalesce = explode('|',implode('',array_filter(explode('~', $columns[$key]->getOption('value')))));
-                                while (!$result[$coalesce[0]]){
-                                    array_shift($coalesce);
-                                }
-                                $value = $result[$coalesce[0]];
-                            }
+
 
                             $cell = new Cell([
                                 'value'   => $value,
@@ -951,13 +963,6 @@ class Grid
                     $what = $match[1] . $match[3];
                 } else {
                     $what = $match[1] . implode('', array_map(function ($m) use (&$result) {
-                        if (false !== strpos($m, '|')) {
-                            // grab the first truthy value
-                            $m = array_shift(array_filter(explode('|', $m), function($v) use ($result) {
-                                var_dump($result);die;
-                                return $result[$v];
-                            }));
-                        }
                         if (array_key_exists($m, $result)) {
                             return $result[$m];
                         } else {
