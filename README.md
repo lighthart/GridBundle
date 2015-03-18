@@ -139,7 +139,7 @@ $gm->addField('b', 'shortName', array(
                 anonymous function, the result tuple for the current row is sent as the
                 first parameter, and an alias translation table for the original alias
                 and the new alias in the query is sent as the second parameter, and the
-                function should return the boolean value.  for example:
+                function should return the boolean value.  For example:
 ```php
     $gm->addField('consentStatus', 'shortName', [
         'filter'   => 'number',
