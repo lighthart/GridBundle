@@ -807,6 +807,8 @@ class Grid
                             if ($columns[$key]->getOption('value')) {
                                 if ('array' == gettype($columns[$key]->getOption('value'))) {
                                     $values = $columns[$key]->getOption('value');
+                                    // var_dump($values);
+                                    // var_dump('--------------');
                                 } else {
                                     $values = [$columns[$key]->getOption('value')];
                                 }
@@ -818,8 +820,13 @@ class Grid
                                         }, $values
                                     )
                                 );
-
                                 $value = array_shift($values);
+                                // if ('array' == gettype($columns[$key]->getOption('value'))) {
+                                //     var_dump($values);
+                                //     var_dump('..............');
+                                //     var_dump($value);
+                                //     var_dump('==============');
+                                // }
                             }
 
                             if (array_key_exists('title', $attr) && $attr['title']) {
@@ -833,6 +840,11 @@ class Grid
                             $boolean = ($columns[$key]->getOption('boolean') ?: null);
                             if ($boolean) {
                                 $options['boolean'] = true;
+                                if ('string' == gettype($boolean)) {
+                                    $value = ($value == $boolean);
+                                } elseif ('object' == gettype($boolean) && 'Closure' == get_class($boolean)) {
+                                    $value = $boolean($result, $this->aliases);
+                                }
                             }
 
                             $money = ($columns[$key]->getOption('money') ?: null);
@@ -880,6 +892,8 @@ class Grid
             $row->addCell($cell);
             $tbody->addRow($row);
         }
+        // stops after all rows.  Also useful for debuggins
+        // die;
     }
 
     public function fillAggregate($qb)

@@ -134,6 +134,34 @@ $gm->addField('b', 'shortName', array(
                 Passing an array (instead of a string )of values takes the first truthy
                 value, similar to a postgres concat operator.
 
+    boolean:    Field is a boolean, will render with boolean twigs.  If value is a string
+                boolean value will be determined by a == comparison.  If value is an anonymous
+                function, the result tuple for the current row is sent as the first
+                parameter, and an alias translation table for the original alias and the
+                new alias in the query is sent as the second parameter, and the function
+                should return the boolean value.  for example:
+                    $gm->addField('consentStatus', 'shortName', [
+                        'filter'   => 'number',
+                        'entityId' => true,
+                        'boolean'  => function($result, $columns){
+                            return
+                                ('Agreed' == $result[$columns['consentStatus.shortName']])
+                                ? true
+                                : (
+                                    ('Declined' == $result[$columns['consentStatus.shortName']])
+                                    ? false
+                                    : null
+                                    )
+                            ;
+                        },
+                        // 'hidden'   => true,
+                        'attr'     => [
+                            'class' => '',
+                        ],
+                        'title' => 'Consent',
+                        'value' => ['~consentStatus.shortName~', null]
+                    ]);
+
 **Use of tildes**:
 
 For 'value', entityId', 'parentId', 'title' and all elements of 'attr', enclosing any
