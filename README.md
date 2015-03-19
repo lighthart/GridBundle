@@ -34,6 +34,16 @@ In config.yml:
                 - LighthartGridBundle
             ...
 
+If aggregate fields are needed in postgres, the operator must be added.
+
+        doctrine:
+            orm:
+            #...
+                        dql:
+                            string_functions:
+                                ARRAYAGG: Lighthart\GridBundle\DQL\Postgres\ArrayAgg
+
+This is not currently supported for any platform other than postgres.
 
 ### Make a Grid:
 

@@ -1,0 +1,8 @@
+doctrine:
+    orm:
+        # ...
+        dql:
+            string_functions:
+                test_string: GridBundle\DQL\ArrayAggFunction
+            numeric_functions:
+            datetime_functions:
