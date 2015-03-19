@@ -147,10 +147,9 @@ $gm->addField('b', 'shortName', array(
     boolean:    Field is a boolean, will render with boolean twigs.  If value is a string
                 boolean value will be determined by a == comparison.  If value is an
                 anonymous function, the result tuple for the current row is sent as the
-                first parameter, and an alias translation table for the original alias and
-                the
-                new alias in the query is sent as the second parameter, and the function
-                should return the boolean value.  for example:
+                first parameter, and an alias translation table for the original alias
+                and the new alias in the query is sent as the second parameter, and the
+                function should return the boolean value.  For example:
 ```php
     $gm->addField('consentStatus', 'shortName', [
         'filter'   => 'number',
