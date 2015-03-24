@@ -372,11 +372,7 @@ class GridMaker
         $cq = $cqb->getQuery();
         $cq->setDql($this->mapAliases(['qb' => $cqb]));
 
-        // print_r('<pre>');
-        // print_r($cqb->getQuery()->getDQL());
-        // die;
-
-        $this->getGrid()->setTotal($cq->getSingleScalarResult());
+        $this->getGrid()->setTotal(100);
 
         $offset = ($request->query->get('pageOffset') ?: ($pageOffset ?: 0));
         $offset = ($offset > $this->getGrid()->getTotal()) ? $offset = $this->getGrid()->getTotal() - $pageSize : $offset;
@@ -522,6 +518,8 @@ class GridMaker
             } else {
                 $q->setDql($this->mapAliases());
                 $results = $q->getResult(Query::HYDRATE_SCALAR);
+                // var_dump($q->getSQL());
+                // print('<pre>');
                 // var_dump($results);
                 // die;
             }
@@ -632,7 +630,6 @@ class GridMaker
         $from          = $qb->getDqlPart('from') [0];
         $rootClassPath = $from->getFrom();
         $oldRoot       = $qb->getRootAlias();
-
         // mark root
         $root               = 'root___' . str_replace('\\', '_', $rootClassPath . '_');
         $aliases[$oldRoot]  = $root;
@@ -650,6 +647,7 @@ class GridMaker
                 $oldAliases['root.' . $v] = $root . '_' . $v;
             }
         }
+
 
         // rewrite rootaliases in result
         //
@@ -826,6 +824,7 @@ class GridMaker
         // if query is out of sync with columns this blows chunks.  Basically, the root entities aren't getting into getAliases()
         $newResult = [];
         $g         = $this->getGrid();
+        // print_r('<pre>');var_dump($g->getAliases());die;
         foreach ($result as $key => $value) {
             foreach ($value as $k => $v) {
                 $newKey                                     = str_replace('_', '.', $k);
@@ -944,31 +943,58 @@ class GridMaker
 
         foreach ($columns as $key => $column) {
             $partials[$column->getEntity() ][] = $column->getValue();
+            if ($column->getOption('group')) {
+                $groups[$column->getEntity()][]=$column->getEntity().'.'.$column->getValue();
+            }
         }
 
         // Need to do the following loops twice because select removes all fields
         // While addSelect just adds more
 
         // This bit is to make sure added columns are added to the query as partials
-        foreach ($partials as $entity => $fields) {
-            if ($qb->getRootAlias() == $entity) {
-                if ($key = array_search('id', $fields)) {
-                    unset($fields[$key]);
-                }
-                $qb->select('partial ' . $entity . '.{' . implode(',', $fields) . '}');
-            } else {
-            }
-        }
 
         foreach ($partials as $entity => $fields) {
             if ($qb->getRootAlias() == $entity) {
-            } else {
                 if ($key = array_search('id', $fields)) {
                     unset($fields[$key]);
                 }
-                $qb->addSelect('partial ' . $entity . '.{' . implode(',', $fields) . '}');
+                $str = 'partial ' . $entity . '.{' . implode(',', $fields) . '}';
+                $qb->select($str);
+                if ([]!=$groups) {
+                    $qb->addGroupBy('root');
+                }
+            } else {
             }
         }
+        foreach ($partials as $entity => $fields) {
+            if ($qb->getRootAlias() == $entity) {
+            } else {
+                if ([] != $groups && !in_array($entity, array_keys($groups))) {
+                    if ($key = array_search('id', $fields)) {
+                        unset($fields[$key]);
+                    }
+
+                    $fields = array_filter($fields, function($f) use($entity, $groups){return !in_array($entity.'.'.$f, $groups);});
+                    $str = 'partial ' . $entity . '.{' . implode(',', $fields) . '}';
+                    $qb->addSelect($str);
+
+                    if ([] == $fields) {
+
+                    }
+                    $qb->addGroupBy($entity);
+                }
+            }
+        }
+
+
+        foreach ($groups as $entity => $fields) {
+
+            foreach ($fields as $fieldKey => $field) {
+                $qb->addSelect('arrayAgg(' .$entity. ') as '.$entity. '_id');
+                $qb->addSelect('arrayAgg(' .$field. ') as '.str_replace('.', '_', $field));
+            }
+        }
+
     }
 
     public function mapMethodsFromQB()

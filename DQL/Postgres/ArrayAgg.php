@@ -16,7 +16,7 @@ class ArrayAgg extends FunctionNode
      *  @override
      */
     public function getSql(\Doctrine\ORM\Query\SqlWalker $sqlWalker) {
-        return "array_agg( " . $sqlWalker->walkArithmeticPrimary($this->field) . ")";
+        return "array_agg(" . $sqlWalker->walkArithmeticPrimary($this->field) . ")";
     }
 
     public function parse(\Doctrine\ORM\Query\Parser $parser) {
