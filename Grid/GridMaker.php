@@ -372,7 +372,7 @@ class GridMaker
         $cq = $cqb->getQuery();
         $cq->setDql($this->mapAliases(['qb' => $cqb]));
 
-        $this->getGrid()->setTotal(100);
+        $this->getGrid()->setTotal($cqb->getQuery()->getSingleScalarResult());
 
         $offset = ($request->query->get('pageOffset') ?: ($pageOffset ?: 0));
         $offset = ($offset > $this->getGrid()->getTotal()) ? $offset = $this->getGrid()->getTotal() - $pageSize : $offset;
@@ -939,6 +939,7 @@ class GridMaker
         $qb = $this->getQB();
 
         $partials = [];
+        $groups = [];
         $columns  = $this->getGrid()->getColumns();
 
         foreach ($columns as $key => $column) {
@@ -969,24 +970,34 @@ class GridMaker
         foreach ($partials as $entity => $fields) {
             if ($qb->getRootAlias() == $entity) {
             } else {
-                if ([] != $groups && !in_array($entity, array_keys($groups))) {
-                    if ($key = array_search('id', $fields)) {
-                        unset($fields[$key]);
-                    }
+                if ($key = array_search('id', $fields)) {
+                    unset($fields[$key]);
+                }
+                if ([] != $groups){
+                    if (!in_array($entity, array_keys($groups))) {
 
-                    $fields = array_filter($fields, function($f) use($entity, $groups){return !in_array($entity.'.'.$f, $groups);});
+                        $fields = array_filter($fields, function($f) use($entity, $groups){return !in_array($entity.'.'.$f, $groups);});
+                        $str = 'partial ' . $entity . '.{' . implode(',', $fields) . '}';
+                        $qb->addSelect($str);
+
+                        if ([] == $fields) {
+
+                        }
+                        $qb->addGroupBy($entity);
+                    } else {
+
+                    }
+                } else {
                     $str = 'partial ' . $entity . '.{' . implode(',', $fields) . '}';
                     $qb->addSelect($str);
 
-                    if ([] == $fields) {
-
-                    }
-                    $qb->addGroupBy($entity);
                 }
             }
         }
 
-
+// var_dump($qb->getQuery()->getDql());
+// print_r("<br>");
+// print_r("<br>");
         foreach ($groups as $entity => $fields) {
 
             foreach ($fields as $fieldKey => $field) {
@@ -994,6 +1005,7 @@ class GridMaker
                 $qb->addSelect('arrayAgg(' .$field. ') as '.str_replace('.', '_', $field));
             }
         }
+// var_dump($qb->getQuery()->getDql());die;
 
     }
 
