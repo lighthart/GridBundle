@@ -25,9 +25,10 @@ class Grid
     private $export;
 
     /**
-    * This should never be used -- method is so there is not an exception thrown
-    * @return string
-    */
+     * This should never be used -- method is so there is not an exception thrown.
+     *
+     * @return string
+     */
     public function __toString()
     {
         return "Grid -- Don't print this -- print the table instead";
@@ -453,8 +454,10 @@ class Grid
 
                 $pattern = '/(\w+)\_\_\_(\w+)\_\_(\w+)/';
                 preg_match($pattern, $key, $match);
-                $attr['data-role-lg-class'] = $match[1] . '___' . $match[2];
-                $attr['data-role-lg-field'] = $columns[$key]->getValue();
+                if ($match) {
+                    $attr['data-role-lg-class'] = $match[1] . '___' . $match[2];
+                    $attr['data-role-lg-field'] = $columns[$key]->getValue();
+                }
 
                 if (isset($columns[$key]->getOptions() ['search'])) {
                     $attr['class'] .= ' lg-searchable';
@@ -469,8 +472,7 @@ class Grid
                     // a result from another column in the query
                     // currently only handles one field
 
-                    $this->tildes([&$title,
-                        ], $result);
+                    $this->tildes([&$title], $result);
                     $parentId = ($columns[$key]->getOption('parentId') ?: null);
 
                     if ($parentId) {
@@ -578,8 +580,10 @@ class Grid
                 if (isset($column->getOptions() ['filter'])) {
                     $pattern = '/(\w+)\_\_\_(\w+)\_\_(\w+)/';
                     preg_match($pattern, $key, $match);
-                    $attr['data-role-lg-class'] = $match[1] . '___' . $match[2];
-                    $attr['data-role-lg-field'] = $columns[$key]->getValue();
+                    if ($match) {
+                        $attr['data-role-lg-class'] = $match[1] . '___' . $match[2];
+                        $attr['data-role-lg-field'] = $columns[$key]->getValue();
+                    }
                     $attr['filter']             = $column->getOptions() ['filter'];
                     $attr['class'] .= ' lg-filterable lg-filter';
                     $entityId = ($columns[$key]->getOption('entityId') ?: null);
@@ -624,7 +628,7 @@ class Grid
     {
         $newResults = [];
         $headers    = $this->exportTh();
-        $columns = $this->getColumns();
+        $columns    = $this->getColumns();
         $booleans   = array_keys(array_filter($columns, function ($col) {
             return $col->getOption('boolean');
         }));
@@ -644,11 +648,11 @@ class Grid
 
                             $values = array_filter(
                                 array_map(
-                                    function($v) use ($result) {
+                                    function ($v) use ($result) {
                                         if (strpos($v, '~') !== false) {
-                                            return $result[str_replace('~','',str_replace('.','_', $v))];
+                                            return $result[str_replace('~', '', str_replace('.', '_', $v))];
                                         } else {
-                                            return null;
+                                            return;
                                         }
 
                                     }, $values
@@ -656,14 +660,11 @@ class Grid
                             );
 
                             $value = array_shift($values);
-
                         }
 
                         $newResult[$headerKey] = $value;
-                        // var_dump($this->getColumn($headerKey));
                     } elseif (in_array($headerKey, $booleans)) {
                         $newResult[$headerKey] = (($result[$headerKey] === null) ? '' : ($result ? "true" : "false"));
-
                     } else {
                         $newResult[$headerKey] = (($result[$headerKey] instanceof \DateTime) ? $result[$headerKey]->format('Y-m-d') : $result[$headerKey]);
                     }
@@ -765,8 +766,10 @@ class Grid
                         if ($columns[$key]->getOption('entityId')) {
                             $pattern = '/(\w+\_\_\_\w+)\_\_/';
                             preg_match($pattern, $key, $match);
-                            $rootId                         = $match[1] . '__id';
-                            $attr['data-role-lg-entity-id'] = $result[$rootId];
+                            if ($match) {
+                                $rootId                         = $match[1] . '__id';
+                                $attr['data-role-lg-entity-id'] = $result[$rootId];
+                            }
                         }
 
                         if (isset($columns[$key]->getOptions() ['search'])) {
@@ -807,25 +810,19 @@ class Grid
                             if ($columns[$key]->getOption('value')) {
                                 if ('array' == gettype($columns[$key]->getOption('value'))) {
                                     $values = $columns[$key]->getOption('value');
-                                    // var_dump($values);
-                                    // var_dump('--------------');
                                 } else {
                                     $values = [$columns[$key]->getOption('value')];
                                 }
 
                                 $values = array_filter(
                                     array_map(
-                                        function($v) use ($result) {
+                                        function ($v) use ($result) {
                                             return $this->tilde($v, $result);
                                         }, $values
                                     )
                                 );
                                 $value = array_shift($values);
                                 // if ('array' == gettype($columns[$key]->getOption('value'))) {
-                                //     var_dump($values);
-                                //     var_dump('..............');
-                                //     var_dump($value);
-                                //     var_dump('==============');
                                 // }
                             }
 
@@ -852,10 +849,9 @@ class Grid
                                 $options['money'] = true;
                             }
 
-                            if(!$security) { $value = null; }
-
-
-
+                            if (!$security) {
+                                $value = null;
+                            }
                             $cell = new Cell([
                                 'value'   => $value,
                                 'title'   => $title,
@@ -941,7 +937,7 @@ class Grid
         if ([] != $results && [] != $results[0]) {
             foreach ($results[0] as $key => $value) {
                 $options = $visible[array_keys($visible) [$key - 1]]->getOptions();
-                $attr = $options ['attr'];
+                $attr    = $options ['attr'];
 
                 // Can't edit aggregates
                 $attr['class']    = preg_replace('/\s*lg-editable\s*/', '', $attr['class']);
@@ -977,7 +973,7 @@ class Grid
     {
         // converts ~column.def~ into the value from the result
         if ('string' == gettype($what)) {
-            while(preg_match('/^(.*?)(~.*?~)(.*?)$/', $what, $match)) {
+            while (preg_match('/^(.*?)(~.*?~)(.*?)$/', $what, $match)) {
                 $matches = array_filter(explode('~', $match[2]));
                 if ([] == $result) {
                     $what = $match[1] . $match[3];
@@ -987,7 +983,7 @@ class Grid
                             return $result[$m];
                         } else {
                             // mark them different so we don't recurse forever
-                            return '%'.$m.'%';
+                            return '%' . $m . '%';
                         }
                     }, $matches)) . $match[3];
                 }
@@ -1005,7 +1001,7 @@ class Grid
     {
         foreach ($tildes as $tildeKey => $what) {
             if ('string' == gettype($what)) {
-                while(preg_match('/^(.*?)(~.*?~)(.*?)$/', $what, $match)) {
+                while (preg_match('/^(.*?)(~.*?~)(.*?)$/', $what, $match)) {
                     $matches = array_filter(explode('~', $match[2]));
                     if ([] == $result) {
                         $what = $match[1] . $match[3];
@@ -1013,18 +1009,18 @@ class Grid
                         $what = $match[1] . implode('', array_map(function ($m) use (&$result) {
                             if (false !== strpos($m, '|')) {
                                 // grab the first truthy value
-                                $m = array_shift(array_filter(explode('|', $m), function($v) use ($result) {return $result[$v];}));
+                                $m = array_shift(array_filter(explode('|', $m), function ($v) use ($result) {return $result[$v];}));
                             }
                             if (array_key_exists($m, $result)) {
                                 return $result[$m];
                             } else {
-                                    // mark them different so we don't recurse forever
+                                // mark them different so we don't recurse forever
                                     if (false === strpos($m, '___')) {
-                                        return '%'.$m.'%';
+                                        return '%' . $m . '%';
                                     } else {
-                                    // in this case no match was found-- remove the tilde tag
+                                        // in this case no match was found-- remove the tilde tag
                                     return '';
-                                }
+                                    }
                             }
                         }, $matches)) . $match[3];
                     }
@@ -1033,7 +1029,6 @@ class Grid
 
                 $tildes[$tildeKey] = $what;
             }
-
         }
 
         return $tildes;

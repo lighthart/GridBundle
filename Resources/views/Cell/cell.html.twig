@@ -19,6 +19,8 @@
     {% include 'LighthartGridBundle:Action:actions.html.twig' with {'actions': cell.actions} %}
 {%- elseif cell.statuses is defined -%}
     {% include 'LighthartGridBundle:Status:statuses.html.twig' with {'status': cell.statuses} %}
+{%- elseif value[:1] == '{' -%}
+    {%- include 'LighthartGridBundle:Cell:list.html.twig' with {'list' : value[:(value|length - 1)][1:]|split(',')} %}
 {%- elseif cell.attr.checkbox is defined -%}
     <input type="checkbox"/>
 {%- elseif cell.value or ( boolean and 'th' != cell.type ) -%}
@@ -27,7 +29,7 @@
         {%- if cell.attr.emphasis is defined %}</{{cell.attr.emphasis}}>{% endif -%}
 {%- elseif 'th' == cell.type -%}
     {%- if cell.attr.filter is defined %}
-        <input type="text" id="lg-filter-{{cell.attr['data-role-lg-class']}}__{{cell.attr['data-role-lg-field']}}" class="lg-filter-input"/>
+        <input type="text" {% if cell.attr['data-role-lg-class'] is defined and cell.attr['data-role-lg-field'] is defined %}id="lg-filter-{{cell.attr['data-role-lg-class']}}__{{cell.attr['data-role-lg-field']}}"{% endif %} class="lg-filter-input"/>
     {%- elseif cell.options.titleHtml is defined and cell.options.titleHtml -%}
         {{- cell.title|raw -}}
     {%- else -%}

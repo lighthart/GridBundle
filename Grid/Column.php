@@ -15,7 +15,7 @@ class Column
     {
         $this->alias   = $alias;
         $this->value   = $value;
-        $options = array_merge([
+        $options       = array_merge([
             'security' => true,
         ], $options);
         $this->options = $options;
@@ -87,5 +87,4 @@ class Column
     {
         return $this->options['security'];
     }
-
 }
