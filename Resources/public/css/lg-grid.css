@@ -145,7 +145,11 @@ th.lg-date, td.lg-date {
 }
 
 .lg-filter-input {
-    width: 100%;
+    text-indent: 1px !important;
+}
+
+th.lg-filter {
+    padding: 2px !important;
 }
 
 .lg-toggle-filter {
