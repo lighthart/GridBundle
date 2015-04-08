@@ -127,8 +127,11 @@ $gm->addField('b', 'shortName', array(
     parentId:   Evaluating to true stores the parent id on the row header. This is mostly
                 useful for javascript related associated entities.
 
-    title:      Sets the title of the column.  Note: the title key of the 'attr' field
-                sets the on-hover title.
+    title:      Sets the title of the column.  Note: the title field sets the on-hover
+                title.
+
+    header:     Sets the display title of the column.  Note: the title field sets the
+                on-hover title.  If not set the header is the same as the title.
 
     hidden:     Evaluating to true hides the column.
 
