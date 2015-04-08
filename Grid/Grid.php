@@ -25,10 +25,10 @@ class Grid
     private $export;
 
     /**
-     * This should never be used -- method is so there is not an exception thrown.
-     *
-     * @return string
-     */
+    * This should never be used -- method is so there is not an exception thrown.
+    *
+    * @return string
+    */
     public function __toString()
     {
         return "Grid -- Don't print this -- print the table instead";
@@ -464,6 +464,7 @@ class Grid
                 }
 
                 $title = ($columns[$key]->getOption('title') ?: $key);
+                $header = ($columns[$key]->getOption('header') ?: $title);
 
                 if (isset($columns[$key]->getOptions() ['hidden'])) {
                 } else {
@@ -510,19 +511,23 @@ class Grid
                     }
 
                     $attr['title'] = $title;
+                    $attr['header'] = $header;
                     $cell          = new Cell([
                         'title'   => $title,
+                        'header'  => $header,
                         'type'    => 'th',
                         'attr'    => $attr,
                         'options' => $options,
                         ]);
                     $row->addCell($cell);
+                    // print_r('<pre>');var_dump($cell);print_r('<br/><br/>');
                 }
             } else {
                 // no column!
             }
         }
         $thead->addRow($row);
+        // die;
         if (([] == array_filter($columns, function ($c) {
             return $c->getOption('filter');
         })) || $this->export) {
@@ -656,8 +661,8 @@ class Grid
                                         }
 
                                     }, $values
-                                )
-                            );
+                                    )
+                                );
 
                             $value = array_shift($values);
                         }
@@ -819,8 +824,8 @@ class Grid
                                         function ($v) use ($result) {
                                             return $this->tilde($v, $result);
                                         }, $values
-                                    )
-                                );
+                                        )
+                                    );
                                 $value = array_shift($values);
                                 // if ('array' == gettype($columns[$key]->getOption('value'))) {
                                 // }
@@ -1015,14 +1020,14 @@ class Grid
                                 return $result[$m];
                             } else {
                                 // mark them different so we don't recurse forever
-                                    if (false === strpos($m, '___')) {
-                                        return '%' . $m . '%';
-                                    } else {
+                                if (false === strpos($m, '___')) {
+                                    return '%' . $m . '%';
+                                } else {
                                         // in this case no match was found-- remove the tilde tag
-                                    return '';
+                                        return '';
                                     }
-                            }
-                        }, $matches)) . $match[3];
+                                }
+                            }, $matches)) . $match[3];
                     }
                 }
                 $what = str_replace('%', '~', $what);
