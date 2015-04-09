@@ -186,7 +186,7 @@ function gridReload(reset) {
                     // make latest timer
                     clearTimeout(timer);
                 }
-            })
+            });
         },
         quiet
     );
