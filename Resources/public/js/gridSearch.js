@@ -5,17 +5,11 @@ function getSearch() {
 
 function gridSearchControl() {
     $('input#lg-search-input').on('keyup change', function() {
-        delay(function() {
-            gridSearchReload();
-        }, quiet);
+        var cookies = getCookies();
+        // reset offset on search
+        cookies.offset = 0;
+        cookies.search = getSearch();
+        setCookies(cookies);
+        gridReload();
     });
-}
-
-function gridSearchReload(control) {
-    var cookies = getCookies();
-    // reset offset on search
-    cookies.offset = 0;
-    cookies.search = getSearch();
-    setCookies(cookies);
-    gridReload();
 }

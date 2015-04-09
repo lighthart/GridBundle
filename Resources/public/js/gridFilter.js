@@ -1,5 +1,5 @@
 function getAllFilters() {
-    var filter = "";
+    var filter = '';
     $('.lg-filter-input').each(function(i, e) {
         filter += $(this).parent().attr('data-role-lg-class') + '__' + $(this).parent().attr('data-role-lg-field') + ':' + $(this).val() + ';';
     });
@@ -8,19 +8,13 @@ function getAllFilters() {
 
 function gridFilterControl() {
     $('input.lg-filter-input').on('keyup change', function() {
-        delay(function() {
-            gridFilterReload();
-        }, quiet);
+        var cookies = getCookies();
+        // reset offset on filter
+        cookies.offset = 0;
+        cookies.filter = getAllFilters();
+        setCookies(cookies);
+        gridReload();
     });
-}
-
-function gridFilterReload(control) {
-    var cookies = getCookies();
-    // reset offset on filter
-    cookies.offset = 0;
-    cookies.filter = getAllFilters();
-    setCookies(cookies);
-    gridReload();
 }
 
 function gridFilterToggleControl() {

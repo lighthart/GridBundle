@@ -1,15 +1,8 @@
 // inhibits recurring callback for duration of quiet before executing
 var quiet = 300; // 300 ms
-var delay = (function() {
-    var timer = 0;
-    return function(callback, ms) {
-        clearTimeout(timer);
-        timer = setTimeout(callback, ms);
-    };
-})();
-// eg:
-// var quiet = 100; // 100 ms
-// delay(function(){ sidebar.finishMove();}, quiet)
+var timer = 0;
+var xhr = 0;
+
 function getOffset() {
     cookies = getCookies();
     var pageVal = Number($('input.lg-page-input').val());
@@ -57,7 +50,7 @@ function highlightFilters() {
 }
 
 function getFlagCookies() {
-    var cookies ={};
+    var cookies = {};
     $.map(getFlags(), function(value, flag) {
         var flagCookie = "lg-" + getLgCurrentRoute() + "-flag-" + flag;
         cookies[flag] = $.cookie(flagCookie);
@@ -129,17 +122,16 @@ function gridFocus() {
 
 function gridReload(reset) {
 
-    console.log('Grid Reload');
     reset = typeof reset !== 'undefined' ? reset : false;
 
     var oldFocus = null;
     var oldVersion = null;
     cookies = getCookies();
     data = {
-            pageSize: cookies.pageSize,
-            pageOffset: cookies.offset,
-            filter: cookies.filter,
-            search: cookies.search,
+        pageSize: cookies.pageSize,
+        pageOffset: cookies.offset,
+        filter: cookies.filter,
+        search: cookies.search,
     };
 
     $.map(getFlags(), function(value, flag) {
@@ -149,38 +141,54 @@ function gridReload(reset) {
         }
     });
 
-    $.ajax({
-        url: getLgCurrentURI(),
-        data: data,
-        dataType: 'html',
-        type: 'GET',
-        cache: false,
-        beforeSend: function(xhr) {
-            $('.lg-table').addClass('text-muted');
-            cookies = getCookies();
-            oldVersion = typeof cookies.version == 'undefined' ? 0 : cookies.version;
-            cookies.version = new Date().getTime();
-            setCookies(cookies);
-            oldFocus = gridFocus() ? '#' + gridFocus().attr('id') : 0;
+    if (xhr) {
+        xhr.abort();
+    }
+
+    if (timer != null) {
+        clearTimeout(timer);
+    }
+
+    timer = setTimeout(function() {
+            xhr = $.ajax({
+                url: getLgCurrentURI(),
+                data: data,
+                dataType: 'html',
+                type: 'GET',
+                cache: false,
+                beforeSend: function(xhr) {
+                    $('.lg-table').addClass('text-muted');
+                    cookies = getCookies();
+                    oldVersion = typeof cookies.version == 'undefined' ? 0 : cookies.version;
+                    cookies.version = new Date().getTime();
+                    setCookies(cookies);
+                    oldFocus = gridFocus() ? '#' + gridFocus().attr('id') : 0;
+                    // $('input').prop('disabled', true);
+                },
+                success: function(data) {
+                    if (reset) {
+                        $('table.lg-table').html($(data).find('table.lg-table').html());
+                        $('div#lg-header').html($(data).find('div#lg-header').html());
+                        $('div#lg-footer').html($(data).find('div#lg-footer').html());
+                    } else {
+                        $('tbody.lg-tbody').html($(data).find('tbody.lg-tbody').html());
+                    }
+                },
+                complete: function() {
+                    highlightSearches();
+                    highlightFilters();
+                    activateControls();
+                    $('.lg-table').removeClass('text-muted');
+                    if (oldFocus) {
+                        $(oldFocus).blur().focus().val($(oldFocus).val());
+                    }
+                    markFlags();
+                    // make latest timer
+                    clearTimeout(timer);
+                }
+            })
         },
-        success: function(data) {
-            if (reset) {
-                $('table.lg-table').html($(data).find('table.lg-table').html());
-                $('div#lg-header').html($(data).find('div#lg-header').html());
-                $('div#lg-footer').html($(data).find('div#lg-footer').html());
-            } else {
-                $('tbody.lg-tbody').html($(data).find('tbody.lg-tbody').html());
-            }
-        },
-        complete: function() {
-            highlightSearches();
-            highlightFilters();
-            activateControls();
-            $('.lg-table').removeClass('text-muted');
-            if (oldFocus) {
-                $(oldFocus).blur().focus().val($(oldFocus).val());
-            }
-            markFlags();
-        }
-    });
+        quiet
+    );
+
 }

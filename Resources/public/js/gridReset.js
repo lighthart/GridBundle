@@ -34,5 +34,5 @@ function gridResetReload(control) {
         $.removeCookie(flagCookie);
     });
 
-    gridReload(true);
+    gridReload(new Date().getTime(), true);
 }
