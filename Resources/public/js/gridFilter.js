@@ -7,7 +7,7 @@ function getAllFilters() {
 }
 
 function gridFilterControl() {
-    $('input.lg-filter-input').on('keydown keyup change', function() {
+    $('input.lg-filter-input').on('keyup change', function() {
         delay(function() {
             gridFilterReload();
         }, quiet);

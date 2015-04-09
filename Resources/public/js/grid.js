@@ -127,7 +127,11 @@ function gridFocus() {
     return focus;
 }
 
-function gridReload() {
+function gridReload(reset) {
+
+    console.log('Grid Reload');
+    reset = typeof reset !== 'undefined' ? reset : false;
+
     var oldFocus = null;
     var oldVersion = null;
     cookies = getCookies();
@@ -160,9 +164,13 @@ function gridReload() {
             oldFocus = gridFocus() ? '#' + gridFocus().attr('id') : 0;
         },
         success: function(data) {
-            $('table.lg-table').html($(data).find('table.lg-table').html());
-            $('div#lg-header').html($(data).find('div#lg-header').html());
-            $('div#lg-footer').html($(data).find('div#lg-footer').html());
+            if (reset) {
+                $('table.lg-table').html($(data).find('table.lg-table').html());
+                $('div#lg-header').html($(data).find('div#lg-header').html());
+                $('div#lg-footer').html($(data).find('div#lg-footer').html());
+            } else {
+                $('tbody.lg-tbody').html($(data).find('tbody.lg-tbody').html());
+            }
         },
         complete: function() {
             highlightSearches();

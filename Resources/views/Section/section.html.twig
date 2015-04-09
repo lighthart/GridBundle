@@ -1,4 +1,4 @@
-<{{- section.type -}}{%- for attrib, value in section.attr|keys -%}{{- attrib -}}="{{- attribs -}}"{%- endfor -%}>
+<{{- section.type -}}{%- for attrib, value in section.attr|keys -%}{{- attrib -}}="{{- attribs -}}"{%- endfor %} class="{% include 'LighthartGridBundle:Section:sectionClasses.html.twig' %}">
 {% for row in section.row %}
     {% include 'LighthartGridBundle:Row:row.html.twig' with {'row': row} %}
 {% endfor %}

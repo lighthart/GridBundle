@@ -1,6 +1,6 @@
 {% block lgGridTable %}
     {% set table = grid.table %}
-    {# classes my not be smoothly loading from gridmaker-- double check #}
+    {# classes may not be smoothly loading from gridmaker-- double check #}
     <{{ table.type }} class="{% include 'LighthartGridBundle:Grid:tableClasses.html.twig' %}" {%- for flavor, attribs in table.attr %}{{-' '-}}{{ flavor }}="{{ attribs }}"{%- endfor -%}>
         {% block sections %}
             {% for section in table.section %}
