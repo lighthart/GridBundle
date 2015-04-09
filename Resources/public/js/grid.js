@@ -172,6 +172,8 @@ function gridReload(reset) {
                         $('div#lg-footer').html($(data).find('div#lg-footer').html());
                     } else {
                         $('tbody.lg-tbody').html($(data).find('tbody.lg-tbody').html());
+                        $('form.navbar-right').html($(data).find('form.navbar-right').html());
+                        $('div#lg-footer').html($(data).find('div#lg-footer').html());
                     }
                 },
                 complete: function() {
