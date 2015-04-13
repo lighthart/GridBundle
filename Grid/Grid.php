@@ -459,6 +459,7 @@ class Grid
                     $attr['data-role-lg-field'] = $columns[$key]->getValue();
                 }
 
+                $attr['class'] = (isset($attr['class']) ? $attr['class'] : "");
                 if (isset($columns[$key]->getOptions() ['search'])) {
                     $attr['class'] .= ' lg-searchable';
                 }
@@ -588,8 +589,18 @@ class Grid
                     if ($match) {
                         $attr['data-role-lg-class'] = $match[1] . '___' . $match[2];
                         $attr['data-role-lg-field'] = $columns[$key]->getValue();
+                        if ($columns[$key]->getOption('filterHidden')) {
+                            $attr['data-role-lg-hidden'] =
+                            implode(';',
+                                array_map(
+                                    function($o) { return substr(strstr($o,'.'),1); },
+                                    explode(';', $columns[$key]->getOption('filterHidden'))
+                                )
+                            );
+                        }
                     }
                     $attr['filter']             = $column->getOptions() ['filter'];
+                    $attr['class'] = (isset($attr['class']) ? $attr['class'] : "");
                     $attr['class'] .= ' lg-filterable lg-filter';
                     $entityId = ($columns[$key]->getOption('entityId') ?: null);
 
@@ -597,7 +608,6 @@ class Grid
                         $attr['class'] .= ' hide';
                     }
                     $cell = new Cell([
-                        'title' => 'Filter' . $column->getOptions() ['filter'],
                         'type'  => 'th',
                         'attr'  => $attr,
                         ]);
@@ -777,6 +787,7 @@ class Grid
                             }
                         }
 
+                        $attr['class'] = (isset($attr['class']) ? $attr['class'] : "");
                         if (isset($columns[$key]->getOptions() ['search'])) {
                             $attr['class'] .= ' lg-searchable';
                         }

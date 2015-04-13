@@ -1081,6 +1081,16 @@ class GridMaker
     public function addSearch($search)
     {
         $qb           = $this->QB();
+
+        $searchColumns = array_filter($this->getGrid()->getColumns(), function ($c) {
+            return $c->getOption('search');
+        });
+
+        foreach ($searchColumns as $searchKey => $searchValue) {
+            if (gettype($searchValue)=== 'array') {}
+        }
+
+
         $searchFields = array_map(function ($c) {
             return $c->getOption('search');
         }, array_filter($this->getGrid()->getColumns(), function ($c) {
@@ -1089,7 +1099,7 @@ class GridMaker
 
         $searches = [];
         foreach ($searchFields as $field => $type) {
-            $searches[$type][] = str_replace('_', '.', $field);
+                $searches[$type][] = str_replace('_', '.', $field);
         }
 
         // $search is the explicit request from user
@@ -1163,6 +1173,23 @@ class GridMaker
         $filters = [];
         foreach ($filterFields as $field => $type) {
             $filters[$type][] = str_replace('_', '.', $field);
+        }
+
+        $hiddenFilters = array_map(function ($c) {
+            return str_replace('.', '_', $c->getOption('filterHidden'));
+        }, array_filter($this->getGrid()->getColumns(), function ($c) {
+            return $c->getOption('filterHidden');
+        }));
+
+        foreach($hiddenFilters as $field => $hiddenType) {
+                $hiddenCombo = implode(';',
+                    array_map(function($h){
+                        return str_replace('_', '.', $h);
+                    },
+                    explode(';',$hiddenType)
+                    )
+                );
+            $filters[$filterFields[$field]][] = $hiddenCombo;
         }
 
         // $filter is the explicit request from user
