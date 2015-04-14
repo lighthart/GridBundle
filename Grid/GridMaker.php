@@ -1205,23 +1205,32 @@ class GridMaker
         }
 
         $filter = explode(';', $filter);
+        $multiFilter = [];
 
         foreach ($filter as $key => $filt) {
-            $flt = explode(':', $filt);
+            if (strpos($filt, '|') === false) {
+                $flt = explode(':', $filt);
 
-            unset($filter[$key]);
-            if (isset($flt[1])) {
-                $filter[$flt[0]] = $flt[1];
+                unset($filter[$key]);
+                if (isset($flt[1])) {
+                    $filter[$flt[0]] = $flt[1];
+                }
+            } else {
+                unset($filter[$key]);
+                $multiFilter[$key] = $filt;
             }
         }
+
 
         $filter = array_filter($filter, function ($e) {
             return !!$e;
         });
 
-        if ([
-            '',
-        ] == $filter || [] == $filter) {
+        if ($multiFilter) {
+            $multiFilter = array_filter($multiFilter, function($e) { return strpos($e, ':|') === false;});
+        }
+
+        if ((['',] == $filter || [] == $filter) && (['',] == $multiFilter || [] == $multiFilter)) {
             // just bail out if there is nothing to filter for
             return $qb;
         }
@@ -1241,6 +1250,26 @@ class GridMaker
                     $qb->andWhere($qb->expr()->like("LOWER(CONCAT($key, ''))", "'%" . strtolower($value) . "%'"));
                 }
             }
+        }
+
+        foreach ($multiFilter as $key => $multi) {
+            $multiFilters = explode('|', $multi);
+            $orF = $qb->expr()->orx();
+            foreach ($multiFilters as $mfKey => $mfValue) {
+                $multiFilterKey = strstr($mfValue, ':', true);
+                $multiFilterValue = substr(strstr($mfValue, ':'),1);
+                $multiFilterKey  = preg_replace('/___(.*?)__/', '.', $multiFilterKey);
+                if ($multiFilterValue == 'null') {
+                    $mfExpr[] = $qb->expr()->isNull($multiFilterKey );
+                } else {
+                    if (in_array($multiFilterKey, $numbers)) {
+                        $orF->add($qb->expr()->like("CONCAT($multiFilterKey, '')", "'%" . strtolower($multiFilterValue) . "%'"));
+                    } else {
+                        $orF->add($qb->expr()->like("LOWER(CONCAT($multiFilterKey, ''))", "'%" . strtolower($multiFilterValue) . "%'"));
+                    }
+                }
+            }
+            $qb->andWhere($orF);
         }
 
         return $qb;

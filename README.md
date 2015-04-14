@@ -107,52 +107,57 @@ $gm->addField('b', 'shortName', array(
 
 **Field Configuration**:
 
-    search:     Setting to true will add the column to the fields searched via the global
-                search tool. Optionally, you can also specify the kind of search filter
-                to use on this filed. Valid types are: date, number, and string.
+    search:         Setting to true will add the column to the fields searched via the global
+                    search tool. Optionally, you can also specify the kind of search filter
+                    to use on this filed. Valid types are: date, number, and string.
 
-    filter:     Setting to true will add a search filter box to the column header which
-                only searches on this field. Optionally, you can also specify the kind of
-                search filter to use on this filed. Valid types are: date, number, and
-                string.
+    filter:         Setting to true will add a search filter box to the column header which
+                    only searches on this field. Optionally, you can also specify the kind of
+                    search filter to use on this filed. Valid types are: date, number, and
+                    string.
 
-    attr:       Sets the html attributes.
+    attr:           Sets the html attributes.
 
-    html:       Indicates the title should be interpreted as html, i.e., the twig raw
-                filter is applied.
+    html:           Indicates the title should be interpreted as html, i.e., the twig raw
+                    filter is applied.
 
-    entityId:   Evaluating to true stores the entity id on the individual cell. This is
-                mostly useful for javascript related associated entities.
+    entityId:       Evaluating to true stores the entity id on the individual cell. This is
+                    mostly useful for javascript related associated entities.
 
-    parentId:   Evaluating to true stores the parent id on the row header. This is mostly
-                useful for javascript related associated entities.
+    parentId:       Evaluating to true stores the parent id on the row header. This is mostly
+                    useful for javascript related associated entities.
 
-    title:      Sets the title of the column.  Note: the title field sets the on-hover
-                title.
+    title:          Sets the title of the column.  Note: the title field sets the on-hover
+                    title.
 
-    header:     Sets the display title of the column.  Note: the title field sets the
-                on-hover title.  If not set the header is the same as the title.
+    header:         Sets the display title of the column.  Note: the title field sets the
+                    on-hover title.  If not set the header is the same as the title.
 
-    hidden:     Evaluating to true hides the column.
+    hidden:         Evaluating to true hides the column.
 
-    security:   A primitive boolean, or an anonymous function.  If the value evaluates to
-                true, the button is rendered.  Default is true.  For the anonymous
-                function, the result tuple for the current row is sent as the first
-                parameter, and an alias translation table for the original alias and the
-                new alias in the query is sent as the second parameter. The tildes (see
-                below) function as columns forming indexes, to base the appearance on
-                portions of the tuple.
+    filterHidden:   Filter on a column which is hidden.  Useful for concatenating fields
+                    filtering the end result, such as lastname/firstname combos.  In this
+                    case hide the firstname column and add 'filterHidden' => 'alias.firstname'
+                    to the lastname column.  Extra fields may be added, semicolon separated.
 
-    value:      Multiple fields may be added using tildes, as with example for title.
-                Passing an array (instead of a string )of values takes the first truthy
-                value, similar to a postgres concat operator.
+    security:       A primitive boolean, or an anonymous function.  If the value evaluates to
+                    true, the button is rendered.  Default is true.  For the anonymous
+                    function, the result tuple for the current row is sent as the first
+                    parameter, and an alias translation table for the original alias and the
+                    new alias in the query is sent as the second parameter. The tildes (see
+                    below) function as columns forming indexes, to base the appearance on
+                    portions of the tuple.
 
-    boolean:    Field is a boolean, will render with boolean twigs.  If value is a string
-                boolean value will be determined by a == comparison.  If value is an
-                anonymous function, the result tuple for the current row is sent as the
-                first parameter, and an alias translation table for the original alias
-                and the new alias in the query is sent as the second parameter, and the
-                function should return the boolean value.  For example:
+    value:          Multiple fields may be added using tildes, as with example for title.
+                    Passing an array (instead of a string )of values takes the first truthy
+                    value, similar to a postgres concat operator.
+
+    boolean:        Field is a boolean, will render with boolean twigs.  If value is a string
+                    boolean value will be determined by a == comparison.  If value is an
+                    anonymous function, the result tuple for the current row is sent as the
+                    first parameter, and an alias translation table for the original alias
+                    and the new alias in the query is sent as the second parameter, and the
+                    function should return the boolean value.  For example:
 ```php
     $gm->addField('consentStatus', 'shortName', [
         'filter'   => 'number',
