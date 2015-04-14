@@ -409,6 +409,7 @@ class Grid
         $columns = $this->getColumns();
         $row     = new Row([
             'type' => 'tr',
+            'attr' => ['class' => 'lg-headers']
             ]);
 
         //Not ready to implement this
@@ -543,6 +544,7 @@ class Grid
         $columns = $this->getColumns();
         $row     = new Row([
             'type' => 'tr',
+            'attr' => ['class' => 'lg-filters']
             ]);
 
         //Not ready to implement this
