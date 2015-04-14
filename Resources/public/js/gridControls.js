@@ -11,8 +11,9 @@ function activateControls() {
         filters = filter.split(';');
         var index;
         for (index = 0; index < filters.length; ++index) {
-            var filterVal = filters[index].split(':')[1];
-            var filterId = filters[index].split(':')[0];
+            f = filters[index].split('|')[0];
+            var filterId = f.split(':')[0];
+            var filterVal = f.split(':')[1];
             if (filterVal) {
                 $('#lg-filter-'+filterId).val(filterVal);
             }

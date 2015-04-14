@@ -3,14 +3,15 @@ function getAllFilters() {
     $('.lg-filter-input').each(function(i, e) {
         var value = $(this).val();
         parent= $(this).parent();
+        filter += parent.attr('data-role-lg-class') + '__' + parent.attr('data-role-lg-field') + ':' + value;
         if (parent.attr('data-role-lg-hidden')) {
             parent.attr('data-role-lg-hidden').split(';')
                 .forEach(function(f) {
-                    filter +=  parent.attr('data-role-lg-class') + '__' + f + ':' + value + '|';
+                    filter +=  '|'+parent.attr('data-role-lg-class') + '__' + f + ':' + value;
 
             });
         }
-        filter += parent.attr('data-role-lg-class') + '__' + parent.attr('data-role-lg-field') + ':' + value + ';';
+        filter +=";"
     });
     return filter;
 }

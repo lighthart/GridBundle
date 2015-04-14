@@ -130,9 +130,10 @@ function gridReload(reset) {
     data = {
         pageSize: cookies.pageSize,
         pageOffset: cookies.offset,
-        filter: cookies.filter,
+        filter: (cookies.filter ? cookies.filter : "").replace("'","''"),
         search: cookies.search,
     };
+
 
     $.map(getFlags(), function(value, flag) {
         var flagCookie = flag;
@@ -163,7 +164,6 @@ function gridReload(reset) {
                     cookies.version = new Date().getTime();
                     setCookies(cookies);
                     oldFocus = gridFocus() ? '#' + gridFocus().attr('id') : 0;
-                    // $('input').prop('disabled', true);
                 },
                 success: function(data) {
                     if (reset) {

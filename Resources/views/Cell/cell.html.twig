@@ -29,7 +29,7 @@
         {%- if cell.attr.emphasis is defined %}</{{cell.attr.emphasis}}>{% endif -%}
 {%- elseif 'th' == cell.type -%}
     {%- if cell.attr.filter is defined %}
-        <input type="text" {% if cell.attr['data-role-lg-class'] is defined and cell.attr['data-role-lg-field'] is defined %}id="lg-filter-{{cell.attr['data-role-lg-class']}}__{{cell.attr['data-role-lg-field']}}{% if cell.attr['data-role-lg-hidden'] is defined %}{% endif %}"{% endif %} class="lg-filter-input"/>
+        <input type="text" {% if cell.attr['data-role-lg-class'] is defined and cell.attr['data-role-lg-field'] is defined %}id="lg-filter-{{cell.attr['data-role-lg-class']}}__{{cell.attr['data-role-lg-field']}}"{% endif %} class="lg-filter-input"/>
     {%- elseif cell.header is defined and cell.header -%}
         {%- if cell.options.titleHtml is defined and cell.options.titleHtml -%}
             {{- cell.header|raw -}}

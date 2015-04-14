@@ -1258,6 +1258,9 @@ class GridMaker
             foreach ($multiFilters as $mfKey => $mfValue) {
                 $multiFilterKey = strstr($mfValue, ':', true);
                 $multiFilterValue = substr(strstr($mfValue, ':'),1);
+                $multiFilterValue = str_replace("'", "''", $multiFilterValue);
+                $multiFilterValue = str_replace(",", "", $multiFilterValue);
+                $multiFilterValue = str_replace(";", "", $multiFilterValue);
                 $multiFilterKey  = preg_replace('/___(.*?)__/', '.', $multiFilterKey);
                 if ($multiFilterValue == 'null') {
                     $mfExpr[] = $qb->expr()->isNull($multiFilterKey );

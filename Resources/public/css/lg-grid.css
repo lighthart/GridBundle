@@ -146,6 +146,7 @@ th.lg-date, td.lg-date {
 
 .lg-filter-input {
     text-indent: 1px !important;
+    width: 100%;
 }
 
 th.lg-filter {
