@@ -137,27 +137,28 @@ $gm->addField('b', 'shortName', array(
 
     filterHidden:   Filter on a column which is hidden.  Useful for concatenating fields
                     filtering the end result, such as lastname/firstname combos.  In this
-                    case hide the firstname column and add 'filterHidden' => 'alias.firstname'
-                    to the lastname column.  Extra fields may be added, semicolon separated.
+                    case hide the firstname column and add 'filterHidden' =>
+                    'alias.firstname' to the lastname column.  Extra fields may be added,
+                    semicolon separated.
 
-    security:       A primitive boolean, or an anonymous function.  If the value evaluates to
-                    true, the button is rendered.  Default is true.  For the anonymous
+    security:       A primitive boolean, or an anonymous function.  If the value evaluates
+                    to true, the button is rendered.  Default is true.  For the anonymous
                     function, the result tuple for the current row is sent as the first
-                    parameter, and an alias translation table for the original alias and the
-                    new alias in the query is sent as the second parameter. The tildes (see
-                    below) function as columns forming indexes, to base the appearance on
-                    portions of the tuple.
+                    parameter, and an alias translation table for the original alias and
+                    the new alias in the query is sent as the second parameter. The tildes
+                    (see below) function as columns forming indexes, to base the appearance
+                    on portions of the tuple.
 
     value:          Multiple fields may be added using tildes, as with example for title.
                     Passing an array (instead of a string )of values takes the first truthy
                     value, similar to a postgres concat operator.
 
-    boolean:        Field is a boolean, will render with boolean twigs.  If value is a string
-                    boolean value will be determined by a == comparison.  If value is an
-                    anonymous function, the result tuple for the current row is sent as the
-                    first parameter, and an alias translation table for the original alias
-                    and the new alias in the query is sent as the second parameter, and the
-                    function should return the boolean value.  For example:
+    boolean:        Field is a boolean, will render with boolean twigs.  If value is a
+                    string boolean value will be determined by a == comparison.  If value
+                    is an anonymous function, the result tuple for the current row is sent
+                    as the first parameter, and an alias translation table for the original
+                    alias and the new alias in the query is sent as the second parameter,
+                    and the function should return the boolean value.  For example:
 ```php
     $gm->addField('consentStatus', 'shortName', [
         'filter'   => 'number',
@@ -187,8 +188,7 @@ $gm->addField('b', 'shortName', array(
                     of raw sql functions.  For example:
 ```php
         $gm->addField('BILLERCONSENT', '', [
-            'dql'      =>
-        'arrayAgg(concat(concat(biller.shortName,\' : \'),consentStatus.shortName)) AS BILLERCONSENT',
+            'dql'      => 'arrayAgg(concat(concat(biller.shortName,\' : \'),consentStatus.shortName)) AS BILLERCONSENT',
             'attr'     => [
                 'class' => '',
             ],
