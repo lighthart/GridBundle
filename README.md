@@ -182,6 +182,19 @@ $gm->addField('b', 'shortName', array(
     ]);
 ```
 
+    dql:            Adds a pseudo column which returns the result of the DQL indicated.
+                    The second parameter should be an empty string.  This allows the use
+                    of raw sql functions.  For example:
+```php
+        $gm->addField('BILLERCONSENT', '', [
+            'dql'      => 'arrayAgg(concat(concat(biller.shortName,\' : \'),consentStatus.shortName)) AS BILLERCONSENT',
+            'attr'     => [
+                'class' => '',
+            ],
+            'title' => 'Consent',
+        ]);
+```
+
 **Use of tildes**:
 
 For 'value', entityId', 'parentId', 'title' and all elements of 'attr', enclosing any
