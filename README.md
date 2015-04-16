@@ -124,8 +124,8 @@ $gm->addField('b', 'shortName', array(
     entityId:       Evaluating to true stores the entity id on the individual cell. This is
                     mostly useful for javascript related associated entities.
 
-    parentId:       Evaluating to true stores the parent id on the row header. This is mostly
-                    useful for javascript related associated entities.
+    parentId:       Evaluating to true stores the parent id on the row header. This is
+                    mostly useful for javascript related associated entities.
 
     title:          Sets the title of the column.  Note: the title field sets the on-hover
                     title.
