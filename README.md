@@ -121,8 +121,8 @@ $gm->addField('b', 'shortName', array(
     html:           Indicates the title should be interpreted as html, i.e., the twig raw
                     filter is applied.
 
-    entityId:       Evaluating to true stores the entity id on the individual cell. This is
-                    mostly useful for javascript related associated entities.
+    entityId:       Evaluating to true stores the entity id on the individual cell. This
+                    is mostly useful for javascript related associated entities.
 
     parentId:       Evaluating to true stores the parent id on the row header. This is
                     mostly useful for javascript related associated entities.
