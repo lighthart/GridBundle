@@ -188,8 +188,12 @@ $gm->addField('b', 'shortName', array(
                     of raw sql functions.  For example:
 ```php
         $gm->addField('BILLERCONSENT', '', [
-            'dql'      => 'arrayAgg(concat(concat(biller.shortName,
-                           \' : \'),consentStatus.shortName)) AS BILLERCONSENT'
+            'dql'      => 'arrayAgg(
+                                concat(
+                                    concat(biller.shortName,\' : \'),
+                                    consentStatus.shortName
+                                      )
+                                   ) AS BILLERCONSENT'
                            ,
             'attr'     => [
                 'class' => '',
