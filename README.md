@@ -107,14 +107,14 @@ $gm->addField('b', 'shortName', array(
 
 **Field Configuration**:
 
-    search:         Setting to true will add the column to the fields searched via the global
-                    search tool. Optionally, you can also specify the kind of search filter
-                    to use on this filed. Valid types are: date, number, and string.
+    search:         Setting to true will add the column to the fields searched via the
+                    global search tool. Optionally, you can also specify the kind of search
+                    filter to use on this filed. Valid types are: date, number, and string.
 
     filter:         Setting to true will add a search filter box to the column header which
-                    only searches on this field. Optionally, you can also specify the kind of
-                    search filter to use on this filed. Valid types are: date, number, and
-                    string.
+                    only searches on this field. Optionally, you can also specify the kind
+                    of search filter to use on this filed. Valid types are: date, number,
+                    and string.
 
     attr:           Sets the html attributes.
 
