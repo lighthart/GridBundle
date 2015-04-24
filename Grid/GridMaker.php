@@ -1038,8 +1038,8 @@ class GridMaker
 
         foreach ($groups as $entity => $fields) {
             foreach ($fields as $fieldKey => $field) {
-                $qb->addSelect('arrayAgg(' . $entity . ') as ' . $entity . '_id');
-                $qb->addSelect('arrayAgg(' . $field . ') as ' . str_replace('.', '_', $field));
+                $qb->addSelect('arrayAggDistinct(' . $entity . ') as ' . $entity . '_id');
+                $qb->addSelect('arrayAggDistinct(' . $field . ') as ' . str_replace('.', '_', $field));
             }
         }
     }
