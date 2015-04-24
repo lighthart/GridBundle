@@ -3,7 +3,7 @@ doctrine:
         # ...
         dql:
             string_functions:
-                test_string1: GridBundle\DQL\ArrayAggDistinctFunction
-                test_string2: GridBundle\DQL\ArrayAggFunction
+                test_string: GridBundle\DQL\ArrayAggDistinctFunction
+                test_string: GridBundle\DQL\ArrayAggFunction
             numeric_functions:
             datetime_functions:

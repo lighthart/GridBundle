@@ -168,3 +168,8 @@ th.lg-filter {
 .export-control {
     margin-left: 3px;
 }
+
+input.lg-grid-flag {
+    margin: 0px !important;
+    vertical-align: middle;
+}
