@@ -8,7 +8,7 @@ use Doctrine\ORM\Query\Lexer;
 /**
  *
  */
-class ArrayAgg extends FunctionNode
+class ArrayAggDistinct extends FunctionNode
 {
     public $field;
     /**
@@ -16,7 +16,7 @@ class ArrayAgg extends FunctionNode
      */
     public function getSql(\Doctrine\ORM\Query\SqlWalker $sqlWalker)
     {
-        return "array_agg(" . $sqlWalker->walkArithmeticPrimary($this->field) . ")";
+        return "array_agg(DISTINCT " . $sqlWalker->walkArithmeticPrimary($this->field) . ")";
     }
 
     public function parse(\Doctrine\ORM\Query\Parser $parser)

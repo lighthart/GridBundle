@@ -3,6 +3,6 @@ doctrine:
         # ...
         dql:
             string_functions:
-                test_string: GridBundle\DQL\ArrayAggFunction
+                test_string: GridBundle\DQL\ArrayAggDistinctFunction
             numeric_functions:
             datetime_functions:
