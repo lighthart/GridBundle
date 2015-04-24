@@ -202,6 +202,10 @@ $gm->addField('b', 'shortName', array(
         ]);
 ```
 
+    group:          Column is part of a group.  Will automatically put arrayAgg in as function,
+                    grouping the field indicated.  Fields which are part of DQL aggregates
+                    should be grouped on something.
+
 **Use of tildes**:
 
 For 'value', entityId', 'parentId', 'title' and all elements of 'attr', enclosing any
