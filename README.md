@@ -146,19 +146,20 @@ $gm->addField('b', 'shortName', array(
                     function, the result tuple for the current row is sent as the first
                     parameter, and an alias translation table for the original alias and
                     the new alias in the query is sent as the second parameter. The tildes
-                    (see below) function as columns forming indexes, to base the appearance
-                    on portions of the tuple.
+                    (see below) function as columns forming indexes, to base the
+                    appearance on portions of the tuple.
 
     value:          Multiple fields may be added using tildes, as with example for title.
-                    Passing an array (instead of a string )of values takes the first truthy
-                    value, similar to a postgres concat operator.
+                    Passing an array (instead of a string )of values takes the first
+                    truthy value, similar to a postgres concat operator.
 
     boolean:        Field is a boolean, will render with boolean twigs.  If value is a
                     string boolean value will be determined by a == comparison.  If value
                     is an anonymous function, the result tuple for the current row is sent
-                    as the first parameter, and an alias translation table for the original
-                    alias and the new alias in the query is sent as the second parameter,
-                    and the function should return the boolean value.  For example:
+                    as the first parameter, and an alias translation table for the
+                    original alias and the new alias in the query is sent as the second
+                    parameter, and the function should return the boolean value.  For
+                    example:
 ```php
     $gm->addField('consentStatus', 'shortName', [
         'filter'   => 'number',
@@ -202,9 +203,9 @@ $gm->addField('b', 'shortName', array(
         ]);
 ```
 
-    group:          Column is part of a group.  Will automatically put arrayAgg in as function,
-                    grouping the field indicated.  Fields which are part of DQL aggregates
-                    should be grouped on something.
+    group:          Column is part of a group.  Will automatically put arrayAgg in as
+                    function, grouping the field indicated.  Fields which are part of DQL
+                    aggregates should be grouped on something.
 
 **Use of tildes**:
 
