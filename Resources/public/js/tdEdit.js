@@ -15,6 +15,12 @@ function makeClickable(object) {
 
 function makeEditable(object) {
     // this function loads the input field and associated controls
+    console.log($('input#cell'));
+    $('input#cell').each(function(){
+        console.log($(this));
+        var original = $(this).text().trim();
+        update($(this), original, original);
+    });
     var original = object.text().trim();
     object.off('click');
     input=object.children('input');

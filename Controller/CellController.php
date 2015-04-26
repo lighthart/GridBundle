@@ -93,6 +93,7 @@ class CellController extends Controller
                             'data-role-lg-class'     => $class,
                             'data-role-lg-field'     => $field,
                             'data-role-lg-entity-id' => $id,
+                            'class'                  => 'cell',
                         ],
                     ]
                 )->createView();
@@ -147,6 +148,7 @@ class CellController extends Controller
                             'data-role-lg-class'     => $class,
                             'data-role-lg-field'     => $field,
                             'data-role-lg-entity-id' => 'new',
+                            'class'                  => 'cell',
                         ],
                     ]
                 )->createView();
