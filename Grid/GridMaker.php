@@ -771,7 +771,7 @@ class GridMaker
                 // tilde mapping
                 $newAlias                                      = $aliases[stristr($oldAlias, '_', true) ] . '_' . $v->getValue();
                 $oldAliases[str_replace('_', '.', $oldAlias) ] = $newAlias;
-                $tildes                                        = ['title', 'parentId', 'entityId', 'value'];
+                $tildes                                        = ['title', 'parentId', 'entityId', 'value', 'header'];
 
                 foreach ($tildes as $k => $option) {
                     $newAlias = $aliases[stristr($oldAlias, '_', true) ] . '_' . $v->getValue();
@@ -827,7 +827,7 @@ class GridMaker
             $oldValue   = $v->getValue();
             $oldOptions = $v->getOptions();
 
-            $tildes     = ['title', 'parentId', 'entityId', 'value'];
+            $tildes     = ['title', 'parentId', 'entityId', 'value', 'header'];
 
             foreach ($tildes as $k => $option) {
                 if (false === strpos($oldAlias, '_')) {

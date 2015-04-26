@@ -476,6 +476,7 @@ class Grid
                     // currently only handles one field
 
                     $this->tildes([&$title], $result);
+                    $this->tildes([&$header], $result);
                     $parentId = ($columns[$key]->getOption('parentId') ?: null);
 
                     if ($parentId) {

@@ -730,16 +730,16 @@ function makeClickable(object) {
 function makeEditable(object) {
     // this function loads the input field and associated controls and clsoes old ones
 
-    console.log($('input.cell'));
     $.each(
         $('input.cell'),
         function(){
-            console.log($(this).parent());
             var val = $(this).val();
-            console.log('origin: '+val);
-            update($(this).parent(), val, val);
+            update($(this).parent(), -1, val, object);
         }
     );
+
+    console.log('object');
+    console.log(object);
 
     var original = object.text().trim();
     object.off('click');
@@ -840,9 +840,12 @@ function makeEditable(object) {
     });
 }
 
-function update(object, original, val) {
-        console.log(original);
-        console.log(val);
+function update(object, original, val, reload) {
+
+    reload = typeof reload !== 'undefined' ? reload : null;
+    console.log('reload');
+    console.log(reload);
+
     object.removeClass('lg-editing');
     var th = object.closest('table').find('th').eq(object.index());
     if ( val == '' || val ==null ) {
@@ -857,6 +860,7 @@ function update(object, original, val) {
         if (object.attr('data-role-lg-new') && !object.attr('data-role-lg-entity-id')) {
             url = makeURLfromTD(object, 'create');
             $.ajax({
+                async: false,
                 type: 'POST',
                 url: url,
                 data: {
@@ -866,6 +870,9 @@ function update(object, original, val) {
 
                     $('.lg-table').addClass('text-muted');
                     location.reload(true);
+                    if (reload) {
+                        makeEditable(reload);
+                    }
                 }
                 // dataType : dataType
             });
@@ -873,6 +880,7 @@ function update(object, original, val) {
         } else {
             url = makeURLfromTD(object, 'update');
             $.ajax({
+                async: false,
                 type: 'POST',
                 url: url,
                 data: {
@@ -885,6 +893,9 @@ function update(object, original, val) {
                     // console.log(url);
                     $('.lg-table').addClass('text-muted');
                     location.reload(true);
+                    if (reload) {
+                        makeEditable(reload);
+                    }
                     // object.load(url, null);
                 }
                 // dataType : dataType
