@@ -962,6 +962,14 @@ class Grid
                 $attr['class']    = preg_replace('/\s*lg-editable\s*/', '', $attr['class']);
                 $attr['emphasis'] = 'strong';
 
+                if (isset($attr['data-role-lg-editable'])){
+                    unset($attr['data-role-lg-editable']);
+                }
+
+                if (isset($attr['data-role-lg-new'])){
+                    unset($attr['data-role-lg-new']);
+                }
+
                 $cell = new Cell([
                     'value' => $value,
                     'title' => "Summary for " . $visible[array_keys($visible) [$key - 1]]->getValue(),
@@ -972,6 +980,7 @@ class Grid
                     ]);
                 $row->addCell($cell);
             }
+
             $tbody->addRow($row);
         }
     }

@@ -6,21 +6,18 @@ $(document).ready(function() {
 
 function makeClickable(object) {
     object.on('click', function() {
-        var th = object.closest('table').find('th').eq(object.index());
-        if (typeof th.attr('data-role-lg-editable') != 'undefined' && th.attr('data-role-lg-editable')) {
-            makeEditable(object);
+        if ($('input#cell.cell').length > 0) {
+        } else {
+            var th = object.closest('table').find('th').eq(object.index());
+            if (typeof td.attr('data-role-lg-editable') != 'undefined' && td.attr('data-role-lg-editable')) {
+                makeEditable(object);
+            }
         }
     });
 }
 
 function makeEditable(object) {
     // this function loads the input field and associated controls
-    console.log($('input#cell'));
-    $('input#cell').each(function(){
-        console.log($(this));
-        var original = $(this).text().trim();
-        update($(this), original, original);
-    });
     var original = object.text().trim();
     object.off('click');
     input=object.children('input');

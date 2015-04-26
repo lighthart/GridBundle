@@ -717,30 +717,20 @@ function activateControls() {
 
 // '@LighthartGridBundle/Resources/public/js/tdEdit.js'
 // $(document).ready moved to below
-
 function makeClickable(object) {
     object.on('click', function() {
-        var th = object.closest('table').find('th').eq(object.index());
-        if (typeof th.attr('data-role-lg-editable') != 'undefined' && th.attr('data-role-lg-editable')) {
-            makeEditable(object);
+        if ($('input#cell.cell').length > 0) {
+        } else {
+            var th = object.closest('table').find('th').eq(object.index());
+            if (typeof td.attr('data-role-lg-editable') != 'undefined' && td.attr('data-role-lg-editable')) {
+                makeEditable(object);
+            }
         }
     });
 }
 
 function makeEditable(object) {
-    // this function loads the input field and associated controls and clsoes old ones
-
-    $.each(
-        $('input.cell'),
-        function(){
-            var val = $(this).val();
-            update($(this).parent(), -1, val, object);
-        }
-    );
-
-    console.log('object');
-    console.log(object);
-
+    // this function loads the input field and associated controls
     var original = object.text().trim();
     object.off('click');
     input=object.children('input');
@@ -805,34 +795,34 @@ function makeEditable(object) {
                         //         .find('td').eq(object.index()));
                         // }
                     }
-                    if (event.which == tab) {
-                        if (object.is(':last-child')) {
-                            // we are at end of row
-                            thdr = object.closest('table').find('th');
-                            var nextth = object.closest('table').find('th').first();
-                            while (typeof nextth.attr('data-role-lg-editable') != 'undefined' && th.attr('data-role-lg-editable')) {
-                                // keep going until one can be editted
-                                nextth = nextth.next();
-                            }
-                            makeEditable(object.closest('tr')
-                                // get next row
-                                .next()
-                                // find td that has same index
-                                // to keep in same column
-                                .find('td').eq(nextth.index()));
-                        } else {
-                            var nextth = object.closest('table').find('th').eq(object.index()).next();
-                            while (typeof nextth.attr('data-role-lg-editable') != 'undefined' && th.attr('data-role-lg-editable')) {
-                                // keep going until one can be editted
-                                nextth = nextth.next();
-                            }
-                            // we are NOT at end of row
-                            makeEditable(object.closest('tr')
-                                // find td that has same index
-                                // to keep in same column
-                                .find('td').eq(nextth.index()));
-                        }
-                    }
+                    // if (event.which == tab) {
+                    //     if (object.is(':last-child')) {
+                    //         // we are at end of row
+                    //         thdr = object.closest('table').find('th');
+                    //         var nextth = object.closest('table').find('th').first();
+                    //         while (typeof nextth.attr('data-role-lg-editable') != 'undefined' && th.attr('data-role-lg-editable')) {
+                    //             // keep going until one can be editted
+                    //             nextth = nextth.next();
+                    //         }
+                    //         makeEditable(object.closest('tr')
+                    //             // get next row
+                    //             .next()
+                    //             // find td that has same index
+                    //             // to keep in same column
+                    //             .find('td').eq(nextth.index()));
+                    //     } else {
+                    //         var nextth = object.closest('table').find('th').eq(object.index()).next();
+                    //         while (typeof nextth.attr('data-role-lg-editable') != 'undefined' && th.attr('data-role-lg-editable')) {
+                    //             // keep going until one can be editted
+                    //             nextth = nextth.next();
+                    //         }
+                    //         // we are NOT at end of row
+                    //         makeEditable(object.closest('tr')
+                    //             // find td that has same index
+                    //             // to keep in same column
+                    //             .find('td').eq(nextth.index()));
+                    //     }
+                    // }
                 }
             });
             object.children('input').focus();
@@ -840,12 +830,7 @@ function makeEditable(object) {
     });
 }
 
-function update(object, original, val, reload) {
-
-    reload = typeof reload !== 'undefined' ? reload : null;
-    console.log('reload');
-    console.log(reload);
-
+function update(object, original, val) {
     object.removeClass('lg-editing');
     var th = object.closest('table').find('th').eq(object.index());
     if ( val == '' || val ==null ) {
@@ -860,7 +845,6 @@ function update(object, original, val, reload) {
         if (object.attr('data-role-lg-new') && !object.attr('data-role-lg-entity-id')) {
             url = makeURLfromTD(object, 'create');
             $.ajax({
-                async: false,
                 type: 'POST',
                 url: url,
                 data: {
@@ -870,9 +854,6 @@ function update(object, original, val, reload) {
 
                     $('.lg-table').addClass('text-muted');
                     location.reload(true);
-                    if (reload) {
-                        makeEditable(reload);
-                    }
                 }
                 // dataType : dataType
             });
@@ -880,7 +861,6 @@ function update(object, original, val, reload) {
         } else {
             url = makeURLfromTD(object, 'update');
             $.ajax({
-                async: false,
                 type: 'POST',
                 url: url,
                 data: {
@@ -893,9 +873,6 @@ function update(object, original, val, reload) {
                     // console.log(url);
                     $('.lg-table').addClass('text-muted');
                     location.reload(true);
-                    if (reload) {
-                        makeEditable(reload);
-                    }
                     // object.load(url, null);
                 }
                 // dataType : dataType
