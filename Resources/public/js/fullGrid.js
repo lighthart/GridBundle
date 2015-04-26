@@ -188,6 +188,7 @@ function gridReload(reset) {
                         $(oldFocus).blur().focus().val($(oldFocus).val());
                     }
                     markFlags();
+                    makeClicks();
                     // make latest timer
                     clearTimeout(timer);
                 }
@@ -919,12 +920,15 @@ function makeURLfromTD(td, action) {
     return url;
 }
 
+function makeClicks(){
+    $('td').each(function() {
+        makeClickable($(this));
+    });
+}
 // Document.readys removed and recombined:
 
 $(document).ready(function() {
     activateControls();
     cookies = getCookies();
-    $('td').each(function() {
-        makeClickable($(this));
-    });
+    makeClicks();
 });
