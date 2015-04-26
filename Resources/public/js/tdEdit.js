@@ -9,6 +9,7 @@ function makeClickable(object) {
         if ($('input#cell.cell').length > 0) {
         } else {
             var th = object.closest('table').find('th').eq(object.index());
+            var td = object;
             if (typeof td.attr('data-role-lg-editable') != 'undefined' && td.attr('data-role-lg-editable')) {
                 makeEditable(object);
             }
