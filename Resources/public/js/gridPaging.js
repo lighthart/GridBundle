@@ -15,9 +15,7 @@ function pagingInputControl() {
             cookies.offset = (newPage - 1) * cookies.pageSize;
         }
         setCookies(cookies);
-        delay(function() {
-            pagingInputReload();
-        }, quiet);
+        pagingInputReload();
     });
 }
 
@@ -32,9 +30,7 @@ function prevPageControl() {
             cookies.offset = 0;
         }
         setCookies(cookies);
-        delay(function() {
-            pagingInputReload();
-        }, quiet);
+        pagingInputReload();
     });
 }
 
@@ -50,9 +46,7 @@ function nextPageControl() {
             cookies.offset -= maxResults % cookies.pageSize;
         }
         setCookies(cookies);
-        delay(function() {
-            pagingInputReload();
-        }, quiet);
+        pagingInputReload();
     });
 }
 

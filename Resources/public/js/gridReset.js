@@ -9,9 +9,7 @@ function gridResetControl() {
         $('input.lg-search').val('');
         $('.lg-grid-flag').each(function(){this.checked = false;});
 
-        delay(function() {
-            gridResetReload(control);
-        }, quiet);
+        gridResetReload(control);
     });
 }
 

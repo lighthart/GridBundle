@@ -1,7 +1,7 @@
 function getAllSorts() {
     var sorts = "";
     $('span.lg-sort').each(function(i, e) {
-            sorts += $(this).parent().attr('data-role-lg-class') + '__' + $(this).parent().attr('data-role-lg-field') + ':' + $(this).children('input').val() + ';';
+        sorts += $(this).parent().attr('data-role-lg-class') + '__' + $(this).parent().attr('data-role-lg-field') + ':' + $(this).children('input').val() + ';';
     });
     return sorts;
 }
@@ -11,9 +11,7 @@ function gridSortControl() {
     $('span.lg-sort').on('click', function(e) {
         control = $(this);
         e.preventDefault();
-        delay(function() {
-            gridSortReload(control);
-        }, quiet);
+        gridSortReload(control);
     });
 }
 

@@ -153,49 +153,49 @@ function gridReload(reset) {
     }
 
     timer = setTimeout(function() {
-            xhr = $.ajax({
-                url: getLgCurrentURI(),
-                data: data,
-                dataType: 'html',
-                type: 'GET',
-                cache: false,
-                beforeSend: function(xhr) {
-                    $('.lg-table').addClass('text-muted');
-                    cookies = getCookies();
-                    oldVersion = typeof cookies.version == 'undefined' ? 0 : cookies.version;
-                    cookies.version = new Date().getTime();
-                    setCookies(cookies);
-                    oldFocus = gridFocus() ? '#' + gridFocus().attr('id') : 0;
-                },
-                success: function(data) {
-                    if (reset) {
-                        $('table.lg-table').html($(data).find('table.lg-table').html());
-                        $('div#lg-header').html($(data).find('div#lg-header').html());
-                        $('div#lg-footer').html($(data).find('div#lg-footer').html());
-                    } else {
-                        $('tbody.lg-tbody').html($(data).find('tbody.lg-tbody').html());
-                        $('form.navbar-right').html($(data).find('form.navbar-right').html());
-                        $('div#lg-footer').html($(data).find('div#lg-footer').html());
-                        $('tr.lg-headers').html($(data).find('tr.lg-headers').html());
-                    }
-                },
-                complete: function() {
-                    highlightSearches();
-                    highlightFilters();
-                    activateControls();
-                    $('.lg-table').removeClass('text-muted');
-                    if (oldFocus) {
-                        $(oldFocus).blur().focus().val($(oldFocus).val());
-                    }
-                    markFlags();
-                    makeClicks();
+        xhr = $.ajax({
+            url: getLgCurrentURI(),
+            data: data,
+            dataType: 'html',
+            type: 'GET',
+            cache: false,
+            beforeSend: function(xhr) {
+                $('.lg-table').addClass('text-muted');
+                cookies = getCookies();
+                oldVersion = typeof cookies.version == 'undefined' ? 0 : cookies.version;
+                cookies.version = new Date().getTime();
+                setCookies(cookies);
+                oldFocus = gridFocus() ? '#' + gridFocus().attr('id') : 0;
+            },
+            success: function(data) {
+                if (reset) {
+                    $('table.lg-table').html($(data).find('table.lg-table').html());
+                    $('div#lg-header').html($(data).find('div#lg-header').html());
+                    $('div#lg-footer').html($(data).find('div#lg-footer').html());
+                } else {
+                    $('tbody.lg-tbody').html($(data).find('tbody.lg-tbody').html());
+                    $('form.navbar-right').html($(data).find('form.navbar-right').html());
+                    $('div#lg-footer').html($(data).find('div#lg-footer').html());
+                    $('tr.lg-headers').html($(data).find('tr.lg-headers').html());
+                }
+            },
+            complete: function() {
+                highlightSearches();
+                highlightFilters();
+                activateControls();
+                $('.lg-table').removeClass('text-muted');
+                if (oldFocus) {
+                    $(oldFocus).blur().focus().val($(oldFocus).val());
+                }
+                markFlags();
+                makeClicks();
                     // make latest timer
                     clearTimeout(timer);
                 }
             });
-        },
-        quiet
-    );
+},
+quiet
+);
 
 }
 
@@ -246,7 +246,7 @@ function gridReload(reset) {
  *
  */
 
-jQuery.extend({
+ jQuery.extend({
     highlight: function (node, re, nodeName, className) {
         if (node.nodeType === 3) {
             var match = node.data.match(re);
@@ -291,10 +291,10 @@ jQuery.fn.highlight = function (words, options) {
     }
     words = jQuery.grep(words, function(word, i){
       return word !== '';
-    });
+  });
     words = jQuery.map(words, function(word, i) {
       return word.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&");
-    });
+  });
     if (words.length == 0) { return this; };
 
     var flag = settings.caseSensitive ? "" : "i";
@@ -328,9 +328,7 @@ function pagingInputControl() {
             cookies.offset = (newPage - 1) * cookies.pageSize;
         }
         setCookies(cookies);
-        delay(function() {
-            pagingInputReload();
-        }, quiet);
+        pagingInputReload();
     });
 }
 
@@ -345,9 +343,7 @@ function prevPageControl() {
             cookies.offset = 0;
         }
         setCookies(cookies);
-        delay(function() {
-            pagingInputReload();
-        }, quiet);
+        pagingInputReload();
     });
 }
 
@@ -363,9 +359,7 @@ function nextPageControl() {
             cookies.offset -= maxResults % cookies.pageSize;
         }
         setCookies(cookies);
-        delay(function() {
-            pagingInputReload();
-        }, quiet);
+        pagingInputReload();
     });
 }
 
@@ -428,13 +422,13 @@ function pageSizeControl() {
 
 function pageSizeReload(control) {
    // The stuff being done
-    var cookies = getCookies();
-    var pageVal = Number($('input.lg-page-input').val());
-    var maxPages = Number(getMaxPages());
-    offset = getOffset(cookies);
-    if (offset < cookies.pageSize) {
-        cookies.offset = 0;
-    }
+   var cookies = getCookies();
+   var pageVal = Number($('input.lg-page-input').val());
+   var maxPages = Number(getMaxPages());
+   offset = getOffset(cookies);
+   if (offset < cookies.pageSize) {
+    cookies.offset = 0;
+}
     // map to the bottom control
     $('.lg-pagesize-button').html(control.html());
     // put the data into our javascript, for next time this is called
@@ -473,8 +467,8 @@ function getAllFilters() {
         filter += parent.attr('data-role-lg-class') + '__' + parent.attr('data-role-lg-field') + ':' + value;
         if (parent.attr('data-role-lg-hidden')) {
             parent.attr('data-role-lg-hidden').split(';')
-                .forEach(function(f) {
-                    filter +=  '|'+parent.attr('data-role-lg-class') + '__' + f + ':' + value;
+            .forEach(function(f) {
+                filter +=  '|'+parent.attr('data-role-lg-class') + '__' + f + ':' + value;
 
             });
         }
@@ -557,7 +551,7 @@ function hideVisibleActions(control) {
 function getAllSorts() {
     var sorts = "";
     $('span.lg-sort').each(function(i, e) {
-            sorts += $(this).parent().attr('data-role-lg-class') + '__' + $(this).parent().attr('data-role-lg-field') + ':' + $(this).children('input').val() + ';';
+        sorts += $(this).parent().attr('data-role-lg-class') + '__' + $(this).parent().attr('data-role-lg-field') + ':' + $(this).children('input').val() + ';';
     });
     return sorts;
 }
@@ -566,9 +560,7 @@ function gridSortControl() {
     $('span.lg-sort').on('click', function(e) {
         control = $(this);
         e.preventDefault();
-        delay(function() {
-            gridSortReload(control);
-        }, quiet);
+        gridSortReload(control);
     });
 }
 
@@ -614,9 +606,7 @@ function gridFlagControl() {
     $('input.lg-grid-flag').on('click', function(e) {
         control = $(this);
         // e.preventDefault();
-        delay(function() {
-            gridFlagReload(control);
-        }, quiet);
+        gridFlagReload(control);
     });
 }
 
@@ -652,9 +642,7 @@ function gridResetControl() {
         $('input.lg-search').val('');
         $('.lg-grid-flag').each(function(){this.checked = false;});
 
-        delay(function() {
-            gridResetReload(control);
-        }, quiet);
+        gridResetReload(control);
     });
 }
 
@@ -827,9 +815,9 @@ function makeEditable(object) {
                     // }
                 }
             });
-            object.children('input').focus();
-        }
-    });
+object.children('input').focus();
+}
+});
 }
 
 function update(object, original, val) {
@@ -907,17 +895,17 @@ function makeURLfromTD(td, action) {
     } else if (typeof tdid != 'undefined' && tdid) {
      // otherwise try to figure it out yourself
 
-        url = getLgAppRoot() + 'cell/' + action + '/' + th.attr('data-role-lg-class') + '/' + th.attr('data-role-lg-field') + '/' + tdid;
-    } else {
-        url = getLgAppRoot() + 'cell/' + action + '/' + th.attr('data-role-lg-class') + '/' + th.attr('data-role-lg-field') + '/' + trid;
-    }
+     url = getLgAppRoot() + 'cell/' + action + '/' + th.attr('data-role-lg-class') + '/' + th.attr('data-role-lg-field') + '/' + tdid;
+ } else {
+    url = getLgAppRoot() + 'cell/' + action + '/' + th.attr('data-role-lg-class') + '/' + th.attr('data-role-lg-field') + '/' + trid;
+}
 
-    if (url.indexOf('___') != -1){
-        url = url.split('___');
-        url[0]=url[0].substr(0,url[0].lastIndexOf('/')+1);
-        url=url.join('');
-    }
-    return url;
+if (url.indexOf('___') != -1){
+    url = url.split('___');
+    url[0]=url[0].substr(0,url[0].lastIndexOf('/')+1);
+    url=url.join('');
+}
+return url;
 }
 
 function makeClicks(){

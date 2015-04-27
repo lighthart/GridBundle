@@ -13,9 +13,7 @@ function gridFlagControl() {
     $('input.lg-grid-flag').on('click', function(e) {
         control = $(this);
         // e.preventDefault();
-        delay(function() {
-            gridFlagReload(control);
-        }, quiet);
+        gridFlagReload(control);
     });
 }
 
