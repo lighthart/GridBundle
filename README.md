@@ -295,13 +295,14 @@ return $this->render('ApplicationBundle:Test:test3.html.twig', array(
     flags:      An array of labels for flags to be rendered as check boxes above grid, to
                 be used to modify the grid query.  Flags specified as:
 
-                'flags' => ['Flag name', 'Another Flag', 'thirdFlag']
+                'flags' => ['Flag name', 'Another Flag', 'thirdFlag', 'ALLCAPSFLAG']
 
                 Would be fetched in a Symfony controller by:
 
                 $flagName    = $request->query->get('flag_name');
                 $anotherFlag = $request->query->get('another_flag');
                 $thirdFlag = $request->query->get('thirdflag');
+                $ALLCAPSFLAG = $request->query->get('allcapsflag');
                 
                 That is, all letters will be lower-cased, and all spaces will become
                 underscores.  The original presentation of the values in the flags
