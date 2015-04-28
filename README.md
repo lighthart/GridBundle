@@ -295,12 +295,17 @@ return $this->render('ApplicationBundle:Test:test3.html.twig', array(
     flags:      An array of labels for flags to be rendered as check boxes above grid, to
                 be used to modify the grid query.  Flags specified as:
 
-                'flags' => ['flagName', 'anotherFlag']
+                'flags' => ['Flag name', 'Another Flag', 'thirdFlag']
 
                 Would be fetched in a Symfony controller by:
 
-                $flagname    = $request->query->get('flagName');
-                $anotherFlag = $request->query->get('anotherFlag');
+                $flagName    = $request->query->get('flag_name');
+                $anotherFlag = $request->query->get('another_flag');
+                $thirdFlag = $request->query->get('thirdflag');
+                
+                That is, all letters will be lower-cased, and all spaces will become
+                underscores.  The original presentation of the values in the flags
+                array will be used for displaying labels next to checkboxes.
 
     export:     Adds export limited to the number of lines specified by the value.  'all'
                 returns all results for export.
