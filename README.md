@@ -110,6 +110,9 @@ $gm->addField('b', 'shortName', array(
     search:         Setting to true will add the column to the fields searched via the
                     global search tool. Optionally, you can also specify the kind of search
                     filter to use on this filed. Valid types are: date, number, and string.
+                    If a true is used, the field will be highlighted on search without
+                    modifying query.  This is useful for compound fields such as made with
+                    the otherGroups config (below)
 
     filter:         Setting to true will add a search filter box to the column header which
                     only searches on this field. Optionally, you can also specify the kind
