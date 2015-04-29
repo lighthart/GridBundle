@@ -138,8 +138,8 @@ $gm->addField('b', 'shortName', array(
     filterHidden:   Filter on a column which is hidden.  Useful for concatenating fields
                     filtering the end result, such as lastname/firstname combos.  In this
                     case hide the firstname column and add 'filterHidden' =>
-                    'alias.firstname' to the lastname column.  Extra fields may be added,
-                    semicolon separated.
+                    'alias.firstname' to the lastname column.  Hiddens columsn must be
+                    filterable.  Item must be an array or semicolon-separated list
 
     security:       A primitive boolean, or an anonymous function.  If the value evaluates
                     to true, the button is rendered.  Default is true.  For the anonymous
@@ -186,7 +186,7 @@ $gm->addField('b', 'shortName', array(
 
     dql:            Adds a pseudo column which returns the result of the DQL indicated.
                     The second parameter should be an empty string.  This allows the use
-                    of raw sql functions.  For example:
+                    of raw dql functions.  For example:
 ```php
         $gm->addField('BILLERCONSENT', '', [
             'dql'      => 'arrayAgg(
@@ -206,6 +206,27 @@ $gm->addField('b', 'shortName', array(
     group:          Column is part of a group.  Will automatically put arrayAgg in as
                     function, grouping the field indicated.  Fields which are part of DQL
                     aggregates should be grouped on something.
+
+    count:          Column is part of a group.  If true, will automatically put count in as
+                    function on the indicated field.  Id is normally a good choice.
+
+    otherGroup:     Column displays a group of composite fields.  Field must be an array
+                    of fields which will me recursively mapped through a DQL concat
+                    function.  To display a , use a double semicolon as a display element.
+                    If the field is alsoa  filter, the otherGroup display elements will
+                    be automatically added.
+
+```php
+            $gm->addField('subordinate_othergroup', 'otherGroup', [
+            'filter'   => 'string',
+            // automatically has:
+            // 'filterHidden' => 'subordinate.firstName;subordinate.lastName',
+            'header' => 'Subordinate',
+            'title' => 'Subordinate',
+            'otherGroup' => ['subordinate.lastName','\';; \'','subordinate.firstName'],
+        ]);
+
+```
 
 **Use of tildes**:
 
@@ -303,7 +324,7 @@ return $this->render('ApplicationBundle:Test:test3.html.twig', array(
                 $anotherFlag = $request->query->get('another_flag');
                 $thirdFlag = $request->query->get('thirdflag');
                 $ALLCAPSFLAG = $request->query->get('allcapsflag');
-                
+
                 That is, all letters will be lower-cased, and all spaces will become
                 underscores.  The original presentation of the values in the flags
                 array will be used for displaying labels next to checkboxes.

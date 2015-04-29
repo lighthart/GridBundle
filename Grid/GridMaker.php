@@ -315,13 +315,13 @@ class GridMaker
      *
      * @param self
      */
-    public function addField($entity, $value = 'id', array $options = [])
+    public function addField($entity, $value, array $options = [])
     {
-        if ('id' == $value) {
-            if (in_array($entity . '_' . $value, array_keys($this->getGrid()->getColumns()))) {
+        if ( null === $value ) {
+            if (in_array($entity . '_' . 'id', array_keys($this->getGrid()->getColumns()))) {
                 return $this;
             } else {
-                $this->getGrid()->addColumn(new Column($entity . '_' . $value, $value, $options));
+                $this->getGrid()->addColumn(new Column($entity . '_' . 'id', 'id', $options));
 
                 return $this;
             }
@@ -331,8 +331,16 @@ class GridMaker
             $this->getGrid()->addColumn(new Column($entity, $value, $options));
 
             return $this;
+        } elseif (isset($options['otherGroup']) && $options['otherGroup']){
+            if (isset($options['filter'])&& $options['filter']) {
+                $options['filterHidden'] = str_replace('\'; \'','; ',str_replace(';;', ';',implode($options['otherGroup'], '')));
+            }
+            $this->getGrid()->addColumn(new Column($entity, $value, $options));
+
+            return $this;
+
         } else {
-            $this->addField($entity, 'id', [
+            $this->addField($entity, null, [
                 'hidden' => true,
             ]);
             $this->getGrid()->addColumn(new Column($entity . '_' . $value, $value, $options));
@@ -400,7 +408,7 @@ class GridMaker
         $cqb->resetDQLPart('orderBy');
         $cqb->setMaxResults(null);
         $cqb->setFirstResult(null);
-        $cqb->select($cqb->expr()->count($root));
+        $cqb->select($cqb->expr()->count('DISTINCT '.$root));
         $cqb->distinct();
         $cqb->resetDQLPart('groupBy');
         $cq = $cqb->getQuery();
@@ -575,6 +583,7 @@ class GridMaker
                     $this->getGrid()->fillTr($results, $root);
                 }
                 if ($this->getGrid()->hasErrors()) {
+                    var_dump($this->getGrid()->getErrors());die;
                     $this->getGrid()->fillErrors($results, $filters);
                 }
 
@@ -667,7 +676,6 @@ class GridMaker
             return $s->getParts()[0] == 'partial root.{id}';
         });
         // $qb->addGroupBy('root');
-
         if (isset($rootSelect[0]) && $rootSelect[0]) {
             // escaping the count query
             $rootSelectParts = explode(',', substr(stristr(stristr($rootSelect[0], '{'), '}', true), 1));
@@ -798,6 +806,7 @@ class GridMaker
                         }
                     }
                 }
+            } elseif ($v->getOption('otherGroup')){
             } else {
                 $g->addError('Column \'' . $oldAlias . '\' maps to alias not present in query');
             }
@@ -982,29 +991,44 @@ class GridMaker
 
         $partials = [];
         $groups   = [];
+        $otherGroups   = [];
         $dqls     = [];
         $columns  = $this->getGrid()->getColumns();
         foreach ($columns as $key => $column) {
             if ($column->getOption('dql')) {
                 $dqls[$column->getEntity()][] = $column->getOption('dql');
+            } elseif ($column->getOption('count')) {
+                $counts[$column->getEntity()] = $column->getEntity() . '.' . $column->getValue();
             } elseif ($column->getOption('group')) {
-                $groups[$column->getEntity()][]   = $column->getEntity() . '.' . $column->getValue();
-                $partials[$column->getEntity()][] = $column->getValue();
+                    $groups[$column->getEntity()][]   = $column->getEntity() . '.' . $column->getValue();
+                    $partials[$column->getEntity()][] = $column->getValue();
+            } elseif ($column->getOption('otherGroup')) {
+                if ('array' == gettype($column->getOption('otherGroup'))) {
+                    $groupList = $column->getOption('otherGroup');
+                    $gString = '\'\'';
+                    while ($g = array_pop($groupList)) {
+                        $gString = 'concat('.$g.','.$gString.')';
+                    }
+                    // $gString .= ' AS '.$column->getEntity().'Group';
+                    $otherGroups[$column->getAlias()][]   = $gString;
+                    // $partials[$column->getEntity()][] = $column->getValue();
+                } else {
+                    $groups[$column->getEntity()][]   = $column->getEntity() . '.' . $column->getValue();
+                    $partials[$column->getEntity()][] = $column->getValue();
+                }
             } else {
                 $partials[$column->getEntity()][] = $column->getValue();
             }
         }
-
         // Need to do the following loops twice because select removes all fields
         // While addSelect just adds more
-
         // This bit is to make sure added columns are added to the query as partials
         foreach ($partials as $entity => $fields) {
             if ($qb->getRootAlias() == $entity) {
                 if ($key = array_search('id', $fields)) {
                     unset($fields[$key]);
                 }
-                $str = 'partial ' . $entity . '.{' . implode(',', $fields) . '}';
+                $str = 'partial ' . $entity . '.{id,' . implode(',', $fields) . '}';
                 $qb->select($str);
                 if ([] != $groups) {
                     $qb->addGroupBy('root');
@@ -1042,9 +1066,21 @@ class GridMaker
         }
 
         foreach ($groups as $entity => $fields) {
-                $qb->addSelect('arrayAggDistinct(' . $entity . ') AS ' . $entity . '_id');
+            $qb->addSelect('arrayAggDistinct(' . $entity . ') AS ' . $entity . '_id');
             foreach ($fields as $fieldKey => $field) {
                 $qb->addSelect('arrayAggDistinct(' . $field . ') AS ' . str_replace('.', '_', $field));
+            }
+        }
+
+        foreach ($counts as $entity => $field) {
+            $qb->addSelect('COUNT (DISTINCT '.$field.') AS '.str_replace('.', '_', $field) );
+        }
+
+        // For composite fields in many-to-many relations
+        foreach ($otherGroups as $entity => $fields) {
+            // $qb->addSelect('arrayAggDistinct(' . $entity . ') AS ' . $entity . '_id');
+            foreach ($fields as $fieldKey => $field) {
+                $qb->addSelect('arrayAggDistinct(' . $field . ') AS ' . str_replace('.', '_', $entity));
             }
         }
     }
@@ -1187,11 +1223,15 @@ class GridMaker
         }));
 
         foreach($hiddenFilters as $field => $hiddenType) {
+            if ('array' == gettype($hiddenType)){
+            } else {
+                $hiddenType = explode(';',$hiddenType);
+            }
                 $hiddenCombo = implode(';',
                     array_map(function($h){
                         return str_replace('_', '.', $h);
                     },
-                    explode(';',$hiddenType)
+                    $hiddenType
                     )
                 );
             $filters[$filterFields[$field]][] = $hiddenCombo;
@@ -1211,6 +1251,8 @@ class GridMaker
 
         $filter = explode(';', $filter);
         $multiFilter = [];
+
+        // print_r('<pre>');var_dump($filter);die;
 
         foreach ($filter as $key => $filt) {
             if (strpos($filt, '|') === false) {

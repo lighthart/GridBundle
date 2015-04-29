@@ -602,6 +602,27 @@ class Grid
                             );
                         }
                     }
+
+                    if ($columns[$key]->getOption('otherGroup') && $columns[$key]->getOption('filterHidden')) {
+                        $attr['data-role-lg-class'] = stristr($columns[$key]->getAlias(),'__otherGroup', true);
+                        $attr['data-role-lg-field'] = array_map(
+                                function($o) { return substr(strstr($o,'.'),1); },
+                                explode(';', $columns[$key]->getOption('filterHidden'))
+                            )[0];
+                        $attr['data-role-lg-hidden'] =
+                        implode(';',
+                            array_map(
+                                function($o) { return substr(strstr($o,'.'),1); },
+                                explode(';', $columns[$key]->getOption('filterHidden'))
+                            )
+                        );
+                        // print_r('<pre>');
+                        // var_dump($attr);
+                        // var_dump($columns[$key]);
+                        // die;
+                    }
+
+
                     $attr['filter']             = $column->getOptions() ['filter'];
                     $attr['class'] = (isset($attr['class']) ? $attr['class'] : "");
                     $attr['class'] .= ' lg-filterable lg-filter';
