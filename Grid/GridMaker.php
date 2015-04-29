@@ -822,6 +822,11 @@ class GridMaker
 
             // the column must be specified as a hidden column in your grid.
         }
+
+        if (!$g->getColumns()) {
+            throw new \Exception('Grid rendered with no defined columns');
+        }
+
         // die;
         $g->setAliases($oldAliases);
     }
