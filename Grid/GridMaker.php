@@ -993,6 +993,7 @@ class GridMaker
         $groups   = [];
         $otherGroups   = [];
         $dqls     = [];
+        $counts = [];
         $columns  = $this->getGrid()->getColumns();
         foreach ($columns as $key => $column) {
             if ($column->getOption('dql')) {
@@ -1121,7 +1122,7 @@ class GridMaker
 
     public function addSearch($search)
     {
-        $qb           = $this->QB();
+        $qb = $this->QB();
 
         $searchColumns = array_filter($this->getGrid()->getColumns(), function ($c) {
             return $c->getOption('search');
@@ -1142,6 +1143,12 @@ class GridMaker
         foreach ($searchFields as $field => $type) {
                 $searches[$type][] = str_replace('_', '.', $field);
         }
+
+        $hiddenFilters = array_map(function ($c) {
+            return str_replace('.', '_', $c->getOption('filterHidden'));
+        }, array_filter($this->getGrid()->getColumns(), function ($c) {
+            return $c->getOption('filterHidden');
+        }));
 
         // $search is the explicit request from user
         // $searches are the fields for while the filter should be searched
@@ -1204,7 +1211,7 @@ class GridMaker
 
     public function addFilter($filter)
     {
-        $qb           = $this->QB();
+        $qb = $this->QB();
         $filterFields = array_map(function ($c) {
             return $c->getOption('filter');
         }, array_filter($this->getGrid()->getColumns(), function ($c) {
