@@ -1,5 +1,4 @@
 // '@LighthartGridBundle/Resources/public/js/grid.js'
-
 // inhibits recurring callback for duration of quiet before executing
 var quiet = 300; // 300 ms
 var timer = 0;
@@ -57,7 +56,6 @@ function getFlagCookies() {
         var flagCookie = "lg-" + getLgCurrentRoute() + "-flag-" + flag;
         cookies[flag] = $.cookie(flagCookie);
     });
-
     return cookies;
 }
 
@@ -76,7 +74,6 @@ function getCookies() {
         sort: $.cookie(sortCookie),
         version: $.cookie(ajaxVersionCookie),
     };
-
     // Setting Defaults
     if ('undefined' == typeof cookies.offset || isNaN(cookies.offset)) {
         cookies.offset = 0;
@@ -123,35 +120,28 @@ function gridFocus() {
 }
 
 function gridReload(reset) {
-
     reset = typeof reset !== 'undefined' ? reset : false;
-
     var oldFocus = null;
     var oldVersion = null;
     cookies = getCookies();
     data = {
         pageSize: cookies.pageSize,
         pageOffset: cookies.offset,
-        filter: (cookies.filter ? cookies.filter : "").replace("'","''"),
+        filter: (cookies.filter ? cookies.filter : "").replace("'", "''"),
         search: cookies.search,
     };
-
-
     $.map(getFlags(), function(value, flag) {
         var flagCookie = flag;
         if (value) {
             data[flagCookie] = value;
         }
     });
-
     if (xhr) {
         xhr.abort();
     }
-
     if (timer != null) {
         clearTimeout(timer);
     }
-
     timer = setTimeout(function() {
         xhr = $.ajax({
             url: getLgCurrentURI(),
@@ -172,8 +162,10 @@ function gridReload(reset) {
                     $('table.lg-table').html($(data).find('table.lg-table').html());
                     $('div#lg-header').html($(data).find('div#lg-header').html());
                     $('div#lg-footer').html($(data).find('div#lg-footer').html());
+                    $('div.lg-flags').html($(data).find('div.lg-flags').html());
                 } else {
                     $('tbody.lg-tbody').html($(data).find('tbody.lg-tbody').html());
+                    $('div.lg-flags').html($(data).find('div.lg-flags').html());
                     $('form.navbar-right').html($(data).find('form.navbar-right').html());
                     $('div#lg-footer').html($(data).find('div#lg-footer').html());
                     $('tr.lg-headers').html($(data).find('tr.lg-headers').html());
@@ -189,18 +181,13 @@ function gridReload(reset) {
                 }
                 markFlags();
                 makeClicks();
-                    // make latest timer
-                    clearTimeout(timer);
-                }
-            });
-},
-quiet
-);
-
+                // make latest timer
+                clearTimeout(timer);
+            }
+        });
+    }, quiet);
 }
-
 // '@LighthartGridBundle/Resources/public/js/gridHighlight.js'
-
 /*
  * jQuery Highlight plugin
  *
@@ -245,9 +232,8 @@ quiet
  * Licensed under MIT license.
  *
  */
-
- jQuery.extend({
-    highlight: function (node, re, nodeName, className) {
+jQuery.extend({
+    highlight: function(node, re, nodeName, className) {
         if (node.nodeType === 3) {
             var match = node.data.match(re);
             if (match) {
@@ -261,8 +247,8 @@ quiet
                 return 1; //skip added node in parent
             }
         } else if ((node.nodeType === 1 && node.childNodes) && // only element nodes that have children
-                !/(script|style)/i.test(node.tagName) && // ignore script and style nodes
-                !(node.tagName === nodeName.toUpperCase() && node.className === className)) { // skip if already highlighted
+            !/(script|style)/i.test(node.tagName) && // ignore script and style nodes
+            !(node.tagName === nodeName.toUpperCase() && node.className === className)) { // skip if already highlighted
             for (var i = 0; i < node.childNodes.length; i++) {
                 i += jQuery.highlight(node.childNodes[i], re, nodeName, className);
             }
@@ -270,47 +256,49 @@ quiet
         return 0;
     }
 });
-
-jQuery.fn.unhighlight = function (options) {
-    var settings = { className: 'highlight', element: 'span' };
+jQuery.fn.unhighlight = function(options) {
+    var settings = {
+        className: 'highlight',
+        element: 'span'
+    };
     jQuery.extend(settings, options);
-
-    return this.find(settings.element + "." + settings.className).each(function () {
+    return this.find(settings.element + "." + settings.className).each(function() {
         var parent = this.parentNode;
         parent.replaceChild(this.firstChild, this);
         parent.normalize();
     }).end();
 };
-
-jQuery.fn.highlight = function (words, options) {
-    var settings = { className: 'highlight', element: 'span', caseSensitive: false, wordsOnly: false };
+jQuery.fn.highlight = function(words, options) {
+    var settings = {
+        className: 'highlight',
+        element: 'span',
+        caseSensitive: false,
+        wordsOnly: false
+    };
     jQuery.extend(settings, options);
-
     if (words.constructor === String) {
         words = [words];
     }
-    words = jQuery.grep(words, function(word, i){
-      return word !== '';
-  });
+    words = jQuery.grep(words, function(word, i) {
+        return word !== '';
+    });
     words = jQuery.map(words, function(word, i) {
-      return word.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&");
-  });
-    if (words.length == 0) { return this; };
-
+        return word.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&");
+    });
+    if (words.length == 0) {
+        return this;
+    };
     var flag = settings.caseSensitive ? "" : "i";
     var pattern = "(" + words.join("|") + ")";
     if (settings.wordsOnly) {
         pattern = "\\b" + pattern + "\\b";
     }
     var re = new RegExp(pattern, flag);
-
-    return this.each(function () {
+    return this.each(function() {
         jQuery.highlight(this, re, settings.element, settings.className);
     });
 };
-
 // '@LighthartGridBundle/Resources/public/js/gridPaging.js'
-
 function pagingInputControl() {
     $('.lg-last-page').unbind('change');
     $('input.lg-page-input').on('change keyup', function(e) {
@@ -408,9 +396,7 @@ function pagingInputReload() {
         gridReload();
     }
 }
-
 // '@LighthartGridBundle/Resources/public/js/gridPageSize.js'
-
 function pageSizeControl() {
     // The control
     $('.lg-pagesize').unbind('click');
@@ -421,14 +407,14 @@ function pageSizeControl() {
 }
 
 function pageSizeReload(control) {
-   // The stuff being done
-   var cookies = getCookies();
-   var pageVal = Number($('input.lg-page-input').val());
-   var maxPages = Number(getMaxPages());
-   offset = getOffset(cookies);
-   if (offset < cookies.pageSize) {
-    cookies.offset = 0;
-}
+    // The stuff being done
+    var cookies = getCookies();
+    var pageVal = Number($('input.lg-page-input').val());
+    var maxPages = Number(getMaxPages());
+    offset = getOffset(cookies);
+    if (offset < cookies.pageSize) {
+        cookies.offset = 0;
+    }
     // map to the bottom control
     $('.lg-pagesize-button').html(control.html());
     // put the data into our javascript, for next time this is called
@@ -438,9 +424,7 @@ function pageSizeReload(control) {
     setCookies(cookies);
     gridReload();
 }
-
 // '@LighthartGridBundle/Resources/public/js/gridSearch.js'
-
 function getSearch() {
     var search = $('input#lg-search-input').val();
     return search;
@@ -456,23 +440,19 @@ function gridSearchControl() {
         gridReload();
     });
 }
-
 // '@LighthartGridBundle/Resources/public/js/gridFilter.js'
-
 function getAllFilters() {
     var filter = '';
     $('.lg-filter-input').each(function(i, e) {
         var value = $(this).val();
-        parent= $(this).parent();
+        parent = $(this).parent();
         filter += parent.attr('data-role-lg-class') + '__' + parent.attr('data-role-lg-field') + ':' + value;
         if (parent.attr('data-role-lg-hidden')) {
-            parent.attr('data-role-lg-hidden').split(';')
-            .forEach(function(f) {
-                filter +=  '|'+parent.attr('data-role-lg-class') + '__' + f + ':' + value;
-
+            parent.attr('data-role-lg-hidden').split(';').forEach(function(f) {
+                filter += '|' + parent.attr('data-role-lg-class') + '__' + f + ':' + value;
             });
         }
-        filter +=";"
+        filter += ";"
     });
     return filter;
 }
@@ -511,9 +491,7 @@ function gridFilterToggleControl() {
         activateControls();
     });
 }
-
 // '@LighthartGridBundle/Resources/public/js/xtraActions.js'
-
 function gridExtraActionsControl() {
     $('.lg-xtra-actions').on('click', function(e) {
         e.preventDefault();
@@ -533,7 +511,7 @@ function showHiddenActions(control) {
     control.siblings('.lg-xtra-action').each(function() {
         $(this).removeClass('hide');
     });
-    control.parent().attr('style','width:'+control.parent().children().length*24+'px;');
+    control.parent().attr('style', 'width:' + control.parent().children().length * 24 + 'px;');
 }
 
 function hideVisibleActions(control) {
@@ -543,11 +521,9 @@ function hideVisibleActions(control) {
     control.siblings('.lg-xtra-action').each(function() {
         $(this).addClass('hide');
     });
-    control.parent().attr('style','width:'+4*24+'px;');
+    control.parent().attr('style', 'width:' + 4 * 24 + 'px;');
 }
-
 // '@LighthartGridBundle/Resources/public/js/gridSort.js'
-
 function getAllSorts() {
     var sorts = "";
     $('span.lg-sort').each(function(i, e) {
@@ -565,9 +541,10 @@ function gridSortControl() {
 }
 
 function gridSortReload(control) {
-
     var order = control.children('input').val();
-    $('.lg-sort').each(function() { $(this).val(''); });
+    $('.lg-sort').each(function() {
+        $(this).val('');
+    });
     if (!order) {
         order = 'ASC';
     } else if (order == 'ASC') {
@@ -576,29 +553,23 @@ function gridSortReload(control) {
         order = '';
     }
     control.children('input').val(order);
-
     var cookies = getCookies();
     cookies.offset = 0;
     cookies.sort = getAllSorts();
     setCookies(cookies);
-
     var th = control.closest('th');
     var thClass = th.attr('data-role-lg-class');
     var thField = th.attr('data-role-lg-field');
-
     gridReload();
 }
-
 // '@LighthartGridBundle/Resources/public/js/gridFlag.js'
-
-function getFlags(){
+function getFlags() {
     checks = $('input.lg-grid-flag');
     flags = {};
-    $.map(checks, function( val, i ) {
-        flag = $(val).attr('id').replace('lg-grid-flag-','');
+    $.map(checks, function(val, i) {
+        flag = $(val).attr('id').replace('lg-grid-flag-', '');
         flags[flag] = $(val).is(':checked') ? 1 : 0;
     });
-
     return flags;
 }
 
@@ -615,33 +586,35 @@ function gridFlagReload(control) {
     // reset offset on search
     cookies.offset = 0;
     setFlagCookies();
-
     gridReload();
 }
 
-function markFlags(){
+function markFlags() {
     var flags = getFlagCookies();
-    $.map(flags, function( value, flag) {
+    $.map(flags, function(value, flag) {
         if (value == 1) {
-            $('input#lg-grid-flag-'+flag).each(function(){this.checked = true;});
+            $('input#lg-grid-flag-' + flag).each(function() {
+                this.checked = true;
+            });
         } else {
-            $('input#lg-grid-flag-'+flag).each(function(){this.checked = false;});
+            $('input#lg-grid-flag-' + flag).each(function() {
+                this.checked = false;
+            });
         }
     });
 }
-
 // '@LighthartGridBundle/Resources/public/js/gridReset.js'
-
 function gridResetControl() {
     $('a.lg-reset').on('click', function(e) {
         control = $(this);
         e.preventDefault();
-        $('input.lg-filter').each(function(){
+        $('input.lg-filter').each(function() {
             $(this).val('');
         });
         $('input.lg-search').val('');
-        $('.lg-grid-flag').each(function(){this.checked = false;});
-
+        $('.lg-grid-flag').each(function() {
+            this.checked = false;
+        });
         gridResetReload(control);
     });
 }
@@ -658,18 +631,14 @@ function gridResetReload(control) {
     $.removeCookie(searchCookie);
     $.removeCookie(filterCookie);
     $.removeCookie(offsetCookie);
-
     $.map(getFlags(), function(value, flag) {
         var flagCookie = "lg-" + getLgCurrentRoute() + "-flag-" + flag;
         $.removeCookie(flagCookie);
     });
-
     gridReload(new Date().getTime(), true);
 }
-
 // '@LighthartGridBundle/Resources/public/js/gridControls.js'
 // $(document).ready moved to below
-
 function activateControls() {
     var cookies = getCookies();
     $('input#lg-search-input').val(cookies.search);
@@ -682,7 +651,7 @@ function activateControls() {
             var filterId = f.split(':')[0];
             var filterVal = f.split(':')[1];
             if (filterVal) {
-                $('#lg-filter-'+filterId).val(filterVal);
+                $('#lg-filter-' + filterId).val(filterVal);
             }
         }
     }
@@ -703,13 +672,11 @@ function activateControls() {
     gridResetControl();
     markFlags();
 }
-
 // '@LighthartGridBundle/Resources/public/js/tdEdit.js'
 // $(document).ready moved to below
 function makeClickable(object) {
     object.on('click', function() {
-        if ($('input#cell.cell').length > 0) {
-        } else {
+        if ($('input#cell.cell').length > 0) {} else {
             var th = object.closest('table').find('th').eq(object.index());
             var td = object;
             if (typeof td.attr('data-role-lg-editable') != 'undefined' && td.attr('data-role-lg-editable')) {
@@ -723,7 +690,7 @@ function makeEditable(object) {
     // this function loads the input field and associated controls
     var original = object.text().trim();
     object.off('click');
-    input=object.children('input');
+    input = object.children('input');
     $('.lg-editing').each(function() {
         var val = $(this).children('input').val();
     });
@@ -760,7 +727,6 @@ function makeEditable(object) {
                     if (event.which == enter) {
                         // This needs to be rethought
                         // Automatic traversal down on enter ?
-
                         // if (object.closest('tr').is(':last-child')) {
                         //     // We are at bottom of column
                         //     makeEditable(
@@ -815,15 +781,15 @@ function makeEditable(object) {
                     // }
                 }
             });
-object.children('input').focus();
-}
-});
+            object.children('input').focus();
+        }
+    });
 }
 
 function update(object, original, val) {
     object.removeClass('lg-editing');
     var th = object.closest('table').find('th').eq(object.index());
-    if ( val == '' || val ==null ) {
+    if (val == '' || val == null) {
         // not string safe...
         val = 0;
     }
@@ -841,13 +807,11 @@ function update(object, original, val) {
                     data: val
                 },
                 success: function(responseText, textStatus, XMLHttpRequest) {
-
                     $('.lg-table').addClass('text-muted');
                     location.reload(true);
                 }
                 // dataType : dataType
             });
-
         } else {
             url = makeURLfromTD(object, 'update');
             $.ajax({
@@ -893,28 +857,25 @@ function makeURLfromTD(td, action) {
     } else if (action == 'new') {
         url = getLgAppRoot() + 'cell/' + action + '/' + th.attr('data-role-lg-class') + '/' + th.attr('data-role-lg-field');
     } else if (typeof tdid != 'undefined' && tdid) {
-     // otherwise try to figure it out yourself
-
-     url = getLgAppRoot() + 'cell/' + action + '/' + th.attr('data-role-lg-class') + '/' + th.attr('data-role-lg-field') + '/' + tdid;
- } else {
-    url = getLgAppRoot() + 'cell/' + action + '/' + th.attr('data-role-lg-class') + '/' + th.attr('data-role-lg-field') + '/' + trid;
+        // otherwise try to figure it out yourself
+        url = getLgAppRoot() + 'cell/' + action + '/' + th.attr('data-role-lg-class') + '/' + th.attr('data-role-lg-field') + '/' + tdid;
+    } else {
+        url = getLgAppRoot() + 'cell/' + action + '/' + th.attr('data-role-lg-class') + '/' + th.attr('data-role-lg-field') + '/' + trid;
+    }
+    if (url.indexOf('___') != -1) {
+        url = url.split('___');
+        url[0] = url[0].substr(0, url[0].lastIndexOf('/') + 1);
+        url = url.join('');
+    }
+    return url;
 }
 
-if (url.indexOf('___') != -1){
-    url = url.split('___');
-    url[0]=url[0].substr(0,url[0].lastIndexOf('/')+1);
-    url=url.join('');
-}
-return url;
-}
-
-function makeClicks(){
+function makeClicks() {
     $('td').each(function() {
         makeClickable($(this));
     });
 }
 // Document.readys removed and recombined:
-
 $(document).ready(function() {
     activateControls();
     cookies = getCookies();

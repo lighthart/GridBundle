@@ -170,11 +170,13 @@ function gridReload(reset) {
                         $('table.lg-table').html($(data).find('table.lg-table').html());
                         $('div#lg-header').html($(data).find('div#lg-header').html());
                         $('div#lg-footer').html($(data).find('div#lg-footer').html());
+                        $('div.lg-flags').html($(data).find('div.lg-flags').html());
                     } else {
                         $('tbody.lg-tbody').html($(data).find('tbody.lg-tbody').html());
                         $('form.navbar-right').html($(data).find('form.navbar-right').html());
                         $('div#lg-footer').html($(data).find('div#lg-footer').html());
                         $('tr.lg-headers').html($(data).find('tr.lg-headers').html());
+                        $('div.lg-flags').html($(data).find('div.lg-flags').html());
                     }
                 },
                 complete: function() {
