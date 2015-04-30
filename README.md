@@ -77,9 +77,13 @@ $gm->initialize(array(
     'table' => 'table table-bordered table-condensed table-hover table-striped',
     'html' => true,
     'massAction' => true,
+    'request' => $request
 ));
 $gm->setQueryBuilder($qb);
 ```
+
+> **Note**: Passing the request is optional, but makes flag cookies available in
+> controller action as $Request->query parameters for dynamic grid layouts
 
 **Grid Configuration**:
 
