@@ -251,7 +251,28 @@ class GridMaker
     {
         $this->grid = new Grid($options);
         $this->grid->setRouter($this->router);
+        if (isset($options['request'])) {
+            $request = $options['request'];
+            $route = $request->get('_route');
+            $cookies = $request->cookies->all();
+            $cookieKeys = array_filter(array_keys($cookies), function($c) use ($route) {return false !== strpos($c, $route);});
+            $cookieKeys = array_filter($cookieKeys, function($c) {return false !== strpos($c, 'lg-');});
+            $flagKeys = array_filter($cookieKeys, function($c) {return false !== strpos($c, '-flag-');});
+            array_map(
+                function($c, $k) use ($flagKeys, &$cookieFlags) {
+                    if (in_array($k, $flagKeys)) {
+                        $cookieFlags[strrev(strstr(strrev($k),'-', true))]=$c;
+                    }
+
+                }
+                , $cookies
+                , array_keys($cookies)
+            );
+            $cookieFlags = array_filter($cookieFlags);
+            $request->query->add($cookieFlags);
+        }
     }
+
 
     /**
      * Determines class is present in ORMs.  Returns array, sets grid errors if
