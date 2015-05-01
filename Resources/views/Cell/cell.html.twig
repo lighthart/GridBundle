@@ -3,8 +3,11 @@
 {% endif %}
 {% set boolean = cell.options.boolean is defined %}
 {% set money = cell.options.money is defined %}
+{% if buttonNum is defined %}
+{% else %}
+    {% set buttonNum = 4 %}
+{% endif %}
 {% set buttonWidth = 24 %}
-{% set buttonNum = 4 %}
 {% set buttonPadding = 6 %}
 {%- if cell.value.timestamp is defined -%}
     {% set value = cell.value|date('Y-m-d') %}

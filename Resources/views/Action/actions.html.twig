@@ -1,14 +1,14 @@
 <div class="btn-group">
-    {% if cell.actions|length > 4 %}
+    {% if cell.actions|length > buttonNum %}
         {% for action in cell.actions %}
-            {% if loop.index0 <= 2 %}
+            {% if loop.index0 <= buttonNum - 2 %}
                 {% include 'LighthartGridBundle:Action:action.html.twig' with {'action': action} %}
             {% else %}
             {% endif %}
         {% endfor %}
-        {% if loop.length > 2 %}
+        {% if loop.length > buttonNum - 2 %}
             {% for action in cell.actions %}
-                {% if loop.index0 > 2 %}
+                {% if loop.index0 > buttonNum - 2 %}
                     {% include 'LighthartGridBundle:Action:action.html.twig' with {'action': action, 'xtra': 1} %}
                 {% else %}
                 {% endif %}

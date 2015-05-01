@@ -268,6 +268,10 @@ $gm->addAction(array(
 ));
 ```
 
+Any number of buttons may be rendered.  By default, if there are more than 4, a fold-up
+button will be automatically rendered.  This can be controlled by overwriting the
+'buttonNum' value in the twigs
+
 > **Note**: actions are rendered as <a> tags
 
 **Action  Configuration**:
