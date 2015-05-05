@@ -51,6 +51,7 @@ class Aliaser
     {
         return $this->qb;
     }
+
     /**
      * Set qb.
      *
@@ -64,6 +65,7 @@ class Aliaser
 
         return $this;
     }
+
     /**
      * Get aliases.
      *
@@ -73,6 +75,7 @@ class Aliaser
     {
         return $this->aliases;
     }
+
     /**
      * Set aliases.
      *
@@ -86,6 +89,7 @@ class Aliaser
 
         return $this;
     }
+
     public function __construct($grid = null, $qb = null)
     {
         if (!$grid) {
