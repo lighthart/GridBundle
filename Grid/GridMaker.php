@@ -71,6 +71,16 @@ class GridMaker
      *
      * @return Grid
      */
+    public function g()
+    {
+        return $this->grid;
+    }
+
+    /**
+     * Getter Method.
+     *
+     * @return Grid
+     */
     public function getGrid()
     {
         return $this->grid;
@@ -252,27 +262,24 @@ class GridMaker
         $this->grid = new Grid($options);
         $this->grid->setRouter($this->router);
         if (isset($options['request'])) {
-            $request = $options['request'];
-            $route = $request->get('_route');
-            $cookies = $request->cookies->all();
-            $cookieKeys = array_filter(array_keys($cookies), function($c) use ($route) {return false !== strpos($c, $route);});
-            $cookieKeys = array_filter($cookieKeys, function($c) {return false !== strpos($c, 'lg-');});
-            $flagKeys = array_filter($cookieKeys, function($c) {return false !== strpos($c, '-flag-');});
+            $request    = $options['request'];
+            $route      = $request->get('_route');
+            $cookies    = $request->cookies->all();
+            $cookieKeys = array_filter(array_keys($cookies), function ($c) use ($route) {return false !== strpos($c, $route);});
+            $cookieKeys = array_filter($cookieKeys, function ($c) {return false !== strpos($c, 'lg-');});
+            $flagKeys = array_filter($cookieKeys, function ($c) {return false !== strpos($c, '-flag-');});
             array_map(
-                function($c, $k) use ($flagKeys, &$cookieFlags) {
+                function ($c, $k) use ($flagKeys, &$cookieFlags) {
                     if (in_array($k, $flagKeys)) {
-                        $cookieFlags[strrev(strstr(strrev($k),'-', true))]=$c;
+                        $cookieFlags[strrev(strstr(strrev($k), '-', true))] = $c;
                     }
 
-                }
-                , $cookies
-                , array_keys($cookies)
+                }, $cookies, array_keys($cookies)
             );
             $cookieFlags = array_filter($cookieFlags);
             $request->query->add($cookieFlags);
         }
     }
-
 
     /**
      * Determines class is present in ORMs.  Returns array, sets grid errors if
@@ -338,7 +345,7 @@ class GridMaker
      */
     public function addField($entity, $value, array $options = [])
     {
-        if ( null === $value ) {
+        if (null === $value) {
             if (in_array($entity . '_' . 'id', array_keys($this->getGrid()->getColumns()))) {
                 return $this;
             } else {
@@ -352,14 +359,13 @@ class GridMaker
             $this->getGrid()->addColumn(new Column($entity, $value, $options));
 
             return $this;
-        } elseif (isset($options['otherGroup']) && $options['otherGroup']){
-            if (isset($options['filter'])&& $options['filter']) {
-                $options['filterHidden'] = str_replace('\'; \'','; ',str_replace(';;', ';',implode($options['otherGroup'], '')));
+        } elseif (isset($options['otherGroup']) && $options['otherGroup']) {
+            if (isset($options['filter']) && $options['filter']) {
+                $options['filterHidden'] = str_replace('\'; \'', '; ', str_replace(';;', ';', implode($options['otherGroup'], '')));
             }
             $this->getGrid()->addColumn(new Column($entity, $value, $options));
 
             return $this;
-
         } else {
             $this->addField($entity, null, [
                 'hidden' => true,
@@ -429,7 +435,7 @@ class GridMaker
         $cqb->resetDQLPart('orderBy');
         $cqb->setMaxResults(null);
         $cqb->setFirstResult(null);
-        $cqb->select($cqb->expr()->count('DISTINCT '.$root));
+        $cqb->select($cqb->expr()->count('DISTINCT ' . $root));
         $cqb->distinct();
         $cqb->resetDQLPart('groupBy');
         $cq = $cqb->getQuery();
@@ -604,7 +610,8 @@ class GridMaker
                     $this->getGrid()->fillTr($results, $root);
                 }
                 if ($this->getGrid()->hasErrors()) {
-                    var_dump($this->getGrid()->getErrors());die;
+                    var_dump($this->getGrid()->getErrors());
+                    die;
                     $this->getGrid()->fillErrors($results, $filters);
                 }
 
@@ -683,6 +690,12 @@ class GridMaker
             $qb = $this->queryBuilder;
         }
 
+        $aliaser = new Aliaser($this->getGrid(), $this->QB());
+        print_r('<pre>');
+        var_dump($aliaser->getAliases());
+        print_r('</pre>');
+        die;
+
         $dql = $qb->getQuery()->getDQL();
 
         $aliases       = [];
@@ -725,11 +738,11 @@ class GridMaker
 
         // realiased qb
 
-        $rqb = $em->getRepository($rootClassPath)->createQueryBuilder($root);
-        // if ($count) {
-        //     $rqb->select($rqb->expr()->count($root));
-        //     $rqb->distinct();
-        // }
+        // $rqb = $em->getRepository($rootClassPath)->createQueryBuilder($root);
+        // // if ($count) {
+        // //     $rqb->select($rqb->expr()->count($root));
+        // //     $rqb->distinct();
+        // // }
 
         $joins = $qb->getDqlPart('join') [$oldRoot];
         foreach ($joins as $k => $join) {
@@ -827,7 +840,7 @@ class GridMaker
                         }
                     }
                 }
-            } elseif ($v->getOption('otherGroup')){
+            } elseif ($v->getOption('otherGroup')) {
             } else {
                 $g->addError('Column \'' . $oldAlias . '\' maps to alias not present in query');
             }
@@ -1010,26 +1023,26 @@ class GridMaker
     {
         $qb = $this->getQB();
 
-        $partials = [];
-        $groups   = [];
+        $partials      = [];
+        $groups        = [];
         $otherGroups   = [];
-        $dqls     = [];
-        $counts = [];
-        $columns  = $this->getGrid()->getColumns();
+        $dqls          = [];
+        $counts        = [];
+        $columns       = $this->getGrid()->getColumns();
         foreach ($columns as $key => $column) {
             if ($column->getOption('dql')) {
                 $dqls[$column->getEntity()][] = $column->getOption('dql');
             } elseif ($column->getOption('count')) {
                 $counts[$column->getEntity()] = $column->getEntity() . '.' . $column->getValue();
             } elseif ($column->getOption('group')) {
-                    $groups[$column->getEntity()][]   = $column->getEntity() . '.' . $column->getValue();
-                    $partials[$column->getEntity()][] = $column->getValue();
+                $groups[$column->getEntity()][]   = $column->getEntity() . '.' . $column->getValue();
+                $partials[$column->getEntity()][] = $column->getValue();
             } elseif ($column->getOption('otherGroup')) {
                 if ('array' == gettype($column->getOption('otherGroup'))) {
                     $groupList = $column->getOption('otherGroup');
-                    $gString = '\'\'';
+                    $gString   = '\'\'';
                     while ($g = array_pop($groupList)) {
-                        $gString = 'concat('.$g.','.$gString.')';
+                        $gString = 'concat(' . $g . ',' . $gString . ')';
                     }
                     // $gString .= ' AS '.$column->getEntity().'Group';
                     $otherGroups[$column->getAlias()][]   = $gString;
@@ -1067,7 +1080,7 @@ class GridMaker
                 }
                 if ([] != $groups) {
                     if (!in_array($entity, array_keys($groups))) {
-                        $fields = array_filter($fields, function ($f) use ($entity,$groups) {return !in_array($entity . '.' . $f, $groups);});
+                        $fields = array_filter($fields, function ($f) use ($entity, $groups) {return !in_array($entity . '.' . $f, $groups);});
                         $str = 'partial ' . $entity . '.{' . implode(',', $fields) . '}';
                         $qb->addSelect($str);
 
@@ -1095,7 +1108,7 @@ class GridMaker
         }
 
         foreach ($counts as $entity => $field) {
-            $qb->addSelect('COUNT (DISTINCT '.$field.') AS '.str_replace('.', '_', $field) );
+            $qb->addSelect('COUNT (DISTINCT ' . $field . ') AS ' . str_replace('.', '_', $field));
         }
 
         // For composite fields in many-to-many relations
@@ -1150,9 +1163,9 @@ class GridMaker
         });
 
         foreach ($searchColumns as $searchKey => $searchValue) {
-            if (gettype($searchValue)=== 'array') {}
+            if (gettype($searchValue) === 'array') {
+            }
         }
-
 
         $searchFields = array_map(function ($c) {
             return $c->getOption('search');
@@ -1162,7 +1175,7 @@ class GridMaker
 
         $searches = [];
         foreach ($searchFields as $field => $type) {
-                $searches[$type][] = str_replace('_', '.', $field);
+            $searches[$type][] = str_replace('_', '.', $field);
         }
 
         $hiddenFilters = array_map(function ($c) {
@@ -1232,7 +1245,7 @@ class GridMaker
 
     public function addFilter($filter)
     {
-        $qb = $this->QB();
+        $qb           = $this->QB();
         $filterFields = array_map(function ($c) {
             return $c->getOption('filter');
         }, array_filter($this->getGrid()->getColumns(), function ($c) {
@@ -1250,13 +1263,13 @@ class GridMaker
             return $c->getOption('filterHidden');
         }));
 
-        foreach($hiddenFilters as $field => $hiddenType) {
-            if ('array' == gettype($hiddenType)){
+        foreach ($hiddenFilters as $field => $hiddenType) {
+            if ('array' == gettype($hiddenType)) {
             } else {
-                $hiddenType = explode(';',$hiddenType);
+                $hiddenType = explode(';', $hiddenType);
             }
-                $hiddenCombo = implode(';',
-                    array_map(function($h){
+            $hiddenCombo = implode(';',
+                    array_map(function ($h) {
                         return str_replace('_', '.', $h);
                     },
                     $hiddenType
@@ -1277,7 +1290,7 @@ class GridMaker
             return $qb;
         }
 
-        $filter = explode(';', $filter);
+        $filter      = explode(';', $filter);
         $multiFilter = [];
 
         // print_r('<pre>');var_dump($filter);die;
@@ -1296,16 +1309,15 @@ class GridMaker
             }
         }
 
-
         $filter = array_filter($filter, function ($e) {
             return !!$e;
         });
 
         if ($multiFilter) {
-            $multiFilter = array_filter($multiFilter, function($e) { return strpos($e, ':|') === false;});
+            $multiFilter = array_filter($multiFilter, function ($e) { return strpos($e, ':|') === false;});
         }
 
-        if ((['',] == $filter || [] == $filter) && (['',] == $multiFilter || [] == $multiFilter)) {
+        if (([''] == $filter || [] == $filter) && ([''] == $multiFilter || [] == $multiFilter)) {
             // just bail out if there is nothing to filter for
             return $qb;
         }
@@ -1329,16 +1341,16 @@ class GridMaker
 
         foreach ($multiFilter as $key => $multi) {
             $multiFilters = explode('|', $multi);
-            $orF = $qb->expr()->orx();
+            $orF          = $qb->expr()->orx();
             foreach ($multiFilters as $mfKey => $mfValue) {
-                $multiFilterKey = strstr($mfValue, ':', true);
-                $multiFilterValue = substr(strstr($mfValue, ':'),1);
+                $multiFilterKey   = strstr($mfValue, ':', true);
+                $multiFilterValue = substr(strstr($mfValue, ':'), 1);
                 $multiFilterValue = str_replace("'", "''", $multiFilterValue);
                 $multiFilterValue = str_replace(",", "", $multiFilterValue);
                 $multiFilterValue = str_replace(";", "", $multiFilterValue);
-                $multiFilterKey  = preg_replace('/___(.*?)__/', '.', $multiFilterKey);
+                $multiFilterKey   = preg_replace('/___(.*?)__/', '.', $multiFilterKey);
                 if ($multiFilterValue == 'null') {
-                    $mfExpr[] = $qb->expr()->isNull($multiFilterKey );
+                    $mfExpr[] = $qb->expr()->isNull($multiFilterKey);
                 } else {
                     if (in_array($multiFilterKey, $numbers)) {
                         $orF->add($qb->expr()->like("CONCAT($multiFilterKey, '')", "'%" . strtolower($multiFilterValue) . "%'"));
