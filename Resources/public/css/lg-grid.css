@@ -178,4 +178,6 @@ input[type=text].lg-edit-field {
     padding: 0;
     border: 0px !important;
     text-indent: 2px;
+    background-image: linear-gradient(to bottom, rgba(255, 255, 0, 0.2), rgba(255, 255, 0, 0.2));
+    width: 100%;
 }
