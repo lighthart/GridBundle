@@ -173,3 +173,9 @@ input.lg-grid-flag {
     margin: 0px !important;
     vertical-align: middle;
 }
+
+input[type=text].lg-edit-field {
+    padding: 0;
+    border: 0px !important;
+    text-indent: 2px;
+}

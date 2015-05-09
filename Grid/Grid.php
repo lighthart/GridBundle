@@ -767,6 +767,11 @@ class Grid
                                 $options['money'] = true;
                             }
 
+                            $edit = ($columns[$key]->getOption('edit') ? : null);
+                            if ($edit) {
+                                $options['edit'] = true;
+                            }
+
                             if (!$security) {
                                 $value = null;
                             }
