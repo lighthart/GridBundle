@@ -863,8 +863,8 @@ function moveCursor() {
 
         if (event.which == escape) { /* unknown at moment  */ }
 
-        // if (event.which == down)   { cursor.down($(this));  }
-        // if (event.which == up)     { cursor.up($(this));    }
+        if (event.which == down)   { cursor.down($(this));  }
+        if (event.which == up)     { cursor.up($(this));    }
         // if (event.which == left)   { cursor.left($(this));  }
         // if (event.which == right)  { cursor.right($(this)); }
         if (event.which == tab) {
@@ -894,42 +894,45 @@ function updates() {
 }
 
 function updateCell(object, val) {
-    object.text(val);
 
-    newValue = object.text();
-    oldValue = object.attr("value");
+    if (val !== '') {
 
-    if (object.parent().attr('data-role-lg-new') && !object.parent().attr('data-role-lg-entity-id')) {
-        url = makeURLfromTD(object.parent(), 'create');
-        $.ajax({
-            type: 'POST',
-            url: url,
-            data: {
-                data: val
-            },
-            success: function(responseText, textStatus, XMLHttpRequest) {}
-        });
-    } else {
-        url = makeURLfromTD(object.parent(), 'update');
-        var td = object.parent();
-        var tr = td.parent();
-        var col = tr.children().index(td);
-        var row = tr.index();
+        object.text(val);
+        newValue = object.text();
+        oldValue = object.attr("value");
 
-        col = 2;
-        row = 1;
+        if (object.parent().attr('data-role-lg-new') && !object.parent().attr('data-role-lg-entity-id')) {
+            url = makeURLfromTD(object.parent(), 'create');
+            $.ajax({
+                type: 'POST',
+                url: url,
+                data: {
+                    data: val
+                },
+                success: function(responseText, textStatus, XMLHttpRequest) {}
+            });
+        } else {
+            url = makeURLfromTD(object.parent(), 'update');
+            var td = object.parent();
+            var tr = td.parent();
+            var col = tr.children().index(td);
+            var row = tr.index();
 
-        // $('table.lg-table').html($(data).find('table.lg-table').html());
-        $.ajax({
-            type: 'POST',
-            url: url,
-            data: {
-                data: val
-            },
-            success: function(responseText, textStatus, XMLHttpRequest) {
-                gridReloadCell(td);
-            }
-        });
+            col = 2;
+            row = 1;
+
+            // $('table.lg-table').html($(data).find('table.lg-table').html());
+            $.ajax({
+                type: 'POST',
+                url: url,
+                data: {
+                    data: val
+                },
+                success: function(responseText, textStatus, XMLHttpRequest) {
+                    gridReloadCell(td);
+                }
+            });
+        }
     }
 }
 
