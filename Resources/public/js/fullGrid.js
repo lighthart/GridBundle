@@ -4,6 +4,10 @@ var quiet = 300; // 300 ms
 var timer = 0;
 var xhr = 0;
 
+function addCommas(value) {
+  return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+}
+
 function getOffset() {
     cookies = getCookies();
     var pageVal = Number($('input.lg-page-input').val());
@@ -970,7 +974,7 @@ function updates() {
 }
 
 function focusEdit() {
-    $('input.lg-edit-field').on('focus click mouseup', function(event) {
+    $('input.lg-edit-field').on('focus click mouseup mousedown', function(event) {
         event.preventDefault();
         $(this).select();
     });
@@ -984,11 +988,13 @@ function updateCell(object, val) {
         var tr = td.parent();
         var col = tr.children().index(td);
         var row = tr.index();
+
+        val = addCommas(val);
+        object.val(val);
         object.text(val);
-        newValue = object.text();
+        newValue = object.val();
         oldValue = object.attr("value");
         difference = newValue - oldValue;
-
         val = val.replace(/[^0-9\.\-]/g,'');
 
 
