@@ -26,8 +26,8 @@
     {% include 'LighthartGridBundle:Action:actions.html.twig' with {'actions': cell.actions} %}
 {%- elseif cell.statuses is defined -%}
     {% include 'LighthartGridBundle:Status:statuses.html.twig' with {'status': cell.statuses} %}
-{% elseif edit %}
-    <input type="text" class="lg-edit-field" />
+{% elseif edit and cell.options.aggregate is not defined %}
+    <input type="text" class="lg-edit-field" value="{{- value|raw -}}"/>
 {%- elseif value[:1] == '{' -%}
     {%- include 'LighthartGridBundle:Cell:list.html.twig' with {'list' : value[:(value|length - 1)][1:]|split(',')} %}
 {%- elseif cell.attr.checkbox is defined -%}

@@ -846,6 +846,7 @@ class Grid
         if ([] != $results && [] != $results[0]) {
             foreach ($results[0] as $key => $value) {
                 $options = $visible[array_keys($visible) [$key - 1]]->getOptions();
+                $options['aggregate'] = true;
                 $attr = $options['attr'];
 
                 // Can't edit aggregates

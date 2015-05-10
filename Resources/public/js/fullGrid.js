@@ -674,124 +674,124 @@ function activateControls() {
     markFlags();
 }
 
-cursor = {
-    down: function(object) {
-        var td = object.parent();
-        var tr = td.parent();
-        var col = tr.children().index(td);
-        var cols = tr.children();
-        var row = tr.index();
-        var rows = tr.parent().children("tr");
-        row += 1;
-        next = rows.eq(row).children().eq(col).children("input");
-        while (0 === next.length) {
-            if (row < rows.length) {
-                row += 1;
-            } else {
-                row = 0;
-                if (col < cols.length) {
-                    col += 1;
-                } else {
-                    col = 0;
-                }
-            }
+    cursor = {
+        down: function(object) {
+            var td = object.parent();
+            var tr = td.parent();
+            var col = tr.children().index(td);
+            var cols = tr.children();
+            var row = tr.index();
+            var rows = tr.parent().children("tr");
+            row += 1;
             next = rows.eq(row).children().eq(col).children("input");
-            if (next.length) {
-                break;
-            }
-        }
-        next.focus();
-    },
-
-    up: function(object) {
-        var td = object.parent();
-        var tr = td.parent();
-        var col = tr.children().index(td);
-        var cols = tr.children();
-        var row = tr.index();
-        var rows = tr.parent().children("tr");
-        row -= 1;
-        next = rows.eq(row).children().eq(col).children("input");
-        // have to check row because .eq() takes negative index
-        while (0 === next.length || row < 0) {
-            if (row > 0 ) {
-                row -= 1;
-            } else {
-                row = rows.length;
-                if (col > 0) {
-                    col -= 1;
-                } else {
-                    col = cols.length;
-                }
-            }
-            next = rows.eq(row).children().eq(col).children("input");
-            if (next.length) {
-                break;
-            }
-        }
-        next.focus();
-    },
-
-    left: function(object) {
-        var td = object.parent();
-        var tr = td.parent();
-        var col = tr.children().index(td);
-        var cols = tr.children();
-        var row = tr.index();
-        var rows = tr.parent().children("tr");
-        next = td.prev('td').children("input");
-
-        while (0 === next.length || col < 0) {
-            if (col > 0 ) {
-                col -= 1;
-            } else {
-                col = cols.length;
-                if (row > 0) {
-                    row -= 1;
-                } else {
-                    row = rows.length;
-                }
-            }
-
-
-
-            next = tr.parent().children("tr").eq(row).children().eq(col).children("input");
-
-            if (next.length) {
-                break;
-            }
-        }
-        next.focus();
-    },
-
-    right: function(object) {
-        var td = object.parent();
-        var tr = td.parent();
-        var col = tr.children().index(td);
-        var cols = tr.children();
-        var row = tr.index();
-        var rows = tr.parent().children("tr");
-        next = td.next('td').children("input");
-        while (next.length === 0) {
-            if (col < cols.length ) {
-                col += 1;
-            } else {
-                col = 0;
+            while (0 === next.length) {
                 if (row < rows.length) {
                     row += 1;
                 } else {
                     row = 0;
+                    if (col < cols.length) {
+                        col += 1;
+                    } else {
+                        col = 0;
+                    }
+                }
+                next = rows.eq(row).children().eq(col).children("input");
+                if (next.length) {
+                    break;
                 }
             }
+            next.focus();
+        },
 
-            next = tr.parent().children("tr").eq(row).children().eq(col).children("input");
-
-            if (next.length) {
-                break;
+        up: function(object) {
+            var td = object.parent();
+            var tr = td.parent();
+            var col = tr.children().index(td);
+            var cols = tr.children();
+            var row = tr.index();
+            var rows = tr.parent().children("tr");
+            row -= 1;
+            next = rows.eq(row).children().eq(col).children("input");
+            // have to check row because .eq() takes negative index
+            while (0 === next.length || row < 0) {
+                if (row > 0 ) {
+                    row -= 1;
+                } else {
+                    row = rows.length;
+                    if (col > 0) {
+                        col -= 1;
+                    } else {
+                        col = cols.length;
+                    }
+                }
+                next = rows.eq(row).children().eq(col).children("input");
+                if (next.length) {
+                    break;
+                }
             }
+            next.focus();
+        },
+
+        left: function(object) {
+            var td = object.parent();
+            var tr = td.parent();
+            var col = tr.children().index(td);
+            var cols = tr.children();
+            var row = tr.index();
+            var rows = tr.parent().children("tr");
+            next = td.prev('td').children("input");
+
+            while (0 === next.length || col < 0) {
+                if (col > 0 ) {
+                    col -= 1;
+                } else {
+                    col = cols.length;
+                    if (row > 0) {
+                        row -= 1;
+                    } else {
+                        row = rows.length;
+                    }
+                }
+
+
+
+                next = tr.parent().children("tr").eq(row).children().eq(col).children("input");
+
+                if (next.length) {
+                    break;
+                }
+            }
+            next.focus();
+        },
+
+        right: function(object) {
+            var td = object.parent();
+            var tr = td.parent();
+            var col = tr.children().index(td);
+            var cols = tr.children();
+            var row = tr.index();
+            var rows = tr.parent().children("tr");
+            next = td.next('td').children("input");
+            while (next.length === 0) {
+                if (col < cols.length ) {
+                    col += 1;
+                } else {
+                    col = 0;
+                    if (row < rows.length) {
+                        row += 1;
+                    } else {
+                        row = 0;
+                    }
+                }
+
+                next = tr.parent().children("tr").eq(row).children().eq(col).children("input");
+
+                if (next.length) {
+                    break;
+                }
+            }
+            next.focus();
         }
-        next.focus();
-    }
 };
 
 
@@ -811,74 +811,66 @@ function moveCursor() {
 
         if (event.which == escape) {/* unknown at moment  */}
 
-        if (event.which == down)   { cursor.down($(this));  }
-        if (event.which == up)     { cursor.up($(this));    }
-        if (event.which == left)   { cursor.left($(this));  }
-        if (event.which == right)  { cursor.right($(this)); }
-        if (event.which == tab)    { cursor.right($(this)); }
-        if (event.which == enter)  { cursor.down($(this));  }
+        // if (event.which == down)   { cursor.down($(this));  }
+        // if (event.which == up)     { cursor.up($(this));    }
+        // if (event.which == left)   { cursor.left($(this));  }
+        // if (event.which == right)  { cursor.right($(this)); }
+        if (event.which == tab)    {
+            if (event.shiftKey === true) {
+                cursor.left($(this));
+            } else {
+                cursor.right($(this));
+            }
+        }
+        if (event.which == enter)  {
+            if (event.shiftKey === true) {
+                cursor.up($(this));
+            } else {
+                cursor.down($(this));
+            }
+        }
     });
 }
 
 
 function updates() {
     $('input.lg-edit-field').on('change blur', function(event) {
-        console.log($(this).parent().attr("data-role-lg-entity-id")+ " blurred");
+        update($(this), $(this).val());
     });
 }
 
-function update(object, original, val) {
-        object.load(url, null, function(responseText, textStatus, XMLHttpRequest) {
-        object.removeClass('lg-editing');
-        var th = object.closest('table').find('th').eq(object.index());
-        if (val == '' || val == null) {
-            // not string safe...
-            val = 0;
-        }
-        if (val == original) {
-            object.text(val);
-        } else {
-            // This over writes the input field
-            object.text(val);
-            if (object.attr('data-role-lg-new') && !object.attr('data-role-lg-entity-id')) {
-                url = makeURLfromTD(object, 'create');
-                $.ajax({
-                    type: 'POST',
-                    url: url,
-                    data: {
-                        data: val
-                    },
-                    success: function(responseText, textStatus, XMLHttpRequest) {
-                        $('.lg-table').addClass('text-muted');
-                        location.reload(true);
-                    }
-                    // dataType : dataType
-                });
-            } else {
-                url = makeURLfromTD(object, 'update');
-                $.ajax({
-                    type: 'POST',
-                    url: url,
-                    data: {
-                        // possible as form fields?
-                        // eg data: {object.attr('data-role-lg-field'):val}
-                        data: val
-                    },
-                    success: function(responseText, textStatus, XMLHttpRequest) {
-                        // console.log(val);
-                        // console.log(url);
-                        $('.lg-table').addClass('text-muted');
-                        location.reload(true);
-                        // object.load(url, null);
-                    }
-                    // dataType : dataType
-                });
+function update(object, val) {
+    object.text(val);
+    console.log(object.parent().attr('data-role-lg-new'));
+    console.log(object.parent().attr('data-role-lg-entity-id'));
+    console.log(!object.parent().attr('data-role-lg-entity-id'));
+    console.log((object.parent().attr('data-role-lg-new') && !object.parent().attr('data-role-lg-entity-id')));
+    if (object.parent().attr('data-role-lg-new') && !object.parent().attr('data-role-lg-entity-id')) {
+        url = makeURLfromTD(object.parent(), 'create');
+        console.log(url);
+        $.ajax({
+            type: 'POST',
+            url: url,
+            data: {
+                data: val
+            },
+            success: function(responseText, textStatus, XMLHttpRequest) {
             }
-        }
-        // reenable clickyness
-        // makeClickable(object);
+        });
+    } else {
+        url = makeURLfromTD(object.parent(), 'update');
+        $.ajax({
+            type: 'POST',
+            url: url,
+            data: {
+                data: val
+            },
+            success: function(responseText, textStatus, XMLHttpRequest) {
+            }
+        });
     }
 }
+
 function makeURLfromTD(td, action) {
     var th = td.closest('table').find('th').eq(td.index());
     var thid = th.attr('data-role-lg-parent-entity-id');
