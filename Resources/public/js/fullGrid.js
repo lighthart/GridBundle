@@ -185,6 +185,9 @@ function gridReload(reset) {
                     $(oldFocus).blur().focus().val($(oldFocus).val());
                 }
                 markFlags();
+                updates();
+                moveCursor();
+                focusEdit();
                 // makeClicks();
                 // make latest timer
                 clearTimeout(timer);
