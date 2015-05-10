@@ -851,7 +851,7 @@ class Grid
 
                 // Can't edit aggregates
                 $attr['class'] = preg_replace('/\s*lg-editable\s*/', '', $attr['class']);
-                $attr['class'] .= "lg-aggregate";
+                $attr['class'] .= " lg-aggregate";
                 $attr['emphasis'] = 'strong';
 
                 if (isset($attr['data-role-lg-editable'])) {
