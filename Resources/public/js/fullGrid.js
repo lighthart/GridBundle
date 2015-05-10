@@ -826,28 +826,28 @@ cursor = {
         var cols = tr.children();
         var row = tr.index();
         var rows = tr.parent().children("tr");
-        next = td.prev('td').children("input");
+        next = tr.prev('td').children("input");
 
-        while (0 === next.length || col < 0) {
-            if (col > 0) {
-                col -= 1;
-            } else {
-                col = cols.length;
-                if (row > 0) {
-                    row -= 1;
-                } else {
-                    row = rows.length;
-                }
-            }
+        // while (0 === next.length || col < 0) {
+        //     if (col > 0) {
+        //         col -= 1;
+        //     } else {
+        //         col = cols.length;
+        //         if (row > 0) {
+        //             row -= 1;
+        //         } else {
+        //             row = rows.length;
+        //         }
+        //     }
 
 
 
-            next = tr.parent().children("tr").eq(row).children().eq(col).children("input");
+        //     next = tr.parent().children("tr").eq(row).children().eq(col).children("input");
 
-            if (next.length) {
-                break;
-            }
-        }
+        //     if (next.length) {
+        //         break;
+        //     }
+        // }
         next.focus();
     },
 
@@ -858,25 +858,25 @@ cursor = {
         var cols = tr.children();
         var row = tr.index();
         var rows = tr.parent().children("tr");
-        next = td.next('td').children("input");
-        while (next.length === 0) {
-            if (col < cols.length) {
-                col += 1;
-            } else {
-                col = 0;
-                if (row < rows.length) {
-                    row += 1;
-                } else {
-                    row = 0;
-                }
-            }
+        next = tr.next('td').children("input");
+        // while (next.length === 0) {
+        //     if (col < cols.length) {
+        //         col += 1;
+        //     } else {
+        //         col = 0;
+        //         if (row < rows.length) {
+        //             row += 1;
+        //         } else {
+        //             row = 0;
+        //         }
+        //     }
 
-            next = tr.parent().children("tr").eq(row).children().eq(col).children("input");
+        //     next = tr.parent().children("tr").eq(row).children().eq(col).children("input");
 
-            if (next.length) {
-                break;
-            }
-        }
+        //     if (next.length) {
+        //         break;
+        //     }
+        // }
         next.focus();
     }
 };
@@ -969,7 +969,6 @@ function updates() {
 function focusEdit() {
     $('input.lg-edit-field').on('focus click mouseup', function(event) {
         event.preventDefault();
-        $(this).val($(this).val().replace(/[^0-9\.\-]/g,''));
         $(this).select();
     });
 }
