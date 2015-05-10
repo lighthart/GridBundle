@@ -240,7 +240,7 @@ function gridReloadCell(td) {
     });
 }
 
-function gridReloadAggregate(td) {
+function gridReloadAggregates() {
     cookies = getCookies();
     data = {
         pageSize: cookies.pageSize,
@@ -263,30 +263,13 @@ function gridReloadAggregate(td) {
         cache: false,
         beforeSend: function(xhr) {},
         success: function(responseText, textStatus, XMLHttpRequest) {
-            var tr = td.parent();
-            var col = tr.children("td").index(td);
-            var row = tr.parent().children("tr").index(tr);
-            var tbody = tr.closest("tbody.lg-tbody");
-            var table = tbody.closest("table.lg-table");
-            var whichTbody = table.children("tbody.lg-tbody").index(tbody);
-            var whichTable = table.parent().children("table.lg-table").index(table);
-            newTable = $(responseText).find("table.lg-table").eq(whichTable);
-            newTbody = newTable.children("tbody.lg-tbody").eq(whichTbody);
-            newTr = newTbody.children("tr").eq(row);
-            newTd = newTr.children("td").eq(col);
-            $('tr.lg-filters').html($(responseText).find('tr.lg-filters').html());
-            td.html(newTd.html());
+            var aggregateRows = $("table.lg-table tbody.lg-tbody tr.lg-aggregate-row");
+            var newAggregateRows = $(responseText).find("table.lg-table tbody.lg-tbody tr.lg-aggregate-row");
+            aggregateRows.each(function() {
+                $(this).html(newAggregateRows.parent().children("tr").eq($(this).index()).html());
+            });
         },
         complete: function() {
-            highlightSearches();
-            highlightFilters();
-            activateControls();
-            markFlags();
-            td.children("input.lg-edit-field").on('change blur', function(event) {
-                updateCell($(this), $(this).val());
-            });
-            moveCursor();
-            // makeClicks();
         }
     });
 }
@@ -941,7 +924,7 @@ function moveCursor() {
 
 
 function updates() {
-    $('input.lg-edit-field').on('change blur', function(event) {
+    $('input.lg-edit-field').on('change', function(event) {
         updateCell($(this), $(this).val());
     });
 }
@@ -973,8 +956,8 @@ function updateCell(object, val) {
                     data: val
                 },
                 success: function(responseText, textStatus, XMLHttpRequest) {
+                    updateAggregate(td, difference);
                     gridReloadCell(td);
-                    updateAggregate(td);
                 }
             });
         } else {
@@ -987,8 +970,8 @@ function updateCell(object, val) {
                     data: val
                 },
                 success: function(responseText, textStatus, XMLHttpRequest) {
-                    gridReloadCell(td);
                     updateAggregate(td, difference);
+                    gridReloadCell(td);
                 }
             });
         }
@@ -999,11 +982,15 @@ function updateAggregate(td, difference) {
         var tr = td.parent();
         var col = tr.children().index(td);
         var row = tr.index();
-        var aggregateRow = td.parent().children("td.lg-aggregate-row");
-        var aggregateCell = aggregateRow.eq(col);
-        var oldAggregateValue = aggregateCell.attr("value");
-        var newAggregateValue = oldAggregateValue + diff;
-        aggregateCell.val(newAggregateValue);
+        var aggregateRow = tr.parent().children("tr.lg-aggregate-row");
+        var aggregateCell = aggregateRow.children("td").eq(col);
+        var oldAggregateHtml = aggregateCell.html();
+        var oldAggregateValue = aggregateCell.text();
+        var newAggregateValue = parseFloat(oldAggregateValue) + parseFloat(difference);
+        var newAggregateHtml = oldAggregateHtml.replace(oldAggregateValue,newAggregateValue);
+        aggregateCell.html(newAggregateHtml);
+        gridReloadAggregates();
+
 }
 
 function updateLocalSum() {
