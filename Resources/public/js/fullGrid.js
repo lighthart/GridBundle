@@ -1007,10 +1007,11 @@ function updateCell(object, val) {
         //     object.removeClass("negative");
         //     object.addClass("positive");
         // }
+        newValue = parseFloat(object.val().replace(/[^0-9\.\-]/g,''));
+        oldValue = parseFloat(object.attr("value").replace(/[^0-9\.\-]/g,''));
         object.val(val);
+        object.attr("value",val);
         object.text(val);
-        newValue = object.val();
-        oldValue = object.attr("value");
         difference = newValue - oldValue;
         val = val.replace(/[^0-9\.\-]/g,'');
 
@@ -1041,6 +1042,7 @@ function updateCell(object, val) {
                 },
                 success: function(responseText, textStatus, XMLHttpRequest) {
                     updateAggregate(td, difference);
+                    // updateSuper(td, difference);
                     // gridReloadCell(td);
                 },
             });
@@ -1056,13 +1058,36 @@ function updateAggregate(td, difference) {
         var aggregateCell = aggregateRow.children("td").eq(col);
         var oldAggregateHtml = aggregateCell.html();
         var oldAggregateValue = aggregateCell.text();
-        var newAggregateValue = addCommas(parseFloat(oldAggregateValue) + parseFloat(difference));
+        var newAggregateValue = parseFloat(oldAggregateValue.replace(/[^0-9\.\-]/g,'')) + parseFloat(difference);
         if (isNaN(newAggregateValue)) {
         } else {
-            var newAggregateHtml = oldAggregateHtml.replace(oldAggregateValue,newAggregateValue);
+            var newAggregateHtml = oldAggregateHtml.replace(oldAggregateValue,addCommas(newAggregateValue));
             aggregateCell.html(newAggregateHtml);
+            aggregateCell.children("input").val(newAggregateValue);
         }
+        updateSuper(td, difference);
         gridReloadAggregates();
+}
+
+function updateSuper(td, difference) {
+        td.children("input").off('change');
+        var tr = td.parent();
+        var col = tr.children().index(td);
+        var row = tr.index();
+        var superCells = tr.children("td.lg-editable");
+        var superCell = superCells.first();
+        var superInput = superCell.children("input");
+        var oldSuperHtml = superCell.html();
+        var oldSuperValue = superInput.val().replace(/[^0-9\.\-]/g,'');
+        var newSuperValue = parseFloat(oldSuperValue) + parseFloat(difference);
+        if (isNaN(newSuperValue)) {
+        } else {
+            console.log('here');
+            superInput.val(addCommas(newSuperValue));
+        }
+        td.children("input").on('change', function(event) {
+            updateCell($(this), $(this).val());
+        });
 }
 
 function makeURLfromTD(td, action) {
