@@ -245,37 +245,37 @@ function gridReloadCell(td) {
 }
 
 function gridReloadAggregates() {
-    cookies = getCookies();
-    data = {
-        pageSize: cookies.pageSize,
-        pageOffset: cookies.offset,
-        filter: (cookies.filter ? cookies.filter : "").replace("'", "''"),
-        search: cookies.search,
-    };
-    $.map(getFlags(), function(value, flag) {
-        var flagCookie = flag;
-        if (value) {s
-            data[flagCookie] = value;
-        }
-    });
+    // cookies = getCookies();
+    // data = {
+    //     pageSize: cookies.pageSize,
+    //     pageOffset: cookies.offset,
+    //     filter: (cookies.filter ? cookies.filter : "").replace("'", "''"),
+    //     search: cookies.search,
+    // };
+    // $.map(getFlags(), function(value, flag) {
+    //     var flagCookie = flag;
+    //     if (value) {s
+    //         data[flagCookie] = value;
+    //     }
+    // });
 
-    $.ajax({
-        url: getLgCurrentURI(),
-        data: data,
-        dataType: 'html',
-        type: 'GET',
-        cache: false,
-        beforeSend: function(xhr) {},
-        success: function(responseText, textStatus, XMLHttpRequest) {
-            var aggregateRows = $("table.lg-table tbody.lg-tbody tr.lg-aggregate-row");
-            var newAggregateRows = $(responseText).find("table.lg-table tbody.lg-tbody tr.lg-aggregate-row");
-            aggregateRows.each(function() {
-                $(this).html(newAggregateRows.parent().children("tr").eq($(this).index()).html());
-            });
-        },
-        complete: function() {
-        }
-    });
+    // $.ajax({
+    //     url: getLgCurrentURI(),
+    //     data: data,
+    //     dataType: 'html',
+    //     type: 'GET',
+    //     cache: false,
+    //     beforeSend: function(xhr) {},
+    //     success: function(responseText, textStatus, XMLHttpRequest) {
+    //         var aggregateRows = $("table.lg-table tbody.lg-tbody tr.lg-aggregate-row");
+    //         var newAggregateRows = $(responseText).find("table.lg-table tbody.lg-tbody tr.lg-aggregate-row");
+    //         aggregateRows.each(function() {
+    //             $(this).html(newAggregateRows.parent().children("tr").eq($(this).index()).html());
+    //         });
+    //     },
+    //     complete: function() {
+    //     }
+    // });
 }
 
 
@@ -944,8 +944,8 @@ function moveCursor() {
 
         if (event.which == escape) { /* unknown at moment  */ }
 
-        if (event.which == down)   { cursor.down($(this));  }
-        if (event.which == up)     { cursor.up($(this));    }
+        // if (event.which == down)   { cursor.down($(this));  }
+        // if (event.which == up)     { cursor.up($(this));    }
         // if (event.which == left)   { cursor.left($(this));  }
         // if (event.which == right)  { cursor.right($(this)); }
         if (event.which == tab) {
@@ -989,7 +989,21 @@ function updateCell(object, val) {
         var col = tr.children().index(td);
         var row = tr.index();
 
+        if (parseFloat(val) < 0) {
+            var negative = true;
+        } else {
+            var negative = false;
+        }
+
         val = addCommas(val);
+        // if (negative) {
+        //     val = "("+val+")";
+        //     object.addClass("negative");
+        //     object.removeClass("positive");
+        // } else {
+        //     object.removeClass("negative");
+        //     object.addClass("positive");
+        // }
         object.val(val);
         object.text(val);
         newValue = object.val();
@@ -1010,8 +1024,8 @@ function updateCell(object, val) {
                 },
                 success: function(responseText, textStatus, XMLHttpRequest) {
                     updateAggregate(td, difference);
-                    gridReloadCell(td);
-                }
+                    // gridReloadCell(td);
+                },
             });
         } else {
             console.log('update');
@@ -1024,8 +1038,8 @@ function updateCell(object, val) {
                 },
                 success: function(responseText, textStatus, XMLHttpRequest) {
                     updateAggregate(td, difference);
-                    gridReloadCell(td);
-                }
+                    // gridReloadCell(td);
+                },
             });
         }
     }
