@@ -1070,6 +1070,7 @@ function updateAggregate(td, difference) {
 }
 
 function updateSuper(td, difference) {
+    console.log(td.hasClass("super"));
         td.children("input").off('change');
         var tr = td.parent();
         var col = tr.children().index(td);
@@ -1088,6 +1089,7 @@ function updateSuper(td, difference) {
         td.children("input").on('change', function(event) {
             updateCell($(this), $(this).val());
         });
+        // updateAggregate(td, difference);
 }
 
 function makeURLfromTD(td, action) {
