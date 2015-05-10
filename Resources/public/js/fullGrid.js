@@ -239,6 +239,59 @@ function gridReloadCell(td) {
         }
     });
 }
+
+function gridReloadAggregate(td) {
+    cookies = getCookies();
+    data = {
+        pageSize: cookies.pageSize,
+        pageOffset: cookies.offset,
+        filter: (cookies.filter ? cookies.filter : "").replace("'", "''"),
+        search: cookies.search,
+    };
+    $.map(getFlags(), function(value, flag) {
+        var flagCookie = flag;
+        if (value) {s
+            data[flagCookie] = value;
+        }
+    });
+
+    $.ajax({
+        url: getLgCurrentURI(),
+        data: data,
+        dataType: 'html',
+        type: 'GET',
+        cache: false,
+        beforeSend: function(xhr) {},
+        success: function(responseText, textStatus, XMLHttpRequest) {
+            var tr = td.parent();
+            var col = tr.children("td").index(td);
+            var row = tr.parent().children("tr").index(tr);
+            var tbody = tr.closest("tbody.lg-tbody");
+            var table = tbody.closest("table.lg-table");
+            var whichTbody = table.children("tbody.lg-tbody").index(tbody);
+            var whichTable = table.parent().children("table.lg-table").index(table);
+            newTable = $(responseText).find("table.lg-table").eq(whichTable);
+            newTbody = newTable.children("tbody.lg-tbody").eq(whichTbody);
+            newTr = newTbody.children("tr").eq(row);
+            newTd = newTr.children("td").eq(col);
+            $('tr.lg-filters').html($(responseText).find('tr.lg-filters').html());
+            td.html(newTd.html());
+        },
+        complete: function() {
+            highlightSearches();
+            highlightFilters();
+            activateControls();
+            markFlags();
+            td.children("input.lg-edit-field").on('change blur', function(event) {
+                updateCell($(this), $(this).val());
+            });
+            moveCursor();
+            // makeClicks();
+        }
+    });
+}
+
+
 // '@LighthartGridBundle/Resources/public/js/gridHighlight.js'
 /*
  * jQuery Highlight plugin
@@ -896,32 +949,23 @@ function updates() {
 function updateCell(object, val) {
 
     if (val !== '') {
-
+        var td = object.parent();
+        var tr = td.parent();
+        var col = tr.children().index(td);
+        var row = tr.index();
         object.text(val);
         newValue = object.text();
         oldValue = object.attr("value");
+        difference = newValue - oldValue;
+
+        console.log(object.parent().attr('data-role-lg-new'));
+        console.log(object.parent().attr('data-role-lg-entity-id'));
+        console.log(!object.parent().attr('data-role-lg-entity-id'));
 
         if (object.parent().attr('data-role-lg-new') && !object.parent().attr('data-role-lg-entity-id')) {
+            console.log('create');
             url = makeURLfromTD(object.parent(), 'create');
-            $.ajax({
-                type: 'POST',
-                url: url,
-                data: {
-                    data: val
-                },
-                success: function(responseText, textStatus, XMLHttpRequest) {}
-            });
-        } else {
-            url = makeURLfromTD(object.parent(), 'update');
-            var td = object.parent();
-            var tr = td.parent();
-            var col = tr.children().index(td);
-            var row = tr.index();
-
-            col = 2;
-            row = 1;
-
-            // $('table.lg-table').html($(data).find('table.lg-table').html());
+            console.log(url);
             $.ajax({
                 type: 'POST',
                 url: url,
@@ -930,10 +974,36 @@ function updateCell(object, val) {
                 },
                 success: function(responseText, textStatus, XMLHttpRequest) {
                     gridReloadCell(td);
+                    updateAggregate(td);
+                }
+            });
+        } else {
+            console.log('update');
+            url = makeURLfromTD(object.parent(), 'update');
+            $.ajax({
+                type: 'POST',
+                url: url,
+                data: {
+                    data: val
+                },
+                success: function(responseText, textStatus, XMLHttpRequest) {
+                    gridReloadCell(td);
+                    updateAggregate(td, difference);
                 }
             });
         }
     }
+}
+
+function updateAggregate(td, difference) {
+        var tr = td.parent();
+        var col = tr.children().index(td);
+        var row = tr.index();
+        var aggregateRow = td.parent().children("td.lg-aggregate-row");
+        var aggregateCell = aggregateRow.eq(col);
+        var oldAggregateValue = aggregateCell.attr("value");
+        var newAggregateValue = oldAggregateValue + diff;
+        aggregateCell.val(newAggregateValue);
 }
 
 function updateLocalSum() {
