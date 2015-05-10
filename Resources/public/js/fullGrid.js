@@ -1055,10 +1055,13 @@ function updateAggregate(td, difference) {
         var aggregateRow = tr.parent().children("tr.lg-aggregate-row");
         var aggregateCell = aggregateRow.children("td").eq(col);
         var oldAggregateHtml = aggregateCell.html();
-        var oldAggregateValue = aggregateCell.text().replace(/[^0-9\.\-]/g,'');
-        var newAggregateValue = parseFloat(oldAggregateValue) + parseFloat(difference);
-        var newAggregateHtml = oldAggregateHtml.replace(oldAggregateValue,newAggregateValue);
-        aggregateCell.html(newAggregateHtml);
+        var oldAggregateValue = aggregateCell.text();
+        var newAggregateValue = addCommas(parseFloat(oldAggregateValue) + parseFloat(difference));
+        if (isNaN(newAggregateValue)) {
+        } else {
+            var newAggregateHtml = oldAggregateHtml.replace(oldAggregateValue,newAggregateValue);
+            aggregateCell.html(newAggregateHtml);
+        }
         gridReloadAggregates();
 }
 

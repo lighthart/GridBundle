@@ -28,10 +28,14 @@
     {% include 'LighthartGridBundle:Status:statuses.html.twig' with {'status': cell.statuses} %}
 {% elseif edit and cell.options.aggregate is not defined %}
     {% if money %}
-        {% if cell.value >= 0 %}
-            <input type="text" class="lg-edit-field money positive" value="{{- value -}}"/>
+        {% if cell.value is not null %}
+            {% if cell.value >= 0 %}
+                <input type="text" class="lg-edit-field money positive text-right" value="{{- value -}}"/>
+            {% else %}
+                <input type="text" class="lg-edit-field money negative text-right" value="({{- value -}})"/>
+            {% endif %}
         {% else %}
-            <input type="text" class="lg-edit-field money negative" value="({{- value -}})"/>
+            <input type="text" class="lg-edit-field money positive text-right"/>
         {% endif %}
         {% else %}
         <input type="text" class="lg-edit-field" value="{{- cell.value -}}"/>
