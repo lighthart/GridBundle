@@ -231,7 +231,7 @@ function gridReloadCell(td) {
             highlightFilters();
             activateControls();
             markFlags();
-            td.children("input.lg-edit-field").on('change blur', function(event) {
+            td.children("input.lg-edit-field").on('change', function(event) {
                 updateCell($(this), $(this).val());
             });
             moveCursor();
@@ -920,6 +920,43 @@ function moveCursor() {
     });
 }
 
+function moveCursor() {
+    $('input.lg-edit-field').off('keydown');
+    $('input.lg-edit-field').on('keydown', function(event) {
+        // this tells us which key is pressed
+        // keep in comments if more functionality
+        // becomes required
+        var tab = 9;
+        var enter = 13;
+        var escape = 27;
+        var left = 37;
+        var up = 38;
+        var right = 39;
+        var down = 40;
+        dir = event.which;
+
+        if (event.which == escape) { /* unknown at moment  */ }
+
+        if (event.which == down)   { cursor.down($(this));  }
+        if (event.which == up)     { cursor.up($(this));    }
+        // if (event.which == left)   { cursor.left($(this));  }
+        // if (event.which == right)  { cursor.right($(this)); }
+        if (event.which == tab) {
+            if (event.shiftKey === true) {
+                cursor.left($(this));
+            } else {
+                cursor.right($(this));
+            }
+        }
+        if (event.which == enter) {
+            if (event.shiftKey === true) {
+                cursor.up($(this));
+            } else {
+                cursor.down($(this));
+            }
+        }
+    });
+}
 
 
 
@@ -928,6 +965,15 @@ function updates() {
         updateCell($(this), $(this).val());
     });
 }
+
+function focusEdit() {
+    $('input.lg-edit-field').on('focus click mouseup', function(event) {
+        event.preventDefault();
+        $(this).val($(this).val().replace(/[^0-9\.\-]/g,''));
+        $(this).select();
+    });
+}
+
 
 function updateCell(object, val) {
 
@@ -941,9 +987,8 @@ function updateCell(object, val) {
         oldValue = object.attr("value");
         difference = newValue - oldValue;
 
-        console.log(object.parent().attr('data-role-lg-new'));
-        console.log(object.parent().attr('data-role-lg-entity-id'));
-        console.log(!object.parent().attr('data-role-lg-entity-id'));
+        val = val.replace(/[^0-9\.\-]/g,'');
+
 
         if (object.parent().attr('data-role-lg-new') && !object.parent().attr('data-role-lg-entity-id')) {
             console.log('create');
@@ -985,20 +1030,11 @@ function updateAggregate(td, difference) {
         var aggregateRow = tr.parent().children("tr.lg-aggregate-row");
         var aggregateCell = aggregateRow.children("td").eq(col);
         var oldAggregateHtml = aggregateCell.html();
-        var oldAggregateValue = aggregateCell.text();
+        var oldAggregateValue = aggregateCell.text().replace(/[^0-9\.\-]/g,'');
         var newAggregateValue = parseFloat(oldAggregateValue) + parseFloat(difference);
         var newAggregateHtml = oldAggregateHtml.replace(oldAggregateValue,newAggregateValue);
         aggregateCell.html(newAggregateHtml);
         gridReloadAggregates();
-
-}
-
-function updateLocalSum() {
-
-}
-
-function updateFinalSum() {
-
 }
 
 function makeURLfromTD(td, action) {
@@ -1046,4 +1082,5 @@ $(document).ready(function() {
     cookies = getCookies();
     updates();
     moveCursor();
+    focusEdit();
 });

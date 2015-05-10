@@ -130,6 +130,10 @@ span.money.negative {
   color: rgba(255,0,0,1);
 }
 
+input.money.negative {
+  color: rgba(255,0,0,1);
+}
+
 th.lg, td.lg {
 }
 
