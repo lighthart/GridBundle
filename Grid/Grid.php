@@ -823,7 +823,7 @@ class Grid
             return !$c->getOption('hidden');
         });
 
-        $row = new Row(['type' => 'tr', 'attr'] => ['class' => 'lg-aggregate-row']);
+        $row = new Row(['type' => 'tr', 'attr' => ['class' => 'lg-aggregate-row']]);
 
         //Not ready to implement this
         if ($this->massAction && !$this->export) {
