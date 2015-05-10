@@ -828,6 +828,7 @@ cursor = {
         var rows = tr.parent().children("tr");
         next = tr.prev('td').children("input");
 
+        // this bit for wrapping
         // while (0 === next.length || col < 0) {
         //     if (col > 0) {
         //         col -= 1;
@@ -859,6 +860,8 @@ cursor = {
         var row = tr.index();
         var rows = tr.parent().children("tr");
         next = tr.next('td').children("input");
+
+        // this bit for wrapping
         // while (next.length === 0) {
         //     if (col < cols.length) {
         //         col += 1;
