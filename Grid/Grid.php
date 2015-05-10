@@ -823,7 +823,7 @@ class Grid
             return !$c->getOption('hidden');
         });
 
-        $row = new Row(['type' => 'tr', ]);
+        $row = new Row(['type' => 'tr', 'attr'] => ['class' => 'lg-aggregate-row']);
 
         //Not ready to implement this
         if ($this->massAction && !$this->export) {
@@ -851,6 +851,7 @@ class Grid
 
                 // Can't edit aggregates
                 $attr['class'] = preg_replace('/\s*lg-editable\s*/', '', $attr['class']);
+                $attr['class'] .= "lg-aggregate";
                 $attr['emphasis'] = 'strong';
 
                 if (isset($attr['data-role-lg-editable'])) {

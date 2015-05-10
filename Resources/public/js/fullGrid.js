@@ -157,19 +157,19 @@ function gridReload(reset) {
                 setCookies(cookies);
                 oldFocus = gridFocus() ? '#' + gridFocus().attr('id') : 0;
             },
-            success: function(data) {
+            success: function(responseText, textStatus, XMLHttpRequest) {
                 if (reset) {
-                    $('table.lg-table').html($(data).find('table.lg-table').html());
-                    $('div#lg-header').html($(data).find('div#lg-header').html());
-                    $('div#lg-footer').html($(data).find('div#lg-footer').html());
-                    $('div.lg-flags').html($(data).find('div.lg-flags').html());
+                    $('table.lg-table').html($(responseText).find('table.lg-table').html());
+                    $('div#lg-header').html($(responseText).find('div#lg-header').html());
+                    $('div#lg-footer').html($(responseText).find('div#lg-footer').html());
+                    $('div.lg-flags').html($(responseText).find('div.lg-flags').html());
                 } else {
-                    $('tbody.lg-tbody').html($(data).find('tbody.lg-tbody').html());
-                    $('div.lg-flags').html($(data).find('div.lg-flags').html());
-                    $('form.navbar-right').html($(data).find('form.navbar-right').html());
-                    $('div#lg-footer').html($(data).find('div#lg-footer').html());
-                    $('tr.lg-headers').html($(data).find('tr.lg-headers').html());
-                    $('tr.lg-filters').html($(data).find('tr.lg-filters').html());
+                    $('tbody.lg-tbody').html($(responseText).find('tbody.lg-tbody').html());
+                    $('div.lg-flags').html($(responseText).find('div.lg-flags').html());
+                    $('form.navbar-right').html($(responseText).find('form.navbar-right').html());
+                    $('div#lg-footer').html($(responseText).find('div#lg-footer').html());
+                    $('tr.lg-headers').html($(responseText).find('tr.lg-headers').html());
+                    $('tr.lg-filters').html($(responseText).find('tr.lg-filters').html());
                 }
             },
             complete: function() {
@@ -181,12 +181,63 @@ function gridReload(reset) {
                     $(oldFocus).blur().focus().val($(oldFocus).val());
                 }
                 markFlags();
-                makeClicks();
+                // makeClicks();
                 // make latest timer
                 clearTimeout(timer);
             }
         });
     }, quiet);
+}
+
+function gridReloadCell(td) {
+    cookies = getCookies();
+    data = {
+        pageSize: cookies.pageSize,
+        pageOffset: cookies.offset,
+        filter: (cookies.filter ? cookies.filter : "").replace("'", "''"),
+        search: cookies.search,
+    };
+    $.map(getFlags(), function(value, flag) {
+        var flagCookie = flag;
+        if (value) {
+            data[flagCookie] = value;
+        }
+    });
+
+    $.ajax({
+        url: getLgCurrentURI(),
+        data: data,
+        dataType: 'html',
+        type: 'GET',
+        cache: false,
+        beforeSend: function(xhr) {},
+        success: function(responseText, textStatus, XMLHttpRequest) {
+            var tr = td.parent();
+            var col = tr.children("td").index(td);
+            var row = tr.parent().children("tr").index(tr);
+            var tbody = tr.closest("tbody.lg-tbody");
+            var table = tbody.closest("table.lg-table");
+            var whichTbody = table.children("tbody.lg-tbody").index(tbody);
+            var whichTable = table.parent().children("table.lg-table").index(table);
+            newTable = $(responseText).find("table.lg-table").eq(whichTable);
+            newTbody = newTable.children("tbody.lg-tbody").eq(whichTbody);
+            newTr = newTbody.children("tr").eq(row);
+            newTd = newTr.children("td").eq(col);
+            $('tr.lg-filters').html($(responseText).find('tr.lg-filters').html());
+            td.html(newTd.html());
+        },
+        complete: function() {
+            highlightSearches();
+            highlightFilters();
+            activateControls();
+            markFlags();
+            td.children("input.lg-edit-field").on('change blur', function(event) {
+                updateCell($(this), $(this).val());
+            });
+            moveCursor();
+            // makeClicks();
+        }
+    });
 }
 // '@LighthartGridBundle/Resources/public/js/gridHighlight.js'
 /*
@@ -674,128 +725,129 @@ function activateControls() {
     markFlags();
 }
 
-    cursor = {
-        down: function(object) {
-            var td = object.parent();
-            var tr = td.parent();
-            var col = tr.children().index(td);
-            var cols = tr.children();
-            var row = tr.index();
-            var rows = tr.parent().children("tr");
-            row += 1;
+cursor = {
+    down: function(object) {
+        var td = object.parent();
+        var tr = td.parent();
+        var col = tr.children().index(td);
+        var cols = tr.children();
+        var row = tr.index();
+        var rows = tr.parent().children("tr");
+        row += 1;
+        next = rows.eq(row).children().eq(col).children("input");
+        while (0 === next.length) {
+            if (row < rows.length) {
+                row += 1;
+            } else {
+                row = 0;
+                if (col < cols.length) {
+                    col += 1;
+                } else {
+                    col = 0;
+                }
+            }
             next = rows.eq(row).children().eq(col).children("input");
-            while (0 === next.length) {
+            if (next.length) {
+                break;
+            }
+        }
+        next.focus();
+    },
+
+    up: function(object) {
+        var td = object.parent();
+        var tr = td.parent();
+        var col = tr.children().index(td);
+        var cols = tr.children();
+        var row = tr.index();
+        var rows = tr.parent().children("tr");
+        row -= 1;
+        next = rows.eq(row).children().eq(col).children("input");
+        // have to check row because .eq() takes negative index
+        while (0 === next.length || row < 0) {
+            if (row > 0) {
+                row -= 1;
+            } else {
+                row = rows.length;
+                if (col > 0) {
+                    col -= 1;
+                } else {
+                    col = cols.length;
+                }
+            }
+            next = rows.eq(row).children().eq(col).children("input");
+            if (next.length) {
+                break;
+            }
+        }
+        next.focus();
+    },
+
+    left: function(object) {
+        var td = object.parent();
+        var tr = td.parent();
+        var col = tr.children().index(td);
+        var cols = tr.children();
+        var row = tr.index();
+        var rows = tr.parent().children("tr");
+        next = td.prev('td').children("input");
+
+        while (0 === next.length || col < 0) {
+            if (col > 0) {
+                col -= 1;
+            } else {
+                col = cols.length;
+                if (row > 0) {
+                    row -= 1;
+                } else {
+                    row = rows.length;
+                }
+            }
+
+
+
+            next = tr.parent().children("tr").eq(row).children().eq(col).children("input");
+
+            if (next.length) {
+                break;
+            }
+        }
+        next.focus();
+    },
+
+    right: function(object) {
+        var td = object.parent();
+        var tr = td.parent();
+        var col = tr.children().index(td);
+        var cols = tr.children();
+        var row = tr.index();
+        var rows = tr.parent().children("tr");
+        next = td.next('td').children("input");
+        while (next.length === 0) {
+            if (col < cols.length) {
+                col += 1;
+            } else {
+                col = 0;
                 if (row < rows.length) {
                     row += 1;
                 } else {
                     row = 0;
-                    if (col < cols.length) {
-                        col += 1;
-                    } else {
-                        col = 0;
-                    }
-                }
-                next = rows.eq(row).children().eq(col).children("input");
-                if (next.length) {
-                    break;
                 }
             }
-            next.focus();
-        },
 
-        up: function(object) {
-            var td = object.parent();
-            var tr = td.parent();
-            var col = tr.children().index(td);
-            var cols = tr.children();
-            var row = tr.index();
-            var rows = tr.parent().children("tr");
-            row -= 1;
-            next = rows.eq(row).children().eq(col).children("input");
-            // have to check row because .eq() takes negative index
-            while (0 === next.length || row < 0) {
-                if (row > 0 ) {
-                    row -= 1;
-                } else {
-                    row = rows.length;
-                    if (col > 0) {
-                        col -= 1;
-                    } else {
-                        col = cols.length;
-                    }
-                }
-                next = rows.eq(row).children().eq(col).children("input");
-                if (next.length) {
-                    break;
-                }
+            next = tr.parent().children("tr").eq(row).children().eq(col).children("input");
+
+            if (next.length) {
+                break;
             }
-            next.focus();
-        },
-
-        left: function(object) {
-            var td = object.parent();
-            var tr = td.parent();
-            var col = tr.children().index(td);
-            var cols = tr.children();
-            var row = tr.index();
-            var rows = tr.parent().children("tr");
-            next = td.prev('td').children("input");
-
-            while (0 === next.length || col < 0) {
-                if (col > 0 ) {
-                    col -= 1;
-                } else {
-                    col = cols.length;
-                    if (row > 0) {
-                        row -= 1;
-                    } else {
-                        row = rows.length;
-                    }
-                }
-
-
-
-                next = tr.parent().children("tr").eq(row).children().eq(col).children("input");
-
-                if (next.length) {
-                    break;
-                }
-            }
-            next.focus();
-        },
-
-        right: function(object) {
-            var td = object.parent();
-            var tr = td.parent();
-            var col = tr.children().index(td);
-            var cols = tr.children();
-            var row = tr.index();
-            var rows = tr.parent().children("tr");
-            next = td.next('td').children("input");
-            while (next.length === 0) {
-                if (col < cols.length ) {
-                    col += 1;
-                } else {
-                    col = 0;
-                    if (row < rows.length) {
-                        row += 1;
-                    } else {
-                        row = 0;
-                    }
-                }
-
-                next = tr.parent().children("tr").eq(row).children().eq(col).children("input");
-
-                if (next.length) {
-                    break;
-                }
-            }
-            next.focus();
         }
+        next.focus();
+    }
 };
 
 
 function moveCursor() {
+    $('input.lg-edit-field').off('keydown');
     $('input.lg-edit-field').on('keydown', function(event) {
         // this tells us which key is pressed
         // keep in comments if more functionality
@@ -809,20 +861,20 @@ function moveCursor() {
         var down = 40;
         dir = event.which;
 
-        if (event.which == escape) {/* unknown at moment  */}
+        if (event.which == escape) { /* unknown at moment  */ }
 
         // if (event.which == down)   { cursor.down($(this));  }
         // if (event.which == up)     { cursor.up($(this));    }
         // if (event.which == left)   { cursor.left($(this));  }
         // if (event.which == right)  { cursor.right($(this)); }
-        if (event.which == tab)    {
+        if (event.which == tab) {
             if (event.shiftKey === true) {
                 cursor.left($(this));
             } else {
                 cursor.right($(this));
             }
         }
-        if (event.which == enter)  {
+        if (event.which == enter) {
             if (event.shiftKey === true) {
                 cursor.up($(this));
             } else {
@@ -833,32 +885,41 @@ function moveCursor() {
 }
 
 
+
+
 function updates() {
     $('input.lg-edit-field').on('change blur', function(event) {
-        update($(this), $(this).val());
+        updateCell($(this), $(this).val());
     });
 }
 
-function update(object, val) {
+function updateCell(object, val) {
     object.text(val);
-    console.log(object.parent().attr('data-role-lg-new'));
-    console.log(object.parent().attr('data-role-lg-entity-id'));
-    console.log(!object.parent().attr('data-role-lg-entity-id'));
-    console.log((object.parent().attr('data-role-lg-new') && !object.parent().attr('data-role-lg-entity-id')));
+
+    newValue = object.text();
+    oldValue = object.attr("value");
+
     if (object.parent().attr('data-role-lg-new') && !object.parent().attr('data-role-lg-entity-id')) {
         url = makeURLfromTD(object.parent(), 'create');
-        console.log(url);
         $.ajax({
             type: 'POST',
             url: url,
             data: {
                 data: val
             },
-            success: function(responseText, textStatus, XMLHttpRequest) {
-            }
+            success: function(responseText, textStatus, XMLHttpRequest) {}
         });
     } else {
         url = makeURLfromTD(object.parent(), 'update');
+        var td = object.parent();
+        var tr = td.parent();
+        var col = tr.children().index(td);
+        var row = tr.index();
+
+        col = 2;
+        row = 1;
+
+        // $('table.lg-table').html($(data).find('table.lg-table').html());
         $.ajax({
             type: 'POST',
             url: url,
@@ -866,9 +927,18 @@ function update(object, val) {
                 data: val
             },
             success: function(responseText, textStatus, XMLHttpRequest) {
+                gridReloadCell(td);
             }
         });
     }
+}
+
+function updateLocalSum() {
+
+}
+
+function updateFinalSum() {
+
 }
 
 function makeURLfromTD(td, action) {
