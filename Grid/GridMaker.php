@@ -270,7 +270,9 @@ class GridMaker
                 , array_keys($cookies)
             );
             $cookieFlags = array_filter($cookieFlags);
-            $request->query->add($cookieFlags);
+            if ([] != $cookieFlags) {
+                $request->query->add($cookieFlags);
+            }
         }
     }
 
