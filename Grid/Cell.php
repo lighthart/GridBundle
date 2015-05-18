@@ -4,9 +4,9 @@ namespace Lighthart\GridBundle\Grid;
 class Cell
 {
     protected $attr;     // html attributes on <td>
-    private   $options;
+    private $options;
     protected $row;      // which row we belong in
-    private   $type;     // td or th
+    private $type;     // td or th
     protected $title;    // column reference
     protected $value;    // the contents of the cell
 
