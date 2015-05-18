@@ -258,6 +258,7 @@ class GridMaker
             $cookieKeys = array_filter(array_keys($cookies), function($c) use ($route) {return false !== strpos($c, $route);});
             $cookieKeys = array_filter($cookieKeys, function($c) {return false !== strpos($c, 'lg-');});
             $flagKeys = array_filter($cookieKeys, function($c) {return false !== strpos($c, '-flag-');});
+            $cookieFlags = [];
             array_map(
                 function($c, $k) use ($flagKeys, &$cookieFlags) {
                     if (in_array($k, $flagKeys)) {
