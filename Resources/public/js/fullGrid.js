@@ -547,7 +547,7 @@ function getAllFilters() {
                 filter += '|' + parent.attr('data-role-lg-class') + '__' + f + ':' + value;
             });
         }
-        filter += ";"
+        filter += ";";
     });
     return filter;
 }
