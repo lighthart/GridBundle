@@ -121,7 +121,8 @@ may use any alias you would like.
     filter:         Setting to true will add a search filter box to the column header which
                     only searches on this field. Optionally, you can also specify the kind
                     of search filter to use on this filed. Valid types are: date, number,
-                    and string.
+                    and string.  If filter is not set, it will default to false, and no
+                    input box will be displayed.
 
     attr:           Sets the html attributes.
 

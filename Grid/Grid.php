@@ -484,7 +484,6 @@ class Grid
         }
         $thead->addRow($row);
 
-        // die;
         if (([] == array_filter($columns, function ($c) {
             return $c->getOption('filter');
         })) || $this->export) {
@@ -514,6 +513,16 @@ class Grid
             $statusCell = new Cell(['title' => '', 'type' => 'th', 'attr' => ['class' => 'lg-filterable lg-filter']]);
             $row->addCell($statusCell);
         }
+
+        foreach ($columns as $key => $column) {
+            if (!isset($column->getOptions() ['filter'])) {
+                $columnOptions = $column->getOptions();
+                $columnOptions['filter'] = false;
+                $column->setOptions($columnOptions);
+            }
+        }
+
+
 
         foreach ($columns as $key => $column) {
             if (isset($columns[$key]->getOptions() ['hidden'])) {
