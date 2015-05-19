@@ -121,7 +121,8 @@ $gm->addField('b', 'shortName', array(
     filter:         Setting to true will add a search filter box to the column header which
                     only searches on this field. Optionally, you can also specify the kind
                     of search filter to use on this filed. Valid types are: date, number,
-                    and string.
+                    and string.  If filter is not set, it will default to false, and no
+                    input box will be displayed.
 
     attr:           Sets the html attributes.
 
@@ -252,20 +253,20 @@ to the table header cell.
 #### Step 4:  Add Actions.
 
 ```php
-$gm->addAction(array(
-    'icon' => 'fa-rocket',
-    'route' => array(
-        'student_show' => array(
-            'id' => '~t.id~'
-        )
-    ) ,
-    'security' => function($result, $columns){
-        return 'F' == $result[$columns['g.shortName']];
-    },
-    'attr' => array(
-        'title' => 'Star3'
-    )
-));
+        $gm->addAction(array(
+            'icon' => 'fa-rocket',
+            'route' => array(
+                'student_show' => array(
+                    'id' => '~t.id~'
+                )
+            ) ,
+            'security' => function($result, $columns){
+                return 'F' == $result[$columns['g.shortName']];
+            },
+            'attr' => array(
+                'title' => 'Star3'
+            )
+        ));
 ```
 
 Any number of buttons may be rendered.  By default, if there are more than 4, a fold-up

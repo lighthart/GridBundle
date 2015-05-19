@@ -603,8 +603,8 @@ class GridMaker
                     $this->getGrid()->fillTr($results, $root);
                 }
                 if ($this->getGrid()->hasErrors()) {
-                    var_dump($this->getGrid()->getErrors());
-                    die;
+                    // var_dump($this->getGrid()->getErrors());
+                    // die;
                     $this->getGrid()->fillErrors($results, $filters);
                 }
 
