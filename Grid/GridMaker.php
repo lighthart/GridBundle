@@ -19,6 +19,8 @@ class GridMaker
     private $query;
     private $queryBuilder;
     private $grid;
+    // options for debugging
+    private $debug;
 
     /**
      * This should never be used -- method is so there is not an exception thrown.
@@ -40,6 +42,7 @@ class GridMaker
     {
         $this->doctrine = $doctrine;
         $this->router   = $router;
+        $this->debug    = [];
     }
 
     /**
@@ -88,6 +91,65 @@ class GridMaker
         $this->grid = $grid;
 
         return $this;
+    }
+
+
+    /**
+     * Get debug
+     *
+     * @return
+     */
+
+    public function getDebug() {
+         return $this->debug;
+    }
+
+    /**
+     * Set debug
+     *
+     * @param
+     * @return $this
+     */
+    public function setDebug($debug) {
+        $this->debug = $debug;
+        return $this;
+    }
+
+    /**
+     * Set debugDump
+     */
+    public function setDebugDump() {
+        $this->setQueryDump();
+        $this->setResultsDump();
+        return $this;
+    }
+
+    public function getQueryDump(){
+        if (isset($this->getDebug()['queryDump'])){
+            return $this->getDebug()['queryDump'];
+        } else {
+            return false;
+        }
+    }
+
+    public function setQueryDump(){
+        $debug = $this->getDebug();
+        $debug['queryDump'] = true;
+        $this->setDebug($debug);
+    }
+
+    public function getResultsDump(){
+        if (isset($this->getDebug()['resultsDump'])){
+            return $this->getDebug()['resultsDump'];
+        } else {
+            return false;
+        }
+    }
+
+    public function setResultsDump(){
+        $debug = $this->getDebug();
+        $debug['resultsDump'] = true;
+        $this->setDebug($debug);
     }
 
     /**
@@ -574,12 +636,28 @@ class GridMaker
             return $response;
         } else {
             $q = $this->QB()->getQuery();
+            if ($this->getQueryDump()) {
+                print_r($this->QB()->getQuery()->getDQL());
+                print_r('<br><br>');
+                print_r($this->QB()->getQuery()->getSQL());
+            }
+
             if ($results) {
                 // This should be handled in controller for now... need a way to smooth this out
                 // $q->setDql($this->mapAliases(['results' => $results]));
             } else {
                 $q->setDql($this->mapAliases());
                 $results = $q->getResult(Query::HYDRATE_SCALAR);
+            }
+
+            if ($this->getResultsDump()) {
+                print_r('<pre>');
+                var_dump($results);
+                print_r('</pre>');
+            }
+
+            if ($this->getResultsDump() || $this->getQueryDump()){
+                die;
             }
 
             $this->mapActions();
@@ -592,6 +670,7 @@ class GridMaker
 
                 $root = $root[array_keys($root) [0]];
             }
+
 
             $html = $this->getGrid()->getOption('html');
 

@@ -53,16 +53,16 @@ The table alias for the root entity must be 'root'. On all joined tables, you
 may use any alias you would like.
 
 ```php
-$em = $this->getDoctrine()->getManager();
-$rep = $em->getRepository('ApplicationBundle:Student');
-$root = 'root';
-$qb = $rep->createQueryBuilder($root);
-$qb->join($root . '.snowflake', 'f');
-$qb->join('f.school', 's');
-$qb->join('s.district', 'd');
-$qb->join('root.biller', 'b');
-$qb->addOrderBy('f.lastName');
-$qb->addOrderBy('f.firstName');
+    $em = $this->getDoctrine()->getManager();
+    $rep = $em->getRepository('ApplicationBundle:Student');
+    $root = 'root';
+    $qb = $rep->createQueryBuilder($root);
+    $qb->join($root . '.snowflake', 'f');
+    $qb->join('f.school', 's');
+    $qb->join('s.district', 'd');
+    $qb->join('root.biller', 'b');
+    $qb->addOrderBy('f.lastName');
+    $qb->addOrderBy('f.firstName');
 ```
 
 > **Note**: This query will be rewritten significantly, to fetch only partial
@@ -71,15 +71,15 @@ $qb->addOrderBy('f.firstName');
 #### Step 2: Initialize your grid.
 
 ```php
-$query = $qb->getQuery();
-$gm = $this->get('lg.maker');
-$gm->initialize(array(
-    'table' => 'table table-bordered table-condensed table-hover table-striped',
-    'html' => true,
-    'massAction' => true,
-    'request' => $request
-));
-$gm->setQueryBuilder($qb);
+    $query = $qb->getQuery();
+    $gm = $this->get('lg.maker');
+    $gm->initialize(array(
+        'table' => 'table table-bordered table-condensed table-hover table-striped',
+        'html' => true,
+        'massAction' => true,
+        'request' => $request
+    ));
+    $gm->setQueryBuilder($qb);
 ```
 
 > **Note**: Passing the request is optional, but makes flag cookies available in
@@ -97,16 +97,16 @@ $gm->setQueryBuilder($qb);
 #### Step 3: Start adding fields/columns.
 
 ```php
-$gm->addField('b', 'shortName', array(
-    // 'search' => false,
-    // 'filter' => false,
-    'attr' => array(
-        'class' => '',
-        'entity_id' => true,
-        'html' => true
-    ) ,
-    'title' => 'Biller:<br/> ~d.shortName~<br/>~s.shortName~',
-));
+    $gm->addField('b', 'shortName', array(
+        // 'search' => false,
+        // 'filter' => false,
+        'attr' => array(
+            'class' => '',
+            'entity_id' => true,
+            'html' => true
+        ) ,
+        'title' => 'Biller:<br/> ~d.shortName~<br/>~s.shortName~',
+    ));
 ```
 
 **Field Configuration**:
@@ -244,29 +244,29 @@ the query and insert that text.  This interpolation will ignore html tags.  The
 title text in the example above will add:
 
 ```html
-Biller:
-<District Name>
-<School Name>
-to the table header cell.
+    Biller:
+    <District Name>
+    <School Name>
+    to the table header cell.
 ```
 
 #### Step 4:  Add Actions.
 
 ```php
-        $gm->addAction(array(
-            'icon' => 'fa-rocket',
-            'route' => array(
-                'student_show' => array(
-                    'id' => '~t.id~'
-                )
-            ) ,
-            'security' => function($result, $columns){
-                return 'F' == $result[$columns['g.shortName']];
-            },
-            'attr' => array(
-                'title' => 'Star3'
+    $gm->addAction(array(
+        'icon' => 'fa-rocket',
+        'route' => array(
+            'student_show' => array(
+                'id' => '~t.id~'
             )
-        ));
+        ) ,
+        'security' => function($result, $columns){
+            return 'F' == $result[$columns['g.shortName']];
+        },
+        'attr' => array(
+            'title' => 'Star3'
+        )
+    ));
 ```
 
 Any number of buttons may be rendered.  By default, if there are more than 4, a fold-up
@@ -308,13 +308,13 @@ button will be automatically rendered.  This can be controlled by overwriting th
 #### Step 5:  Hydrate the grid and pass it to a twig.
 
 ```php
-$gm->hydrateGrid($request);
-return $this->render('ApplicationBundle:Test:test3.html.twig', array(
-    'grid'    => $gm->getGrid() ,
-    'flags'   => $flags,
-    'newPath' => $url,
-    'export'  => 1000,
-));
+    $gm->hydrateGrid($request);
+    return $this->render('ApplicationBundle:Test:test3.html.twig', array(
+        'grid'    => $gm->getGrid() ,
+        'flags'   => $flags,
+        'newPath' => $url,
+        'export'  => 1000,
+    ));
 ```
 
 **Render Configuration**:
@@ -356,21 +356,33 @@ return $this->render('ApplicationBundle:Test:test3.html.twig', array(
 #### Step 6:  In your twig.
 
 ```html
-{% include 'LighthartGridBundle:Grid:grid.html.twig' %}
+    {% include 'LighthartGridBundle:Grid:grid.html.twig' %}
 ```
 
 or
 
 ```html
-{% embed 'LighthartGridBundle:Grid:grid.html.twig' %}
-< over-write certain blocks >
-{% endembed %}
+    {% embed 'LighthartGridBundle:Grid:grid.html.twig' %}
+    < over-write certain blocks >
+    {% endembed %}
 ```
 
 #### Step 7:  Configure routes.
 
 ```yml
-test3:
-    pattern:  /test3/
-    defaults: { _controller: "ApplicationBundle:Test:test3" }
+    test3:
+        pattern:  /test3/
+        defaults: { _controller: "ApplicationBundle:Test:test3" }
+```
+
+#### Step 8:  Debug helpers
+
+Three functions, setResultsDump(), setQueryDump() and setDebugDump() can be called on
+grid maker to dump debug output and die.  setDebugDump() does both of the other two
+actions.  Do this in the controller after or during the grid construction: eg:
+
+```php
+    $gm = $this->get('lg.maker');
+    $gm->setDebugDump();
+));
 ```
