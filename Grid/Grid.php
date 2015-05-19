@@ -496,7 +496,7 @@ class Grid
     {
         $thead   = $this->getTable()->getThead();
         $columns = $this->getColumns();
-        $row     = new Row(['type' => 'tr', 'attr' => ['class' => 'lg-filters']]);
+        $row     = new Row(['type' => 'tr', 'attr' => ['class' => 'lg-filters'. ($filters ? '' : ' hide')]]);
 
         //Not ready to implement this
         if ($this->massAction) {
