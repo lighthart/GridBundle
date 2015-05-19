@@ -1,7 +1,7 @@
 {% if flags is defined %}
     <div class='lg-flags'>
-    {% for flag in flags %}
-        <input id="lg-grid-flag-{{flag|lower}}" type="checkbox" class="lg-grid-flag" style="vertical-align:middle;"/>&nbsp;<label for="lg-grid-flag-{{flag|lower}}">{{flag}}</label>&nbsp;
+    {% for flagkey, flagtitle in flags %}
+        <input id="lg-grid-flag-{{flagkey|lower}}" type="checkbox" class="lg-grid-flag" style="vertical-align:middle;"/>&nbsp;<label for="lg-grid-flag-{{flagkey|lower}}" title="{{flagtitle}}">{{flagkey|capitalize}}</label>&nbsp;
     {% endfor %}
     </div>
 {% endif %}

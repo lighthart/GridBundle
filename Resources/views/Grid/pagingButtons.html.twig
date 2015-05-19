@@ -3,9 +3,9 @@
 {% block pagingControls %}
     {% if grid.table.attr['singlePage'] is defined %}
     {% else %}
-        <div class="lg-paging-controls form-group">
+        <div class="lg-paging-controls lg-paging-widget">
             {% block pageBackControls %}
-                <div class="btn-group">
+                <div class="btn-group lg-paging-widget">
                     {% block firstPage -%}
                         <button class="btn btn-xs btn-default lg-btn-top lg-first-page">
                             <span class="fa fa-step-backward lg-control-icon"></span>
@@ -19,13 +19,13 @@
                 </div>
             {% endblock pageBackControls %}
             {% block pageCounter %}
-                <input type="text" maxlength="4" id="lg-page-input" class="lg-page-input" value="{{ ( ( grid.offset + 1 ) / grid.pageSize ) | round(0, 'ceil' )  }}"/>
-                <div id="lg-{{place}}-total-pages" class="lg-control-text lg-total-pages form-group">of {{ maxPages }}</div>
+                <input type="text" maxlength="4" id="lg-page-input" class="lg-page-input lg-paging-widget" value="{{ ( ( grid.offset + 1 ) / grid.pageSize ) | round(0, 'ceil' )  }}"/>
+                <div id="lg-{{place}}-total-pages" class="lg-control-text lg-result-counts lg-total-pages lg-paging-widget">of {{ maxPages }}</div>
                 <input type="hidden" id="lg-max-pages" value="{{maxPages}}"/>
                 <input type="hidden" id="lg-max-results" value="{{grid.total}}"/>
             {% endblock pageCounter %}
             {% block pageForwardControls %}
-                <div class="btn-group">
+                <div class="btn-group lg-paging-widget">
                     {% block pageForward -%}
                         <button class="btn btn-xs btn-default lg-btn-top lg-next-page">
                             <span class="fa fa-play lg-control-icon"></span>

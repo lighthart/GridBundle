@@ -1105,11 +1105,6 @@ class GridMaker
                 $qb->addSelect('arrayAggDistinct(' . $field . ') AS ' . str_replace('.', '_', $entity));
             }
         }
-
-        // print_r($qb->getQuery()->getDql());
-        // print_r("<br><br>");
-        // print_r($qb->getQuery()->getSql());
-        // die;
     }
 
     public function mapMethodsFromQB()
