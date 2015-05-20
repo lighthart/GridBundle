@@ -10,7 +10,6 @@
         'JOIN'     : 'JOIN<br/>&nbsp;&nbsp;',
         'FROM'     : '<br/>FROM<br/>&nbsp;&nbsp;',
         'WHERE'    : '<br/>WHERE<br/>&nbsp;&nbsp;',
-        'AND'      : '<br/>AND<br/>&nbsp;&nbsp;',
         'OR'       : '<br/>OR<br/>&nbsp;&nbsp;',
         'ORDER BY' : '<br/>ORDER BY<br/>&nbsp;&nbsp;',
         'GROUP BY' : '<br/>GROUP BY<br/>&nbsp;&nbsp;',
@@ -19,9 +18,10 @@
         'OFFSET'   : '<br/>OFFSET<br/>&nbsp;&nbsp;',
     })|raw
 }}
+        {# 'AND'      : '<br/>AND<br/>&nbsp;&nbsp;', #}
 <br/>
 ---------------------------------------------------------------------------------------------
 {% for param in qb.getQuery.parameters.toArray %}
-    {{param.getName}} - {% if param.getValue is iterable %}{{param.getValue|join(',')}}{% elseif not param.getValue %}False{% else %}{{param.getValue}}{% endif %}<br/>
+    {{param.getName}} - {% if param.getValue is iterable %}{% for eachParam in param.getValue %}{{eachParam.id}}{% if not loop.last %},{% endif %}{% endfor %}{% elseif not param.getValue %}False{% else %}{{param.getValue}}{% endif %}<br/>
 {% endfor %}
 </pre>

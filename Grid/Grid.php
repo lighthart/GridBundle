@@ -423,7 +423,7 @@ class Grid
                 $title  = ($columns[$key]->getOption('title') ?: $key);
                 $header = ($columns[$key]->getOption('header') ?: $title);
 
-                if (isset($columns[$key]->getOptions() ['hidden'])) {
+                if (isset($columns[$key]->getOptions()['hidden']) && $columns[$key]->getOptions()['hidden']) {
                 } else {
 
                     // tilde mapping
