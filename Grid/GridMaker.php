@@ -833,38 +833,40 @@ class GridMaker
         //     $rqb->distinct();
         // }
 
+        if (isset($qb->getDqlPart('join')[$oldRoot])) {
+
         $joins = $qb->getDqlPart('join') [$oldRoot];
-        foreach ($joins as $k => $join) {
-            if (false === strpos($join->getJoin(), '\\')) {
-                $entity = stristr($join->getJoin(), '.', true);
-                $field  = substr(stristr($join->getJoin(), '.', false), 1);
-                $alias  = $join->getAlias();
-                if (!in_array($join->getAlias(), array_keys($aliases))) {
-                    $mappings                     = $em->getMetadataFactory()->getMetadataFor($entities[$entity])->getAssociationMappings();
-                    if ($mappings[$field]['type'] <= 2) {
-                        // $qb->addGroupBy($alias);
+            foreach ($joins as $k => $join) {
+                if (false === strpos($join->getJoin(), '\\')) {
+                    $entity = stristr($join->getJoin(), '.', true);
+                    $field  = substr(stristr($join->getJoin(), '.', false), 1);
+                    $alias  = $join->getAlias();
+                    if (!in_array($join->getAlias(), array_keys($aliases))) {
+                        $mappings                     = $em->getMetadataFactory()->getMetadataFor($entities[$entity])->getAssociationMappings();
+                        if ($mappings[$field]['type'] <= 2) {
+                            // $qb->addGroupBy($alias);
+                        }
+                        $aliases[$join->getAlias() ]  = $alias . '___' . str_replace('\\', '_', $mappings[$field]['targetEntity'] . '_');
+                        $entities[$join->getAlias() ] = $mappings[$field]['targetEntity'];
                     }
-                    $aliases[$join->getAlias() ]  = $alias . '___' . str_replace('\\', '_', $mappings[$field]['targetEntity'] . '_');
-                    $entities[$join->getAlias() ] = $mappings[$field]['targetEntity'];
-                }
-            } else {
-                // for backside joins
-                $entity = $join->getJoin();
-                $field  = stristr($join->getCondition(), '=', true);
-                $field  = trim(substr(stristr($field, '.', false), 1));
-                $alias  = $join->getAlias();
-                if (!in_array($join->getAlias(), array_keys($aliases))) {
-                    $mappings                     = $em->getMetadataFactory()->getMetadataFor($entity)->getAssociationMappings();
+                } else {
+                    // for backside joins
+                    $entity = $join->getJoin();
+                    $field  = stristr($join->getCondition(), '=', true);
+                    $field  = trim(substr(stristr($field, '.', false), 1));
+                    $alias  = $join->getAlias();
+                    if (!in_array($join->getAlias(), array_keys($aliases))) {
+                        $mappings                     = $em->getMetadataFactory()->getMetadataFor($entity)->getAssociationMappings();
 
-                    if ($mappings[$field]['type'] <= 2) {
-                        // $qb->addGroupBy($alias);
+                        if ($mappings[$field]['type'] <= 2) {
+                            // $qb->addGroupBy($alias);
+                        }
+                        $aliases[$join->getAlias() ]  = $alias . '___' . str_replace('\\', '_', $entity . '_');
+                        $entities[$join->getAlias() ] = $entity;
                     }
-                    $aliases[$join->getAlias() ]  = $alias . '___' . str_replace('\\', '_', $entity . '_');
-                    $entities[$join->getAlias() ] = $entity;
                 }
-            }
-        };
-
+            };
+        }
         foreach ($aliases as $k => $v) {
             // mark root
             if ($k == $oldRoot) {

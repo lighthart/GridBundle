@@ -42,6 +42,7 @@ If aggregate fields are needed in postgres, the operator must be added.
                         dql:
                             string_functions:
                                 ARRAYAGG: Lighthart\GridBundle\DQL\Postgres\ArrayAgg
+                                ARRAYAGGDISTINCT: Lighthart\GridBundle\DQL\Postgres\ArrayAggDistinct
 
 This is not currently supported for any platform other than postgres.
 
