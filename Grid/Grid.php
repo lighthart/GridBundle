@@ -709,7 +709,7 @@ class Grid
                             $pattern = '/(\w+\_\_\_\w+)\_\_/';
                             preg_match($pattern, $key, $match);
                             if ($match) {
-                                $rootId                         = $match[1] . '__id';
+                                $rootId                         = $match[1] . "__id";
                                 $attr['data-role-lg-entity-id'] = $result[$rootId];
                             }
                         }
