@@ -6,7 +6,12 @@ imports:
 services:
     lg.maker:
         class: Lighthart\GridBundle\Grid\GridMaker
-        arguments: [ @doctrine, @router ]
+        arguments: [ @doctrine, @router, @lg.dumper ]
+
+    lg.dumper:
+            class: Lighthart\GridBundle\Grid\GridDumper
+            arguments: [ @templating ]
+
 
     lg.subcookie.extension:
         class: Lighthart\GridBundle\Twig\SubcookieExtension

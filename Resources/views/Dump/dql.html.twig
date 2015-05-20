@@ -1,0 +1,46 @@
+<pre>
+=============================================================================================
+<br/>
+SELECT<br/>
+{{-qb.getDqlParts.distinct-}}
+{%- for part in qb.getDqlParts.select -%}
+    &nbsp;&nbsp;{{-part.__toString -}}<br/>
+{%- endfor -%}
+FROM<br/>
+{%- for part in qb.getDqlParts.from -%}
+    &nbsp;&nbsp;{{- part.__toString}}<br/>
+{%- endfor -%}
+{%- for joinpart in qb.getDqlParts.join -%}
+    {%- for part in joinpart -%}
+        {%- if qb.getDqlParts.join != [] -%}
+            {{- part|replace({'JOIN':'JOIN<br/>&nbsp;&nbsp;'})|raw -}}<br/>
+        {%- endif -%}
+    {%- endfor -%}
+{%- endfor -%}
+{%- if qb.getDqlParts.where != [] -%}
+WHERE<br/>&nbsp;&nbsp;
+    {{- qb.getDqlParts.where.__toString|replace({'AND':'<br/>&nbsp;&nbsp;AND', 'OR': '<br/>&nbsp;&nbsp;OR'})|raw -}}<br/>
+{%- endif -%}
+{% if qb.getDqlParts.groupBy != [] and qb.getDqlParts.groupBy %}
+GROUP BY<br/>
+    {%- for part in qb.getDqlParts.groupBy -%}
+        &nbsp;&nbsp;{{-part.__toString -}}<br/>
+    {%- endfor -%}
+{% endif %}
+{% if qb.getDqlParts.having != [] and qb.getDqlParts.having %}
+HAVING
+    {%- for part in qb.getDqlParts.having -%}
+        &nbsp;&nbsp;{{-part.__toString -}}<br/>
+    {%- endfor -%}
+{% endif %}
+{% if qb.getDqlParts.orderBy != [] and qb.getDqlParts.orderBy %}
+ORDER BY<br/>
+    {%- for part in qb.getDqlParts.orderBy -%}
+        {%- if part.__toString is defined -%}
+            &nbsp;&nbsp;{{- part.__toString -}}<br/>
+        {%- else -%}
+            &nbsp;&nbsp;{{- part -}}<br/>
+        {%- endif -%}
+    {%- endfor -%}
+{% endif %}
+</pre>

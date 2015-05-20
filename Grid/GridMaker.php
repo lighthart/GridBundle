@@ -21,6 +21,7 @@ class GridMaker
     private $grid;
     // options for debugging
     private $debug;
+    private $dumper;
 
     /**
      * This should never be used -- method is so there is not an exception thrown.
@@ -38,10 +39,11 @@ class GridMaker
      * @param Doctrine Service
      * @param Router Service
      */
-    public function __construct($doctrine, $router)
+    public function __construct($doctrine, $router, $dumper)
     {
         $this->doctrine = $doctrine;
         $this->router   = $router;
+        $this->dumper   = $dumper;
         $this->debug    = [];
     }
 
@@ -150,6 +152,27 @@ class GridMaker
         $debug = $this->getDebug();
         $debug['resultsDump'] = true;
         $this->setDebug($debug);
+    }
+
+    /**
+     * Get dumper
+     *
+     * @return
+     */
+
+    public function getDumper() {
+         return $this->dumper;
+    }
+
+    /**
+     * Set dumper
+     *
+     * @param
+     * @return $this
+     */
+    public function setDumper($dumper) {
+        $this->dumper = $dumper;
+        return $this;
     }
 
     /**
@@ -637,9 +660,10 @@ class GridMaker
         } else {
             $q = $this->QB()->getQuery();
             if ($this->getQueryDump()) {
-                print_r($this->QB()->getQuery()->getDQL());
-                print_r('<br><br>');
-                print_r($this->QB()->getQuery()->getSQL());
+                $dump = $this->getDumper()->dumpDql($this->QB());
+                print_r($dump);
+                $dump = $this->getDumper()->dumpSql($this->QB());
+                print_r($dump);
             }
 
             if ($results) {
@@ -651,9 +675,8 @@ class GridMaker
             }
 
             if ($this->getResultsDump()) {
-                print_r('<pre>');
-                var_dump($results);
-                print_r('</pre>');
+                $dump = $this->getDumper()->dumpResults($results);
+                print_r($dump);
             }
 
             if ($this->getResultsDump() || $this->getQueryDump()){

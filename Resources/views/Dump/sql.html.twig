@@ -1,0 +1,27 @@
+<pre>
+<br/>
+---------------------------------------------------------------------------------------------
+<br/>
+{# {{dump(qb.getQuery.getSql)}} #}
+{{
+    qb.getQuery.sql|replace({
+        ','        : ',<br/>&nbsp;&nbsp;',
+        'SELECT'   : 'SELECT<br/>&nbsp;&nbsp;',
+        'JOIN'     : 'JOIN<br/>&nbsp;&nbsp;',
+        'FROM'     : '<br/>FROM<br/>&nbsp;&nbsp;',
+        'WHERE'    : '<br/>WHERE<br/>&nbsp;&nbsp;',
+        'AND'      : '<br/>AND<br/>&nbsp;&nbsp;',
+        'OR'       : '<br/>OR<br/>&nbsp;&nbsp;',
+        'ORDER BY' : '<br/>ORDER BY<br/>&nbsp;&nbsp;',
+        'GROUP BY' : '<br/>GROUP BY<br/>&nbsp;&nbsp;',
+        'HAVING'   : '<br/>HAVING<br/>&nbsp;&nbsp;',
+        'LIMIT'    : '<br/>LIMIT<br/>&nbsp;&nbsp;',
+        'OFFSET'   : '<br/>OFFSET<br/>&nbsp;&nbsp;',
+    })|raw
+}}
+<br/>
+---------------------------------------------------------------------------------------------
+{% for param in qb.getQuery.parameters.toArray %}
+    {{param.getName}} - {% if param.getValue is iterable %}{{param.getValue|join(',')}}{% elseif not param.getValue %}False{% else %}{{param.getValue}}{% endif %}<br/>
+{% endfor %}
+</pre>
