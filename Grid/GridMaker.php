@@ -715,13 +715,9 @@ class GridMaker
                     $this->getGrid()->fillTr($results, $root);
                 }
                 if ($this->getGrid()->hasErrors()) {
-<<<<<<< HEAD
-                    var_dump($this->getGrid()->getErrors());
-                    die;
-=======
                     // var_dump($this->getGrid()->getErrors());
                     // die;
->>>>>>> master
+                    //
                     $this->getGrid()->fillErrors($results, $filters);
                 }
 
@@ -801,10 +797,10 @@ class GridMaker
         }
 
         $aliaser = new Aliaser($this->getGrid(), $this->QB());
-        print_r('<pre>');
-        var_dump($aliaser->getAliases());
-        print_r('</pre>');
-        die;
+        // print_r('<pre>');
+        // var_dump($aliaser->getAliases());
+        // print_r('</pre>');
+        // die;
 
         $dql = $qb->getQuery()->getDQL();
 
@@ -1375,10 +1371,6 @@ class GridMaker
             return $c->getOption('filterHidden');
         }));
 
-<<<<<<< HEAD
-=======
-
->>>>>>> master
         foreach ($hiddenFilters as $field => $hiddenType) {
             if ('array' == gettype($hiddenType)) {
             } else {
