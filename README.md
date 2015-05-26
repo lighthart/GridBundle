@@ -159,7 +159,7 @@ may use any alias you would like.
                     appearance on portions of the tuple.
 
     value:          Multiple fields may be added using tildes, as with example for title.
-                    Passing an array (instead of a string )of values takes the first
+                    Passing an array (instead of a string) of values takes the first
                     truthy value, similar to a postgres concat operator.
 
     boolean:        Field is a boolean, will render with boolean twigs.  If value is a
