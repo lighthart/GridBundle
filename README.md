@@ -42,6 +42,7 @@ If aggregate fields are needed in postgres, the operator must be added.
                         dql:
                             string_functions:
                                 ARRAYAGG: Lighthart\GridBundle\DQL\Postgres\ArrayAgg
+                                ARRAYAGGDISTINCT: Lighthart\GridBundle\DQL\Postgres\ArrayAggDistinct
 
 This is not currently supported for any platform other than postgres.
 
@@ -53,16 +54,16 @@ The table alias for the root entity must be 'root'. On all joined tables, you
 may use any alias you would like.
 
 ```php
-$em = $this->getDoctrine()->getManager();
-$rep = $em->getRepository('ApplicationBundle:Student');
-$root = 'root';
-$qb = $rep->createQueryBuilder($root);
-$qb->join($root . '.snowflake', 'f');
-$qb->join('f.school', 's');
-$qb->join('s.district', 'd');
-$qb->join('root.biller', 'b');
-$qb->addOrderBy('f.lastName');
-$qb->addOrderBy('f.firstName');
+    $em = $this->getDoctrine()->getManager();
+    $rep = $em->getRepository('ApplicationBundle:Student');
+    $root = 'root';
+    $qb = $rep->createQueryBuilder($root);
+    $qb->join($root . '.snowflake', 'f');
+    $qb->join('f.school', 's');
+    $qb->join('s.district', 'd');
+    $qb->join('root.biller', 'b');
+    $qb->addOrderBy('f.lastName');
+    $qb->addOrderBy('f.firstName');
 ```
 
 > **Note**: This query will be rewritten significantly, to fetch only partial
@@ -71,15 +72,15 @@ $qb->addOrderBy('f.firstName');
 #### Step 2: Initialize your grid.
 
 ```php
-$query = $qb->getQuery();
-$gm = $this->get('lg.maker');
-$gm->initialize(array(
-    'table' => 'table table-bordered table-condensed table-hover table-striped',
-    'html' => true,
-    'massAction' => true,
-    'request' => $request
-));
-$gm->setQueryBuilder($qb);
+    $query = $qb->getQuery();
+    $gm = $this->get('lg.maker');
+    $gm->initialize(array(
+        'table' => 'table table-bordered table-condensed table-hover table-striped',
+        'html' => true,
+        'massAction' => true,
+        'request' => $request
+    ));
+    $gm->setQueryBuilder($qb);
 ```
 
 > **Note**: Passing the request is optional, but makes flag cookies available in
@@ -97,16 +98,16 @@ $gm->setQueryBuilder($qb);
 #### Step 3: Start adding fields/columns.
 
 ```php
-$gm->addField('b', 'shortName', array(
-    // 'search' => false,
-    // 'filter' => false,
-    'attr' => array(
-        'class' => '',
-        'entity_id' => true,
-        'html' => true
-    ) ,
-    'title' => 'Biller:<br/> ~d.shortName~<br/>~s.shortName~',
-));
+    $gm->addField('b', 'shortName', array(
+        // 'search' => false,
+        // 'filter' => false,
+        'attr' => array(
+            'class' => '',
+            'entity_id' => true,
+            'html' => true
+        ) ,
+        'title' => 'Biller:<br/> ~d.shortName~<br/>~s.shortName~',
+    ));
 ```
 
 **Field Configuration**:
@@ -121,7 +122,8 @@ $gm->addField('b', 'shortName', array(
     filter:         Setting to true will add a search filter box to the column header which
                     only searches on this field. Optionally, you can also specify the kind
                     of search filter to use on this filed. Valid types are: date, number,
-                    and string.
+                    and string.  If filter is not set, it will default to false, and no
+                    input box will be displayed.
 
     attr:           Sets the html attributes.
 
@@ -145,8 +147,8 @@ $gm->addField('b', 'shortName', array(
     filterHidden:   Filter on a column which is hidden.  Useful for concatenating fields
                     filtering the end result, such as lastname/firstname combos.  In this
                     case hide the firstname column and add 'filterHidden' =>
-                    'alias.firstname' to the lastname column.  Hiddens columsn must be
-                    filterable.  Item must be an array or semicolon-separated list
+                    'alias.firstname' to the lastname column.  Hiddens columns must be
+                    set filterable.  Item must be an array or semicolon-separated list
 
     security:       A primitive boolean, or an anonymous function.  If the value evaluates
                     to true, the button is rendered.  Default is true.  For the anonymous
@@ -157,7 +159,7 @@ $gm->addField('b', 'shortName', array(
                     appearance on portions of the tuple.
 
     value:          Multiple fields may be added using tildes, as with example for title.
-                    Passing an array (instead of a string )of values takes the first
+                    Passing an array (instead of a string) of values takes the first
                     truthy value, similar to a postgres concat operator.
 
     boolean:        Field is a boolean, will render with boolean twigs.  If value is a
@@ -243,29 +245,29 @@ the query and insert that text.  This interpolation will ignore html tags.  The
 title text in the example above will add:
 
 ```html
-Biller:
-<District Name>
-<School Name>
-to the table header cell.
+    Biller:
+    <District Name>
+    <School Name>
+    to the table header cell.
 ```
 
 #### Step 4:  Add Actions.
 
 ```php
-$gm->addAction(array(
-    'icon' => 'fa-rocket',
-    'route' => array(
-        'student_show' => array(
-            'id' => '~t.id~'
+    $gm->addAction(array(
+        'icon' => 'fa-rocket',
+        'route' => array(
+            'student_show' => array(
+                'id' => '~t.id~'
+            )
+        ) ,
+        'security' => function($result, $columns){
+            return 'F' == $result[$columns['g.shortName']];
+        },
+        'attr' => array(
+            'title' => 'Star3'
         )
-    ) ,
-    'security' => function($result, $columns){
-        return 'F' == $result[$columns['g.shortName']];
-    },
-    'attr' => array(
-        'title' => 'Star3'
-    )
-));
+    ));
 ```
 
 Any number of buttons may be rendered.  By default, if there are more than 4, a fold-up
@@ -307,13 +309,13 @@ button will be automatically rendered.  This can be controlled by overwriting th
 #### Step 5:  Hydrate the grid and pass it to a twig.
 
 ```php
-$gm->hydrateGrid($request);
-return $this->render('ApplicationBundle:Test:test3.html.twig', array(
-    'grid'    => $gm->getGrid() ,
-    'flags'   => $flags,
-    'newPath' => $url,
-    'export'  => 1000,
-));
+    $gm->hydrateGrid($request);
+    return $this->render('ApplicationBundle:Test:test3.html.twig', array(
+        'grid'    => $gm->getGrid() ,
+        'flags'   => $flags,
+        'newPath' => $url,
+        'export'  => 1000,
+    ));
 ```
 
 **Render Configuration**:
@@ -327,7 +329,12 @@ return $this->render('ApplicationBundle:Test:test3.html.twig', array(
     flags:      An array of labels for flags to be rendered as check boxes above grid, to
                 be used to modify the grid query.  Flags specified as:
 
-                'flags' => ['Flag name', 'Another Flag', 'thirdFlag', 'ALLCAPSFLAG']
+                $flags['Flag name']    = 'Flag Name Title';
+                $flags['Another Flag'] = 'Another Flag Title';
+                $flags['thirdFlag']    = 'thirdFlag Title';
+                $flags['ALLCAPSFLAG']  = 'ALLCAPSFLAG Title';
+
+                'flags' => $flags;
 
                 Would be fetched in a Symfony controller by:
 
@@ -337,8 +344,9 @@ return $this->render('ApplicationBundle:Test:test3.html.twig', array(
                 $ALLCAPSFLAG = $request->query->get('allcapsflag');
 
                 That is, all letters will be lower-cased, and all spaces will become
-                underscores.  The original presentation of the values in the flags
-                array will be used for displaying labels next to checkboxes.
+                underscores.  The original presentation of the keys in the flags
+                array will be used for displaying labels next to checkboxes.  Titles
+                will be added to html title attribute for hoverover captioning.
 
     export:     Adds export limited to the number of lines specified by the value.  'all'
                 returns all results for export.
@@ -349,21 +357,33 @@ return $this->render('ApplicationBundle:Test:test3.html.twig', array(
 #### Step 6:  In your twig.
 
 ```html
-{% include 'LighthartGridBundle:Grid:grid.html.twig' %}
+    {% include 'LighthartGridBundle:Grid:grid.html.twig' %}
 ```
 
 or
 
 ```html
-{% embed 'LighthartGridBundle:Grid:grid.html.twig' %}
-< over-write certain blocks >
-{% endembed %}
+    {% embed 'LighthartGridBundle:Grid:grid.html.twig' %}
+    < over-write certain blocks >
+    {% endembed %}
 ```
 
 #### Step 7:  Configure routes.
 
 ```yml
-test3:
-    pattern:  /test3/
-    defaults: { _controller: "ApplicationBundle:Test:test3" }
+    test3:
+        pattern:  /test3/
+        defaults: { _controller: "ApplicationBundle:Test:test3" }
+```
+
+#### Step 8:  Debug helpers
+
+Three functions, setResultsDump(), setQueryDump() and setDebugDump() can be called on
+grid maker to dump debug output and die.  setDebugDump() does both of the other two
+actions.  Do this in the controller after or during the grid construction: eg:
+
+```php
+    $gm = $this->get('lg.maker');
+    $gm->setDebugDump();
+));
 ```

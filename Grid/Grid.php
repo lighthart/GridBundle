@@ -423,7 +423,7 @@ class Grid
                 $title  = ($columns[$key]->getOption('title') ?: $key);
                 $header = ($columns[$key]->getOption('header') ?: $title);
 
-                if (isset($columns[$key]->getOptions() ['hidden'])) {
+                if (isset($columns[$key]->getOptions()['hidden']) && $columns[$key]->getOptions()['hidden']) {
                 } else {
 
                     // tilde mapping
@@ -474,8 +474,6 @@ class Grid
                     $attr['header'] = $header;
                     $cell           = new Cell(['title' => $title, 'header' => $header, 'type' => 'th', 'attr' => $attr, 'options' => $options]);
                     $row->addCell($cell);
-
-                    // print_r('<pre>');var_dump($cell);print_r('<br/><br/>');
                 }
             } else {
 
@@ -484,7 +482,6 @@ class Grid
         }
         $thead->addRow($row);
 
-        // die;
         if (([] == array_filter($columns, function ($c) {
             return $c->getOption('filter');
         })) || $this->export) {
@@ -497,7 +494,7 @@ class Grid
     {
         $thead   = $this->getTable()->getThead();
         $columns = $this->getColumns();
-        $row     = new Row(['type' => 'tr', 'attr' => ['class' => 'lg-filters']]);
+        $row     = new Row(['type' => 'tr', 'attr' => ['class' => 'lg-filters'. ($filters ? '' : ' hide')]]);
 
         //Not ready to implement this
         if ($this->massAction) {
@@ -516,6 +513,16 @@ class Grid
         }
 
         foreach ($columns as $key => $column) {
+            if (!isset($column->getOptions() ['filter'])) {
+                $columnOptions = $column->getOptions();
+                $columnOptions['filter'] = false;
+                $column->setOptions($columnOptions);
+            }
+        }
+
+
+
+        foreach ($columns as $key => $column) {
             if (isset($columns[$key]->getOptions() ['hidden'])) {
             } else {
                 $attr = (isset($columns[$key]->getOptions() ['attr']) ? $columns[$key]->getOptions() ['attr'] : '');
@@ -527,8 +534,13 @@ class Grid
                         $attr['data-role-lg-field'] = $columns[$key]->getValue();
                         if ($columns[$key]->getOption('filterHidden')) {
                             $attr['data-role-lg-hidden'] = implode(';', array_map(function ($o) {
-                                return substr(strstr($o, '.'), 1);
-                            }, explode(';', $columns[$key]->getOption('filterHidden'))));
+                                return $this->getAliases()[$o];
+                            },
+                            'array' == gettype($columns[$key]->getOption('filterHidden')) ?
+                            $columns[$key]->getOption('filterHidden') :
+                            explode(';', $columns[$key]->getOption('filterHidden'))
+                            )
+                            );
                         }
                     }
 
@@ -538,13 +550,8 @@ class Grid
                             return substr(strstr($o, '.'), 1);
                         }, explode(';', $columns[$key]->getOption('filterHidden'))) [0];
                         $attr['data-role-lg-hidden'] = implode(';', array_map(function ($o) {
-                            return substr(strstr($o, '.'), 1);
+                            return $o;
                         }, explode(';', $columns[$key]->getOption('filterHidden'))));
-
-                        // print_r('<pre>');
-                        // var_dump($attr);
-                        // var_dump($columns[$key]);
-                        // die;
                     }
 
                     $attr['filter'] = $column->getOptions() ['filter'];
@@ -700,7 +707,7 @@ class Grid
                             $pattern = '/(\w+\_\_\_\w+)\_\_/';
                             preg_match($pattern, $key, $match);
                             if ($match) {
-                                $rootId                         = $match[1] . '__id';
+                                $rootId                         = $match[1] . "__id";
                                 $attr['data-role-lg-entity-id'] = $result[$rootId];
                             }
                         }
@@ -780,6 +787,11 @@ class Grid
                                 $options['money'] = true;
                             }
 
+                            $edit = ($columns[$key]->getOption('edit') ?: null);
+                            if ($edit) {
+                                $options['edit'] = true;
+                            }
+
                             if (!$security) {
                                 $value = null;
                             }
@@ -824,7 +836,7 @@ class Grid
             return !$c->getOption('hidden');
         });
 
-        $row = new Row(['type' => 'tr']);
+        $row = new Row(['type' => 'tr', 'attr' => ['class' => 'lg-aggregate-row']]);
 
         //Not ready to implement this
         if ($this->massAction && !$this->export) {
@@ -846,11 +858,13 @@ class Grid
         $results = $aqb->getQuery()->getResult();
         if ([] != $results && [] != $results[0]) {
             foreach ($results[0] as $key => $value) {
-                $options = $visible[array_keys($visible) [$key - 1]]->getOptions();
-                $attr    = $options['attr'];
+                $options              = $visible[array_keys($visible) [$key - 1]]->getOptions();
+                $options['aggregate'] = true;
+                $attr                 = $options['attr'];
 
                 // Can't edit aggregates
-                $attr['class']    = preg_replace('/\s*lg-editable\s*/', '', $attr['class']);
+                $attr['class'] = preg_replace('/\s*lg-editable\s*/', '', $attr['class']);
+                $attr['class'] .= " lg-aggregate";
                 $attr['emphasis'] = 'strong';
 
                 if (isset($attr['data-role-lg-editable'])) {

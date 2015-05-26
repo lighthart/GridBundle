@@ -1,17 +1,14 @@
 {% block footer %}
     {% set place = 'footer' %}
-    <div id="lg-{{place}}" class="container lg-{{place}}">
-        <nav class="navbar navbar-default" role="navigation">
-            <div class="container-fluid lg-grid-footer">
-                <form class="navbar-form navbar-left lg-left" role="search">
-                    {% include 'LighthartGridBundle:Grid:exportControl.html.twig' %}
-                    {# &nbsp;&nbsp; #}
-                    {% include 'LighthartGridBundle:Grid:resetControl.html.twig' %}
-                </form>
-                <form class="navbar-form navbar-right lg-right" role="search">
-                        {% include 'LighthartGridBundle:Grid:pagingControls.html.twig' %}
-                </form>
+    <div id="lg-{{place}}" class="container lg-{{place}} lg-controls">
+        <div class="row lg-grid-footer">
+            <div class="col-md-1-2 lg-left">
+                {% include 'LighthartGridBundle:Grid:exportControl.html.twig' %}
+                {% include 'LighthartGridBundle:Grid:resetControl.html.twig' %}
             </div>
-        </nav>
+            <div class="col-md-1-2">
+                {% include 'LighthartGridBundle:Grid:pagingControls.html.twig' %}
+            </div>
+        </div>
     </div>
 {% endblock footer %}

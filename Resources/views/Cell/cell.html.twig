@@ -3,6 +3,7 @@
 {% endif %}
 {% set boolean = cell.options.boolean is defined %}
 {% set money = cell.options.money is defined %}
+{% set edit = cell.options.edit is defined %}
 {% if buttonNum is defined %}
 {% else %}
     {% set buttonNum = 4 %}
@@ -16,25 +17,47 @@
 {%- elseif boolean -%}
     {% set value = cell.value|boolean %}
 {%- elseif money -%}
-    {% set value = cell.value|money %}
+    {% set value = cell.value|number_format(0, '.', ',') %}
 {%- else -%}
     {% set value = cell.value|trim %}
 {%- endif -%}
-<{{- cell.type }} {% for attrib, value in cell.attr -%}{{- attrib -}}="{{- value|trim -}}" {%- endfor -%} {% if width is defined %}style="width:{{width}};"{% endif %} {% if cell.attr['title'] is defined and 'td' == cell.type -%}{%- elseif boolean -%} title="{{cell.value|boolean(false)}}"{%- else -%} title="{{- value -}}"{%- endif %}{% if boolean %}{% endif %}{% if boolean %}width = "2em"{% endif %}{%- if cell.actions is defined -%}style="width:{% if cell.actions|length > buttonNum %}{{ buttonWidth * buttonNum + buttonPadding}}{% else %}{{ buttonWidth * cell.actions|length + buttonPadding}}{% endif %}px;"{% endif %}>{{-''-}}
+<{{- cell.type }} {% for attrib, value in cell.attr -%}{{- attrib -}}="{{- value|trim -}}" {%- endfor -%} {% if width is defined %}style="width:{{width}};"{% endif %} {% if cell.attr['title'] is defined and 'td' == cell.type -%}{%- elseif boolean -%} title="{{cell.value|boolean(false)}}"{%- else -%} title="{{- value -}}"{%- endif %}{% if boolean %}width = "2em"{% endif %}{%- if cell.actions is defined -%}style="width:{% if cell.actions|length > buttonNum %}{{ buttonWidth * buttonNum + buttonPadding}}{% else %}{{ buttonWidth * cell.actions|length + buttonPadding}}{% endif %}px;"{% endif %}>{{-''-}}
 {%- if cell.actions is defined -%}
     {% include 'LighthartGridBundle:Action:actions.html.twig' with {'actions': cell.actions} %}
 {%- elseif cell.statuses is defined -%}
     {% include 'LighthartGridBundle:Status:statuses.html.twig' with {'status': cell.statuses} %}
+{% elseif edit and cell.options.aggregate is not defined %}
+    {% if money %}
+        {% if cell.value is not null %}
+            {% if cell.value >= 0 %}
+                <input type="text" class="lg-edit-field money positive text-right" value="{{- value -}}"/>
+            {% else %}
+                <input type="text" class="lg-edit-field money negative text-right" value="({{- value -}})"/>
+            {% endif %}
+        {% else %}
+            <input type="text" class="lg-edit-field money positive text-right"/>
+        {% endif %}
+        {% else %}
+        <input type="text" class="lg-edit-field" value="{{- cell.value -}}"/>
+    {% endif %}
 {%- elseif value[:1] == '{' -%}
     {%- include 'LighthartGridBundle:Cell:list.html.twig' with {'list' : value[:(value|length - 1)][1:]|split(',')} %}
 {%- elseif cell.attr.checkbox is defined -%}
     <input type="checkbox"/>
 {%- elseif cell.value or ( boolean and 'th' != cell.type ) -%}
     {%- if cell.attr.emphasis is defined %}<{{- cell.attr.emphasis -}}>{% endif -%}
-        {{- value|raw -}}
+        {% if money %}
+            {% if cell.value >= 0 %}
+                <span class="money positive">{{- value -}}</span>
+            {% else %}
+                <span class="money negative">({{- value -}})</span>
+            {% endif %}
+        {% else %}
+            {{- value|raw -}}
+        {% endif %}
         {%- if cell.attr.emphasis is defined %}</{{cell.attr.emphasis}}>{% endif -%}
 {%- elseif 'th' == cell.type -%}
-    {%- if cell.attr.filter is defined %}
+    {%- if cell.attr.filter is defined and cell.attr.filter %}
         <input type="text" {% if cell.attr['data-role-lg-class'] is defined and cell.attr['data-role-lg-field'] is defined %}id="lg-filter-{{cell.attr['data-role-lg-class']}}__{{cell.attr['data-role-lg-field']}}"{% endif %} class="lg-filter-input"/>
     {%- elseif cell.header is defined and cell.header -%}
         {%- if cell.options.titleHtml is defined and cell.options.titleHtml -%}

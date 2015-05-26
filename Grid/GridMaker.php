@@ -19,6 +19,9 @@ class GridMaker
     private $query;
     private $queryBuilder;
     private $grid;
+    // options for debugging
+    private $debug;
+    private $dumper;
 
     /**
      * This should never be used -- method is so there is not an exception thrown.
@@ -36,10 +39,12 @@ class GridMaker
      * @param Doctrine Service
      * @param Router Service
      */
-    public function __construct($doctrine, $router)
+    public function __construct($doctrine, $router, $dumper)
     {
         $this->doctrine = $doctrine;
         $this->router   = $router;
+        $this->dumper   = $dumper;
+        $this->debug    = [];
     }
 
     /**
@@ -97,6 +102,86 @@ class GridMaker
     {
         $this->grid = $grid;
 
+        return $this;
+    }
+
+
+    /**
+     * Get debug
+     *
+     * @return
+     */
+
+    public function getDebug() {
+         return $this->debug;
+    }
+
+    /**
+     * Set debug
+     *
+     * @param
+     * @return $this
+     */
+    public function setDebug($debug) {
+        $this->debug = $debug;
+        return $this;
+    }
+
+    /**
+     * Set debugDump
+     */
+    public function setDebugDump() {
+        $this->setQueryDump();
+        $this->setResultsDump();
+        return $this;
+    }
+
+    public function getQueryDump(){
+        if (isset($this->getDebug()['queryDump'])){
+            return $this->getDebug()['queryDump'];
+        } else {
+            return false;
+        }
+    }
+
+    public function setQueryDump(){
+        $debug = $this->getDebug();
+        $debug['queryDump'] = true;
+        $this->setDebug($debug);
+    }
+
+    public function getResultsDump(){
+        if (isset($this->getDebug()['resultsDump'])){
+            return $this->getDebug()['resultsDump'];
+        } else {
+            return false;
+        }
+    }
+
+    public function setResultsDump(){
+        $debug = $this->getDebug();
+        $debug['resultsDump'] = true;
+        $this->setDebug($debug);
+    }
+
+    /**
+     * Get dumper
+     *
+     * @return
+     */
+
+    public function getDumper() {
+         return $this->dumper;
+    }
+
+    /**
+     * Set dumper
+     *
+     * @param
+     * @return $this
+     */
+    public function setDumper($dumper) {
+        $this->dumper = $dumper;
         return $this;
     }
 
@@ -268,6 +353,7 @@ class GridMaker
             $cookieKeys = array_filter(array_keys($cookies), function ($c) use ($route) {return false !== strpos($c, $route);});
             $cookieKeys = array_filter($cookieKeys, function ($c) {return false !== strpos($c, 'lg-');});
             $flagKeys = array_filter($cookieKeys, function ($c) {return false !== strpos($c, '-flag-');});
+            $cookieFlags = [];
             array_map(
                 function ($c, $k) use ($flagKeys, &$cookieFlags) {
                     if (in_array($k, $flagKeys)) {
@@ -277,7 +363,9 @@ class GridMaker
                 }, $cookies, array_keys($cookies)
             );
             $cookieFlags = array_filter($cookieFlags);
-            $request->query->add($cookieFlags);
+            if ([] != $cookieFlags) {
+                $request->query->add($cookieFlags);
+            }
         }
     }
 
@@ -581,12 +669,28 @@ class GridMaker
             return $response;
         } else {
             $q = $this->QB()->getQuery();
+            if ($this->getQueryDump()) {
+                $dump = $this->getDumper()->dumpDql($this->QB());
+                print_r($dump);
+                $dump = $this->getDumper()->dumpSql($this->QB());
+                print_r($dump);
+            }
+
             if ($results) {
                 // This should be handled in controller for now... need a way to smooth this out
                 // $q->setDql($this->mapAliases(['results' => $results]));
             } else {
                 $q->setDql($this->mapAliases());
                 $results = $q->getResult(Query::HYDRATE_SCALAR);
+            }
+
+            if ($this->getResultsDump()) {
+                $dump = $this->getDumper()->dumpResults($results);
+                print_r($dump);
+            }
+
+            if ($this->getResultsDump() || $this->getQueryDump()){
+                die;
             }
 
             $this->mapActions();
@@ -600,6 +704,7 @@ class GridMaker
                 $root = $root[array_keys($root) [0]];
             }
 
+
             $html = $this->getGrid()->getOption('html');
 
             if ($html) {
@@ -610,8 +715,13 @@ class GridMaker
                     $this->getGrid()->fillTr($results, $root);
                 }
                 if ($this->getGrid()->hasErrors()) {
+<<<<<<< HEAD
                     var_dump($this->getGrid()->getErrors());
                     die;
+=======
+                    // var_dump($this->getGrid()->getErrors());
+                    // die;
+>>>>>>> master
                     $this->getGrid()->fillErrors($results, $filters);
                 }
 
@@ -744,38 +854,40 @@ class GridMaker
         // //     $rqb->distinct();
         // // }
 
+        if (isset($qb->getDqlPart('join')[$oldRoot])) {
+
         $joins = $qb->getDqlPart('join') [$oldRoot];
-        foreach ($joins as $k => $join) {
-            if (false === strpos($join->getJoin(), '\\')) {
-                $entity = stristr($join->getJoin(), '.', true);
-                $field  = substr(stristr($join->getJoin(), '.', false), 1);
-                $alias  = $join->getAlias();
-                if (!in_array($join->getAlias(), array_keys($aliases))) {
-                    $mappings                     = $em->getMetadataFactory()->getMetadataFor($entities[$entity])->getAssociationMappings();
-                    if ($mappings[$field]['type'] <= 2) {
-                        // $qb->addGroupBy($alias);
+            foreach ($joins as $k => $join) {
+                if (false === strpos($join->getJoin(), '\\')) {
+                    $entity = stristr($join->getJoin(), '.', true);
+                    $field  = substr(stristr($join->getJoin(), '.', false), 1);
+                    $alias  = $join->getAlias();
+                    if (!in_array($join->getAlias(), array_keys($aliases))) {
+                        $mappings                     = $em->getMetadataFactory()->getMetadataFor($entities[$entity])->getAssociationMappings();
+                        if ($mappings[$field]['type'] <= 2) {
+                            // $qb->addGroupBy($alias);
+                        }
+                        $aliases[$join->getAlias() ]  = $alias . '___' . str_replace('\\', '_', $mappings[$field]['targetEntity'] . '_');
+                        $entities[$join->getAlias() ] = $mappings[$field]['targetEntity'];
                     }
-                    $aliases[$join->getAlias() ]  = $alias . '___' . str_replace('\\', '_', $mappings[$field]['targetEntity'] . '_');
-                    $entities[$join->getAlias() ] = $mappings[$field]['targetEntity'];
-                }
-            } else {
-                // for backside joins
-                $entity = $join->getJoin();
-                $field  = stristr($join->getCondition(), '=', true);
-                $field  = trim(substr(stristr($field, '.', false), 1));
-                $alias  = $join->getAlias();
-                if (!in_array($join->getAlias(), array_keys($aliases))) {
-                    $mappings                     = $em->getMetadataFactory()->getMetadataFor($entity)->getAssociationMappings();
+                } else {
+                    // for backside joins
+                    $entity = $join->getJoin();
+                    $field  = stristr($join->getCondition(), '=', true);
+                    $field  = trim(substr(stristr($field, '.', false), 1));
+                    $alias  = $join->getAlias();
+                    if (!in_array($join->getAlias(), array_keys($aliases))) {
+                        $mappings                     = $em->getMetadataFactory()->getMetadataFor($entity)->getAssociationMappings();
 
-                    if ($mappings[$field]['type'] <= 2) {
-                        // $qb->addGroupBy($alias);
+                        if ($mappings[$field]['type'] <= 2) {
+                            // $qb->addGroupBy($alias);
+                        }
+                        $aliases[$join->getAlias() ]  = $alias . '___' . str_replace('\\', '_', $entity . '_');
+                        $entities[$join->getAlias() ] = $entity;
                     }
-                    $aliases[$join->getAlias() ]  = $alias . '___' . str_replace('\\', '_', $entity . '_');
-                    $entities[$join->getAlias() ] = $entity;
                 }
-            }
-        };
-
+            };
+        }
         foreach ($aliases as $k => $v) {
             // mark root
             if ($k == $oldRoot) {
@@ -856,7 +968,6 @@ class GridMaker
 
             // the column must be specified as a hidden column in your grid.
         }
-
         if (!$g->getColumns()) {
             throw new \Exception('Grid rendered with no defined columns');
         }
@@ -1103,7 +1214,7 @@ class GridMaker
         foreach ($groups as $entity => $fields) {
             $qb->addSelect('arrayAgg(' . $entity . ') AS ' . $entity . '_id');
             foreach ($fields as $fieldKey => $field) {
-                $qb->addSelect('arrayAgg(' . $field . ') AS ' . str_replace('.', '_', $field));
+                $qb->addSelect('arrayAggDistinct(' . $field . ') AS ' . str_replace('.', '_', $field));
             }
         }
 
@@ -1252,6 +1363,7 @@ class GridMaker
             return $c->getOption('filter');
         }));
 
+
         $filters = [];
         foreach ($filterFields as $field => $type) {
             $filters[$type][] = str_replace('_', '.', $field);
@@ -1263,6 +1375,10 @@ class GridMaker
             return $c->getOption('filterHidden');
         }));
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> master
         foreach ($hiddenFilters as $field => $hiddenType) {
             if ('array' == gettype($hiddenType)) {
             } else {
@@ -1292,8 +1408,6 @@ class GridMaker
 
         $filter      = explode(';', $filter);
         $multiFilter = [];
-
-        // print_r('<pre>');var_dump($filter);die;
 
         foreach ($filter as $key => $filt) {
             if (strpos($filt, '|') === false) {

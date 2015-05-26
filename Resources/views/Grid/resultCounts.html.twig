@@ -1,5 +1,5 @@
 {% block resultCount -%}
-    <div id="lg-{{ place }}-result-counts" class="lg-control-text lg-result-counts form-group">
+    <div id="lg-{{ place }}-result-counts" class="lg-control-text lg-result-counts lg-paging-widget">
         Results&nbsp; {{- grid.offset + 1-}}- {{-((grid.offset + grid.pageSize)> grid.total )? grid.total : grid.offset + grid.pageSize -}} &nbsp; of {{grid.total}}
     </div>{{-''-}}&nbsp;{{-''-}}
 {%- endblock resultCount %}
