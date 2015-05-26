@@ -148,7 +148,7 @@ may use any alias you would like.
                     filtering the end result, such as lastname/firstname combos.  In this
                     case hide the firstname column and add 'filterHidden' =>
                     'alias.firstname' to the lastname column.  Hiddens columns must be
-                    filterable.  Item must be an array or semicolon-separated list
+                    set filterable.  Item must be an array or semicolon-separated list
 
     security:       A primitive boolean, or an anonymous function.  If the value evaluates
                     to true, the button is rendered.  Default is true.  For the anonymous
