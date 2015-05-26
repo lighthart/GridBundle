@@ -147,7 +147,7 @@ may use any alias you would like.
     filterHidden:   Filter on a column which is hidden.  Useful for concatenating fields
                     filtering the end result, such as lastname/firstname combos.  In this
                     case hide the firstname column and add 'filterHidden' =>
-                    'alias.firstname' to the lastname column.  Hiddens columsn must be
+                    'alias.firstname' to the lastname column.  Hiddens columns must be
                     filterable.  Item must be an array or semicolon-separated list
 
     security:       A primitive boolean, or an anonymous function.  If the value evaluates
