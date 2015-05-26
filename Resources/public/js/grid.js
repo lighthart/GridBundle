@@ -544,7 +544,9 @@ function getAllFilters() {
         filter += parent.attr('data-role-lg-class') + '__' + parent.attr('data-role-lg-field') + ':' + value;
         if (parent.attr('data-role-lg-hidden')) {
             parent.attr('data-role-lg-hidden').split(';').forEach(function(f) {
-                filter += '|' + parent.attr('data-role-lg-class') + '__' + f + ':' + value;
+                filter += '|' + f + ':' + value;
+                // Older below.  A little concerned about no reference to column's original field
+                // filter += '|' + parent.attr('data-role-lg-class') + '__' + f + ':' + value;
             });
         }
         filter += ";";

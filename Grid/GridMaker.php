@@ -1342,6 +1342,7 @@ class GridMaker
             return $c->getOption('filter');
         }));
 
+
         $filters = [];
         foreach ($filterFields as $field => $type) {
             $filters[$type][] = str_replace('_', '.', $field);
@@ -1352,6 +1353,7 @@ class GridMaker
         }, array_filter($this->getGrid()->getColumns(), function ($c) {
             return $c->getOption('filterHidden');
         }));
+
 
         foreach ($hiddenFilters as $field => $hiddenType) {
             if ('array' == gettype($hiddenType)) {
@@ -1382,8 +1384,6 @@ class GridMaker
 
         $filter      = explode(';', $filter);
         $multiFilter = [];
-
-        // print_r('<pre>');var_dump($filter);die;
 
         foreach ($filter as $key => $filt) {
             if (strpos($filt, '|') === false) {

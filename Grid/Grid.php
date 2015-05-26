@@ -474,8 +474,6 @@ class Grid
                     $attr['header'] = $header;
                     $cell           = new Cell(['title' => $title, 'header' => $header, 'type' => 'th', 'attr' => $attr, 'options' => $options]);
                     $row->addCell($cell);
-
-                    // print_r('<pre>');var_dump($cell);print_r('<br/><br/>');
                 }
             } else {
 
@@ -536,8 +534,13 @@ class Grid
                         $attr['data-role-lg-field'] = $columns[$key]->getValue();
                         if ($columns[$key]->getOption('filterHidden')) {
                             $attr['data-role-lg-hidden'] = implode(';', array_map(function ($o) {
-                                return substr(strstr($o, '.'), 1);
-                            }, explode(';', $columns[$key]->getOption('filterHidden'))));
+                                return $this->getAliases()[$o];
+                            },
+                            'array' == gettype($columns[$key]->getOption('filterHidden')) ?
+                            $columns[$key]->getOption('filterHidden') :
+                            explode(';', $columns[$key]->getOption('filterHidden'))
+                            )
+                            );
                         }
                     }
 
@@ -547,13 +550,8 @@ class Grid
                             return substr(strstr($o, '.'), 1);
                         }, explode(';', $columns[$key]->getOption('filterHidden'))) [0];
                         $attr['data-role-lg-hidden'] = implode(';', array_map(function ($o) {
-                            return substr(strstr($o, '.'), 1);
+                            return $o;
                         }, explode(';', $columns[$key]->getOption('filterHidden'))));
-
-                        // print_r('<pre>');
-                        // var_dump($attr);
-                        // var_dump($columns[$key]);
-                        // die;
                     }
 
                     $attr['filter'] = $column->getOptions() ['filter'];
