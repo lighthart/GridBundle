@@ -1,5 +1,5 @@
 {%- for item in list -%}
     {% if 'NULL' != item %}
-        {{- item|replace({"\"":""})|replace({";;":","}) -}}<br/>
+        {{- item|replace({"\"":""}) -}}<br/>
     {% endif %}
 {%- endfor -%}

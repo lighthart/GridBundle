@@ -533,8 +533,14 @@ class Grid
                         $attr['data-role-lg-class'] = $match[1] . '___' . $match[2];
                         $attr['data-role-lg-field'] = $columns[$key]->getValue();
                         if ($columns[$key]->getOption('filterHidden')) {
-                            $attr['data-role-lg-hidden'] = implode(';', array_map(function ($o) {
-                                return $this->getAliases()[$o];
+                            // var_dump($columns[$key]->getOption('filterHidden'));die;
+                            $aliases = $this->getAliases();
+                            $attr['data-role-lg-hidden'] = implode(';', array_map(function ($o) use ($aliases) {
+                                if (isset($aliases[$o])) {
+                                    return $aliases[$o];
+                                } else {
+                                    return $o;
+                                }
                             },
                             'array' == gettype($columns[$key]->getOption('filterHidden')) ?
                             $columns[$key]->getOption('filterHidden') :
@@ -548,10 +554,10 @@ class Grid
                         $attr['data-role-lg-class'] = stristr($columns[$key]->getAlias(), '__otherGroup', true);
                         $attr['data-role-lg-field'] = array_map(function ($o) {
                             return substr(strstr($o, '.'), 1);
-                        }, explode(';', $columns[$key]->getOption('filterHidden'))) [0];
+                        }, explode(', ', $columns[$key]->getOption('filterHidden'))) [0];
                         $attr['data-role-lg-hidden'] = implode(';', array_map(function ($o) {
                             return $o;
-                        }, explode(';', $columns[$key]->getOption('filterHidden'))));
+                        }, explode(',', $columns[$key]->getOption('filterHidden'))));
                     }
 
                     $attr['filter'] = $column->getOptions() ['filter'];

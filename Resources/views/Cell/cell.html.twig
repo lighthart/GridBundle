@@ -41,7 +41,7 @@
         <input type="text" class="lg-edit-field" value="{{- cell.value -}}"/>
     {% endif %}
 {%- elseif value[:1] == '{' -%}
-    {%- include 'LighthartGridBundle:Cell:list.html.twig' with {'list' : value[:(value|length - 1)][1:]|split(',')} %}
+    {%- include 'LighthartGridBundle:Cell:list.html.twig' with {'list' : value[:(value|length - 1)][1:]|split('","')} %}
 {%- elseif cell.attr.checkbox is defined -%}
     <input type="checkbox"/>
 {%- elseif cell.value or ( boolean and 'th' != cell.type ) -%}

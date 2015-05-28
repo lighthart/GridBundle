@@ -439,7 +439,11 @@ class GridMaker
             return $this;
         } elseif (isset($options['otherGroup']) && $options['otherGroup']) {
             if (isset($options['filter']) && $options['filter']) {
-                $options['filterHidden'] = str_replace('\'; \'', '; ', str_replace(';;', ';', implode($options['otherGroup'], '')));
+                if ('array' == gettype($options['otherGroup'])) {
+                $options['filterHidden'] = implode($options['otherGroup'], '');
+                } else {
+                    $options['filterHidden'] = $options['otherGroup'];
+                }
             }
             $this->getGrid()->addColumn(new Column($entity, $value, $options));
 
@@ -846,8 +850,8 @@ class GridMaker
                         if ($mappings[$field]['type'] <= 2) {
                             // $qb->addGroupBy($alias);
                         }
-                        $aliases[$join->getAlias() ]  = $alias . '___' . str_replace('\\', '_', $mappings[$field]['targetEntity'] . '_');
-                        $entities[$join->getAlias() ] = $mappings[$field]['targetEntity'];
+                        $aliases[$join->getAlias()]  = $alias . '___' . str_replace('\\', '_', $mappings[$field]['targetEntity'] . '_');
+                        $entities[$join->getAlias()] = $mappings[$field]['targetEntity'];
                     }
                 } else {
                     // for backside joins
@@ -856,13 +860,13 @@ class GridMaker
                     $field  = trim(substr(stristr($field, '.', false), 1));
                     $alias  = $join->getAlias();
                     if (!in_array($join->getAlias(), array_keys($aliases))) {
-                        $mappings                     = $em->getMetadataFactory()->getMetadataFor($entity)->getAssociationMappings();
+                        $mappings = $em->getMetadataFactory()->getMetadataFor($entity)->getAssociationMappings();
 
                         if ($mappings[$field]['type'] <= 2) {
                             // $qb->addGroupBy($alias);
                         }
-                        $aliases[$join->getAlias() ]  = $alias . '___' . str_replace('\\', '_', $entity . '_');
-                        $entities[$join->getAlias() ] = $entity;
+                        $aliases[$join->getAlias()]  = $alias . '___' . str_replace('\\', '_', $entity . '_');
+                        $entities[$join->getAlias()] = $entity;
                     }
                 }
             };
@@ -982,9 +986,9 @@ class GridMaker
                 if (false === strpos($oldAlias, '_')) {
                     $newAlias = $oldAlias;
                 } else {
-                    $newAlias   = $g->getAliases()[str_replace('_', '.', $oldAlias)];
+                    $newAlias = $g->getAliases()[str_replace('_', '.', $oldAlias)];
                 }
-                $columns[]  = new Column($newAlias, $oldValue, $oldOptions);
+                $columns[] = new Column($newAlias, $oldValue, $oldOptions);
             }
         }
         $g->setColumns($columns);
@@ -1130,6 +1134,7 @@ class GridMaker
             } elseif ($column->getOption('otherGroup')) {
                 if ('array' == gettype($column->getOption('otherGroup'))) {
                     $groupList = $column->getOption('otherGroup');
+                    // var_dump($groupList);die;
                     $gString   = '\'\'';
                     while ($g = array_pop($groupList)) {
                         $gString = 'concat(' . $g . ',' . $gString . ')';
@@ -1138,8 +1143,9 @@ class GridMaker
                     $otherGroups[$column->getAlias()][]   = $gString;
                     // $partials[$column->getEntity()][] = $column->getValue();
                 } else {
-                    $groups[$column->getEntity()][]   = $column->getEntity() . '.' . $column->getValue();
-                    $partials[$column->getEntity()][] = $column->getValue();
+                    // var_dump($column->getOption('otherGroup'));die;
+                    $otherGroups[$column->getEntity()][]   = $column->getOption('otherGroup');
+                    $partials[$column->getEntity()][] = $column->getOption('otherGroup');
                 }
             } else {
                 $partials[$column->getEntity()][] = $column->getValue();
@@ -1189,7 +1195,6 @@ class GridMaker
         foreach ($dqls as $key => $dql) {
             $qb->addSelect($dql);
         }
-
         foreach ($groups as $entity => $fields) {
             $qb->addSelect('arrayAgg(' . $entity . ') AS ' . $entity . '_id');
             foreach ($fields as $fieldKey => $field) {
@@ -1205,7 +1210,12 @@ class GridMaker
         foreach ($otherGroups as $entity => $fields) {
             // $qb->addSelect('arrayAggDistinct(' . $entity . ') AS ' . $entity . '_id');
             foreach ($fields as $fieldKey => $field) {
-                $qb->addSelect('arrayAggDistinct(' . $field . ') AS ' . str_replace('.', '_', $entity));
+                $chunks = explode(';', $field);
+                $chunkField="''";
+                foreach (array_reverse($chunks) as $chunkKey => $chunkValue) {
+                    $chunkField = "concat(".$chunkValue.','.$chunkField.')';
+                }
+                $qb->addSelect('arrayAggDistinct(' . $chunkField . ') AS ' . str_replace('.', '_', $entity)."_otherGroup");
             }
         }
     }

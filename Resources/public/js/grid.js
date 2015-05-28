@@ -693,11 +693,13 @@ function markFlags() {
             $('input#lg-grid-flag-' + flag).each(function() {
                 this.checked = true;
             });
-        } else {
-            $('input#lg-grid-flag-' + flag).each(function() {
-                this.checked = false;
-            });
         }
+        // Conflicts with pre-set flags
+        // else {
+        //     $('input#lg-grid-flag-' + flag).each(function() {
+        //         this.checked = false;
+        //     });
+        // }
     });
 }
 // '@LighthartGridBundle/Resources/public/js/gridReset.js'
