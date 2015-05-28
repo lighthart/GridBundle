@@ -439,11 +439,7 @@ class GridMaker
             return $this;
         } elseif (isset($options['otherGroup']) && $options['otherGroup']) {
             if (isset($options['filter']) && $options['filter']) {
-                if ('array' == gettype($options['otherGroup'])) {
-                $options['filterHidden'] = implode($options['otherGroup'], '');
-                } else {
-                    $options['filterHidden'] = $options['otherGroup'];
-                }
+                $options['filterHidden'] = $options['otherGroup'];
             }
             $this->getGrid()->addColumn(new Column($entity, $value, $options));
 
@@ -997,7 +993,8 @@ class GridMaker
     public function mapResults(array $result)
     {
 
-        // if query is out of sync with columns this blows chunks.  Basically, the root entities aren't getting into getAliases()
+        // if query is out of sync with columns this blows chunks.
+        // Basically, the root entities aren't getting into getAliases()
         $newResult = [];
         $g         = $this->getGrid();
         foreach ($result as $key => $value) {
@@ -1206,6 +1203,8 @@ class GridMaker
             $qb->addSelect('COUNT (DISTINCT ' . $field . ') AS ' . str_replace('.', '_', $field));
         }
 
+        // var_dump($otherGroups);die;
+
         // For composite fields in many-to-many relations
         foreach ($otherGroups as $entity => $fields) {
             // $qb->addSelect('arrayAggDistinct(' . $entity . ') AS ' . $entity . '_id');
@@ -1215,7 +1214,7 @@ class GridMaker
                 foreach (array_reverse($chunks) as $chunkKey => $chunkValue) {
                     $chunkField = "concat(".$chunkValue.','.$chunkField.')';
                 }
-                $qb->addSelect('arrayAggDistinct(' . $chunkField . ') AS ' . str_replace('.', '_', $entity)."_otherGroup");
+                $qb->addSelect('arrayAggDistinct(' . $chunkField . ') AS ' . str_replace('.', '_', $entity));
             }
         }
     }
@@ -1364,11 +1363,8 @@ class GridMaker
             return $c->getOption('filterHidden');
         }));
 
+
         foreach ($hiddenFilters as $field => $hiddenType) {
-            if ('array' == gettype($hiddenType)) {
-            } else {
-                $hiddenType = explode(';', $hiddenType);
-            }
             $hiddenCombo = implode(';',
                     array_map(function ($h) {
                         return str_replace('_', '.', $h);
@@ -1392,6 +1388,8 @@ class GridMaker
         }
 
         $filter      = explode(';', $filter);
+
+        // the | come from the js ajax request
         $multiFilter = [];
         foreach ($filter as $key => $filt) {
             if (strpos($filt, '|') === false) {
@@ -1439,7 +1437,7 @@ class GridMaker
         }
 
         foreach ($multiFilter as $key => $multi) {
-            $multiFilters = explode('|', $multi);
+            $multiFilters = array_filter(explode('|', $multi));
             $orF          = $qb->expr()->orx();
             foreach ($multiFilters as $mfKey => $mfValue) {
                 $multiFilterKey   = strstr($mfValue, ':', true);

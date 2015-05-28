@@ -555,9 +555,8 @@ class Grid
 
                     if ($columns[$key]->getOption('otherGroup') && $columns[$key]->getOption('filterHidden')) {
                         $attr['data-role-lg-class'] = stristr($columns[$key]->getAlias(), '__otherGroup', true);
-                        $attr['data-role-lg-field'] = array_map(function ($o) {
-                            return substr(strstr($o, '.'), 1);
-                        }, explode(';\', ', $columns[$key]->getOption('filterHidden'))) [0];
+
+                        $attr['data-role-lg-field'] = '0';
                         $aliases = $this->getAliases();
                         $attr['data-role-lg-hidden'] =
                         implode(';',
@@ -569,7 +568,7 @@ class Grid
                                     }
                             },
                             array_filter(
-                                explode(';', $columns[$key]->getOption('filterHidden')),
+                                $columns[$key]->getOption('filterHidden'),
                                 function($e) use ($aliases) {
                                     return isset($aliases[$e]);
                                 }

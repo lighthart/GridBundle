@@ -1,5 +1,4 @@
-{% block lgGrid %}
-    {# used in blocks below #}
+{% block lgGrid %}    {# used in blocks below #}
     {% spaceless %}
         <div class="lg">
             {% block lgGridheader %}
@@ -14,10 +13,6 @@
         </div>
     {% endspaceless %}
 {% endblock lgGrid %}
-
-{% block javascripts %}
-    {% include 'LighthartGridBundle:Grid:javascripts.html.twig' %}
-{% endblock javascripts %}
 {% block stylesheets %}
     {% include 'LighthartGridBundle:Grid:stylesheets.html.twig' %}
 {% endblock stylesheets %}
