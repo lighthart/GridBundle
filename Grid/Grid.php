@@ -549,6 +549,10 @@ class Grid
                         }
                     }
 
+// This is some pretty cantekerous bullshit.
+//
+// Need to go to an array merging approach/combinign tuples
+
                     if ($columns[$key]->getOption('otherGroup') && $columns[$key]->getOption('filterHidden')) {
                         $attr['data-role-lg-class'] = stristr($columns[$key]->getAlias(), '__otherGroup', true);
                         $attr['data-role-lg-field'] = array_map(function ($o) {
