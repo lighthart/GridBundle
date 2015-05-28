@@ -1131,16 +1131,12 @@ class GridMaker
             } elseif ($column->getOption('otherGroup')) {
                 if ('array' == gettype($column->getOption('otherGroup'))) {
                     $groupList = $column->getOption('otherGroup');
-                    // var_dump($groupList);die;
                     $gString   = '\'\'';
                     while ($g = array_pop($groupList)) {
                         $gString = 'concat(' . $g . ',' . $gString . ')';
                     }
-                    // $gString .= ' AS '.$column->getEntity().'Group';
                     $otherGroups[$column->getAlias()][]   = $gString;
-                    // $partials[$column->getEntity()][] = $column->getValue();
                 } else {
-                    // var_dump($column->getOption('otherGroup'));die;
                     $otherGroups[$column->getEntity()][]   = $column->getOption('otherGroup');
                     $partials[$column->getEntity()][] = $column->getOption('otherGroup');
                 }
@@ -1363,7 +1359,6 @@ class GridMaker
             return $c->getOption('filterHidden');
         }));
 
-
         foreach ($hiddenFilters as $field => $hiddenType) {
             $hiddenCombo = implode(';',
                     array_map(function ($h) {
@@ -1437,7 +1432,8 @@ class GridMaker
         }
 
         foreach ($multiFilter as $key => $multi) {
-            $multiFilters = array_filter(explode('|', $multi));
+            // 'otherGroup' is a keyword
+            $multiFilters = array_filter(explode('|', $multi), function($e){return strpos($e, 'otherGroup') === false;});
             $orF          = $qb->expr()->orx();
             foreach ($multiFilters as $mfKey => $mfValue) {
                 $multiFilterKey   = strstr($mfValue, ':', true);

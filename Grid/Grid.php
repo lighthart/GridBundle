@@ -555,8 +555,7 @@ class Grid
 
                     if ($columns[$key]->getOption('otherGroup') && $columns[$key]->getOption('filterHidden')) {
                         $attr['data-role-lg-class'] = stristr($columns[$key]->getAlias(), '__otherGroup', true);
-
-                        $attr['data-role-lg-field'] = '0';
+                        // $attr['data-role-lg-field'] = 'otherGroup';
                         $aliases = $this->getAliases();
                         $attr['data-role-lg-hidden'] =
                         implode(';',

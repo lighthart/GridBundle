@@ -1,4 +1,10 @@
 {% block pageSizeSelector %}
+                    <ul class="dropdown-menu" role="menu">
+                    <li><a href="#" class="text-left lg-pagesize" data-role-lg-pagesize="10">10 per page</a></li>
+                    <li><a href="#" class="text-left lg-pagesize" data-role-lg-pagesize="25">25 per page</a></li>
+                    <li><a href="#" class="text-left lg-pagesize" data-role-lg-pagesize="50">50 per page</a></li>
+                    <li><a href="#" class="text-left lg-pagesize" data-role-lg-pagesize="100">100 per page</a></li>
+                </ul>
     {% if grid.table.attr['singlePage'] is defined %}
     {% else %}
         <div class="lg-paging-widget">
