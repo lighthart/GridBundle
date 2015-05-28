@@ -1364,7 +1364,6 @@ class GridMaker
             return $c->getOption('filterHidden');
         }));
 
-
         foreach ($hiddenFilters as $field => $hiddenType) {
             if ('array' == gettype($hiddenType)) {
             } else {
@@ -1394,7 +1393,6 @@ class GridMaker
 
         $filter      = explode(';', $filter);
         $multiFilter = [];
-
         foreach ($filter as $key => $filt) {
             if (strpos($filt, '|') === false) {
                 $flt = explode(':', $filt);
@@ -1421,6 +1419,7 @@ class GridMaker
             // just bail out if there is nothing to filter for
             return $qb;
         }
+
 
         foreach ($filter as $key => $value) {
             $value = trim($value);

@@ -29,3 +29,9 @@ services:
         arguments: [ @twig ]
         tags:
             - { name: twig.extension }
+
+    lg.csvtoarray.extension:
+        class: Lighthart\GridBundle\Twig\CSVToArrayExtension
+        arguments: [ @twig ]
+        tags:
+            - { name: twig.extension }
