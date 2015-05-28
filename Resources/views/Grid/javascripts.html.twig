@@ -1,5 +1,6 @@
 {% block javascripts %}
     {% include 'LighthartGridBundle:Grid:grid.js.twig' %}
+    {{ asset('@jquery') }}
     {% javascripts
         '@LighthartGridBundle/Resources/public/js/grid.js'
         '@LighthartGridBundle/Resources/public/js/gridHighlight.js'
