@@ -1,5 +1,8 @@
 // '@LighthartGridBundle/Resources/public/js/grid.js'
 // inhibits recurring callback for duration of quiet before executing
+//
+// This is a relic for reference
+//
 var quiet = 300; // 300 ms
 var timer = 0;
 var xhr = 0;
