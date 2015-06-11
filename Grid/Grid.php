@@ -725,6 +725,7 @@ class Grid
                 }
                 foreach ($result as $key => $value) {
                     if (isset($columns[$key])) {
+                        $title = ($columns[$key]->getOption('title') ?: $key);
                         $attr = $columns[$key]->getOption('attr');
                         if ($columns[$key]->getOption('entityId')) {
                             $pattern = '/(\w+\_\_\_\w+)\_\_/';
@@ -732,6 +733,7 @@ class Grid
                             if ($match) {
                                 $rootId                         = $match[1] . "__id";
                                 $attr['data-role-lg-entity-id'] = $result[$rootId];
+                                $attr['data-role-th']           = $title;
                             }
                         }
 
@@ -743,7 +745,6 @@ class Grid
                             $attr['class'] .= ' lg-filterable';
                         }
 
-                        $title = ($columns[$key]->getOption('title') ?: $key);
 
                         $security = $columns[$key]->getSecurity();
                         if (is_bool($security)) {
