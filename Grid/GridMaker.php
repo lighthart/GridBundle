@@ -1359,6 +1359,7 @@ class GridMaker
             return $c->getOption('filterHidden');
         }));
 
+
         foreach ($hiddenFilters as $field => $hiddenType) {
             $hiddenCombo = implode(';',
                     array_map(function ($h) {
