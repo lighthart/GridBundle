@@ -1,0 +1,27 @@
+{% block addButton -%}
+    {%- if addForm is defined -%}
+        <div class="row lg-grid-header" style="display:inline-block;width:60%;vertical-align: middle">
+            <div class="col-md-1-12">
+                <span class="addForm" id="lg-toggle-add-form">
+                    <span class="btn btn-default btn-xs">
+                        Add
+                        <span id="lg-add-icon" class="fa {% if app.request.cookies.get('lg-add-form-toggle') %}fa-chevron-left{% else %}fa-chevron-right{% endif %}"></span>
+                    </span>
+                </span>
+            </div>
+            <div class="col-md-11-12">
+                <div id="lg-add-form" class="row {% if app.request.cookies.get('lg-add-form-toggle') %}{% else %}hide{% endif %}">
+                    {{ form_start(addForm)}}
+                    <div class="col-md-8-12">
+                        {{ form_widget(addForm.snowflake) }}
+                    </div>
+                    <div class="col-md-4-12">
+                        {{ form_widget(addForm.submit) }}
+                    </div>
+                    {{ form_rest(addForm) }}
+                    {{ form_end(addForm) }}
+                </div>
+            </div>
+        </div>
+    {%- endif -%}
+{%- endblock addButton %}

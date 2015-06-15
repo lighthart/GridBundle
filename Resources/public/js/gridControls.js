@@ -31,5 +31,6 @@ function activateControls() {
     gridSortControl();
     gridFlagControl();
     gridResetControl();
+    addButtonToggleControl()
     markFlags();
 }

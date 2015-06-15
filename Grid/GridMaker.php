@@ -857,10 +857,6 @@ class GridMaker
                     $alias  = $join->getAlias();
                     if (!in_array($join->getAlias(), array_keys($aliases))) {
                         $mappings = $em->getMetadataFactory()->getMetadataFor($entity)->getAssociationMappings();
-
-                        if ($mappings[$field]['type'] <= 2) {
-                            // $qb->addGroupBy($alias);
-                        }
                         $aliases[$join->getAlias()]  = $alias . '___' . str_replace('\\', '_', $entity . '_');
                         $entities[$join->getAlias()] = $entity;
                     }

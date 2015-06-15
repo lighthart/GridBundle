@@ -699,6 +699,7 @@ class Grid
                                     foreach ($params as $paramKey => $param) {
                                         $routeConfig[$routeKey][$paramKey] = $this->tilde($param, $result);
                                     }
+                                    $newAction->setRoute($this->router->generate($routeKey, $routeConfig[$routeKey]));
                                     try {
                                         $newAction->setRoute($this->router->generate($routeKey, $routeConfig[$routeKey]));
                                     } catch (\Exception $e) {
