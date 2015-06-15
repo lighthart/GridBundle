@@ -12,7 +12,6 @@ services:
             class: Lighthart\GridBundle\Grid\GridDumper
             arguments: [ @templating ]
 
-
     lg.subcookie.extension:
         class: Lighthart\GridBundle\Twig\SubcookieExtension
         tags:
