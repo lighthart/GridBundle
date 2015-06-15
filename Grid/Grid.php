@@ -680,7 +680,6 @@ class Grid
                 $cellActions = [];
                 if (([] != $this->getActions()) && !$this->export) {
                     foreach ($this->getActions() as $slug => $action) {
-
                         // figure out a bail out clause
                         // which uses tildes
                         $newAction = clone $action;
@@ -699,7 +698,6 @@ class Grid
                                     foreach ($params as $paramKey => $param) {
                                         $routeConfig[$routeKey][$paramKey] = $this->tilde($param, $result);
                                     }
-                                    $newAction->setRoute($this->router->generate($routeKey, $routeConfig[$routeKey]));
                                     try {
                                         $newAction->setRoute($this->router->generate($routeKey, $routeConfig[$routeKey]));
                                     } catch (\Exception $e) {
