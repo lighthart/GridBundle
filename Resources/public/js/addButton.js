@@ -1,8 +1,6 @@
 function addButtonToggleControl() {
-    console.log('addformtogglectotrols');
     $('#lg-toggle-add-form').unbind('click');
     $('#lg-toggle-add-form').one('click', function(e) {
-        console.log('addformtoggle');
         e.preventDefault();
         var addFormToggleCookie = 'lg-add-form-toggle';
         if ($('#lg-add-form').hasClass('hide')) {
