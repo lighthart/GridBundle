@@ -144,9 +144,11 @@ function gridReload(reset) {
                     $('tbody.lg-tbody').html($(responseText).find('tbody.lg-tbody').html());
                     $('div.lg-flags').html($(responseText).find('div.lg-flags').html());
                     $('form.navbar-right').html($(responseText).find('form.navbar-right').html());
-                    $('div.lg-paging-controls').html($(responseText).find('div.lg-paging-controls').html());
+                    $('div.lg-paging-controls-header').html($(responseText).find('div.lg-paging-controls-header').html());
+                    $('div#lg-footer').html($(responseText).find('div#lg-footer').html());
                     $('tr.lg-headers').html($(responseText).find('tr.lg-headers').html());
                     $('tr.lg-filters').html($(responseText).find('tr.lg-filters').html());
+
                 }
             },
             complete: function() {

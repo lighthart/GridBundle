@@ -498,17 +498,39 @@ class Grid
 
         //Not ready to implement this
         if ($this->massAction) {
-            $row->addCell(new Cell(['title' => ' ', 'type' => 'th', 'attr' => ['class' => 'lg-filterable lg-filter' . ($filters ? '' : ' hide')]]));
+            $row->addCell(new Cell(
+                [
+                    'title' => ' ',
+                    'type'  => 'th',
+                    'attr'  => [
+                        'class' => 'lg-filterable lg-filter' . ($filters ? '' : ' hide')
+                        ]
+                    ])
+            );
         }
 
         if ([] != $this->getActions()) {
-            $actionCell = new Cell(['title' => ' ', 'type' => 'th', 'attr' => ['class' => 'lg-filterable lg-filter' . ($filters ? '' : ' hide')]]);
+            $actionCell = new Cell(
+                [
+                    'title' => ' ',
+                    'type'  => 'th',
+                    'attr'  => [
+                         'class' => 'lg-filterable lg-filter' . ($filters ? '' : ' hide')
+                    ]
+                ]);
 
             $row->addCell($actionCell);
         }
 
         if ([] != $this->getStatuses()) {
-            $statusCell = new Cell(['title' => '', 'type' => 'th', 'attr' => ['class' => 'lg-filterable lg-filter']]);
+            $statusCell = new Cell(
+                [
+                'title' => '',
+                    'type' => 'th',
+                     'attr' => [
+                         'class' => 'lg-filterable lg-filter'
+                     ]
+                 ]);
             $row->addCell($statusCell);
         }
 
@@ -519,8 +541,6 @@ class Grid
                 $column->setOptions($columnOptions);
             }
         }
-
-
 
         foreach ($columns as $key => $column) {
             if (isset($columns[$key]->getOptions() ['hidden'])) {
@@ -691,26 +711,28 @@ class Grid
                             $security = $security($result, $this->aliases);
                         }
 
-                        if ($newAction->getRoute()) {
-                            $routeConfig = $newAction->getRoute();
-                            if ('array' == gettype($routeConfig)) {
-                                foreach ($routeConfig as $routeKey => $params) {
-                                    foreach ($params as $paramKey => $param) {
-                                        $routeConfig[$routeKey][$paramKey] = $this->tilde($param, $result);
-                                    }
-                                    try {
-                                        $newAction->setRoute($this->router->generate($routeKey, $routeConfig[$routeKey]));
-                                    } catch (\Exception $e) {
-                                        $newAction = null;
+                        if ($security){
+                            if ($newAction->getRoute()) {
+                                $routeConfig = $newAction->getRoute();
+                                if ('array' == gettype($routeConfig)) {
+                                    foreach ($routeConfig as $routeKey => $params) {
+                                        foreach ($params as $paramKey => $param) {
+                                            $routeConfig[$routeKey][$paramKey] = $this->tilde($param, $result);
+                                        }
+                                        try {
+                                            $newAction->setRoute($this->router->generate($routeKey, $routeConfig[$routeKey]));
+                                        } catch (\Exception $e) {
+                                            $newAction = null;
+                                        }
                                     }
                                 }
+                            } else {
+                                $newAction = null;
                             }
-                        } else {
-                            $newAction = null;
-                        }
 
-                        if ($security && $newAction) {
-                            $cellActions[] = $newAction;
+                            if ($newAction) {
+                                $cellActions[] = $newAction;
+                            }
                         }
                     }
 
