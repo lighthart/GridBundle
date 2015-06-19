@@ -40,6 +40,8 @@ function gridFilterToggleControl() {
             $.cookie(filterToggleCookie, 1);
             $('#lg-toggle-filter > span').removeClass('fa-chevron-down');
             $('#lg-toggle-filter > span').addClass('fa-chevron-up');
+            $('#lg-toggle-filter').removeClass('lg-filter-closed');
+            $('#lg-toggle-filter').addClass('lg-filter-open');
             $('.lg-filter').parent().removeClass('hide');
             $('.lg-filter').removeClass('hide');
         } else {
@@ -47,6 +49,8 @@ function gridFilterToggleControl() {
             $.cookie(filterToggleCookie, 0);
             $('#lg-toggle-filter > span').addClass('fa-chevron-down');
             $('#lg-toggle-filter > span').removeClass('fa-chevron-up');
+            $('#lg-toggle-filter').addClass('lg-filter-closed');
+            $('#lg-toggle-filter').removeClass('lg-filter-open');
             $('.lg-filter').parent().addClass('hide');
             $('.lg-filter').addClass('hide');
         }
