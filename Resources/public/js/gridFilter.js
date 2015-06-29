@@ -43,7 +43,7 @@ function gridFilterToggleControl() {
             $('#lg-toggle-filter').removeClass('lg-filter-closed');
             $('#lg-toggle-filter').addClass('lg-filter-open');
             $('.lg-filter').parent().removeClass('hide');
-            $('.lg-filter').removeClass('hide');pus
+            $('.lg-filter').removeClass('hide');
         } else {
             // Closed
             $.cookie(filterToggleCookie, 0);
