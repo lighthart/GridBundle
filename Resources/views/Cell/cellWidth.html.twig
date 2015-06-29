@@ -1,0 +1,18 @@
+width =
+{%- if boolean -%}"2em"
+{%- else -%}
+    "
+    {%- if width is defined -%}
+        {{- width -}}
+        {# Note: this is over-written because width is listed as an attribute #}
+        {# This may require a redesign #}
+    {%- elseif cell.actions is defined -%}
+        {%- if cell.actions|length > buttonNum -%}
+            {{- buttonWidth * buttonNum + buttonPadding -}}
+        {%- else -%}
+            {{- buttonWidth * cell.actions|length + buttonPadding -}}
+        {%- endif -%}
+        px
+    {%- endif -%}
+    "
+{%- endif -%}
