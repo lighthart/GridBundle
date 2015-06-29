@@ -21,7 +21,9 @@
 {%- else -%}
     {% set value = cell.value|trim %}
 {%- endif -%}
-<{{- cell.type }} {% for attrib, value in cell.attr -%}{{- attrib -}}="{{- value|trim -}}" {%- endfor -%} {% if cell.attr['title'] is defined and 'td' == cell.type -%}{%- elseif boolean -%} title="{{cell.value|boolean(false)}}"{%- else -%} title="{{- value -}}"{%- endif -%}{%- include 'LighthartGridBundle:Cell:cellWidth.html.twig' -%}>{{-''-}}
+<{{- cell.type }} {% for attrib, value in cell.attr -%}{%- if attrib != "width" -%}{{- attrib -}}="{{- value|trim -}}" {%- endif -%}{%- endfor -%} {% if cell.attr['title'] is defined and 'td' == cell.type -%}{%- elseif boolean -%} title="{{cell.value|boolean(false)}}"{%- else -%} title="{{- value -}}"{%- endif -%}
+    {%- include 'LighthartGridBundle:Cell:cellWidth.html.twig' -%}
+    >{{-''-}}
 {%- if cell.actions is defined -%}
     {% include 'LighthartGridBundle:Action:actions.html.twig' with {'actions': cell.actions} %}
 {%- elseif cell.statuses is defined -%}

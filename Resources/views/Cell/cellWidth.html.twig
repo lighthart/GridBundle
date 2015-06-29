@@ -1,18 +1,18 @@
-width =
-{%- if boolean -%}"2em"
+{%- if boolean -%}{% set widthVal = "4em" %}
 {%- else -%}
-    "
     {%- if width is defined -%}
-        {{- width -}}
-        {# Note: this is over-written because width is listed as an attribute #}
-        {# This may require a redesign #}
+        {% set widthVal = width %}
     {%- elseif cell.actions is defined -%}
         {%- if cell.actions|length > buttonNum -%}
-            {{- buttonWidth * buttonNum + buttonPadding -}}
+            {% set widthVal = buttonWidth * buttonNum + buttonPadding %}
         {%- else -%}
-            {{- buttonWidth * cell.actions|length + buttonPadding -}}
+            {% set widthVal = buttonWidth * cell.actions|length + buttonPadding %}
         {%- endif -%}
-        px
+        {% set widthVal = widthVal~"px" %}
     {%- endif -%}
-    "
 {%- endif -%}
+{% if widthVal is defined %}
+style ="width:{{widthVal}};min-width:{{widthVal}};white-space:nowrap;"
+{% else %}
+style ="white-space:nowrap;"
+{% endif %}
