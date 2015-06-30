@@ -862,6 +862,7 @@ class Grid
             $attr['colspan'] = count(array_filter($columns, function ($c) {
                 return !isset($c->getOptions() ['hidden']);
             }));
+            $attr['noResults'] = true;
             $cell = new Cell(['value' => 'No Results', 'title' => 'No Results', 'type' => 'td', 'attr' => $attr]);
             $row->addCell($cell);
             $tbody->addRow($row);
