@@ -9,16 +9,16 @@ function addButtonToggleControl() {
             $('#lg-add-icon').removeClass('fa-chevron-down');
             $('#lg-add-icon').addClass('fa-chevron-up');
             $('#lg-add-form').removeClass('hide');
-            $('#lg-add-form-toggle').removeClass('add-form-closed');
-            $('#lg-add-form-toggle').addClass('add-form-open');
+            $('#lg-add-form-toggle').removeClass('lg-add-form-closed');
+            $('#lg-add-form-toggle').addClass('lg-add-form-open');
         } else {
             // Closed
             $.cookie(addFormToggleCookie, 0);
             $('#lg-add-icon').addClass('fa-chevron-down');
             $('#lg-add-icon').removeClass('fa-chevron-up');
             $('#lg-add-form').addClass('hide');
-            $('#lg-add-form-toggle').addClass('add-form-closed');
-            $('#lg-add-form-toggle').removeClass('add-form-open');
+            $('#lg-add-form-toggle').addClass('lg-add-form-closed');
+            $('#lg-add-form-toggle').removeClass('lg-add-form-open');
         }
         activateControls();
     });
