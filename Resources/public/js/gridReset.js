@@ -32,3 +32,17 @@ function gridResetReload(control) {
     });
     gridReload(new Date().getTime(), true);
 }
+
+$(document).keyup(function(e){
+    e.preventDefault();
+    if (e.keyCode == 27) {
+        $('input.lg-filter').each(function() {
+            $(this).val('');
+        });
+        $('input.lg-search').val('');
+        $('.lg-grid-flag').each(function() {
+            this.checked = false;
+        });
+        gridResetReload();
+    }
+});
