@@ -1,27 +1,22 @@
 {%- if addForm is defined -%}
-    <div class="row lg-grid-header" style="display:inline-block;width:60%;vertical-align: middle">
-        <div class="col-md-1-12">
-            <span class="addForm" id="lg-toggle-add-form">
-                <span id="lg-add-form-toggle" class="btn btn-default btn-xs {% if app.request.cookies.get('lg-add-form-toggle') %}lg-add-form-open{% else %}lg-add-form-closed{% endif %}" title="{% if addTitle is defined %}{{addTitle}}{% else %}Add{% endif %}">
-                    Add&nbsp;
-                    <span id="lg-add-icon" class="fa {% if app.request.cookies.get('lg-add-form-toggle') %}fa-chevron-left{% else %}fa-chevron-right{% endif %}"></span>
-                </span>
-            </span>
+    <div class="row lg-grid-header addFormToggle" style="display:inline-block;vertical-align:middle;">
+        <span id="lg-add-form-toggle" class="btn btn-default btn-xs {% if app.request.cookies.get('lg-add-form-toggle') %}lg-add-form-open{% else %}lg-add-form-closed{% endif %}" title="{% if addTitle is defined %}{{addTitle}}{% else %}Add{% endif %}">
+            {% if addTitle is defined %}{{addTitle}}{% else %}Add{% endif %}&nbsp;
+            <span id="lg-add-icon" class="fa {% if app.request.cookies.get('lg-add-form-toggle') %}fa-chevron-up{% else %}fa-chevron-down{% endif %}"></span>
+        </span>
+    </div>
+    <div id="lg-add-form" class="lg-add-form {% if app.request.cookies.get('lg-add-form-toggle') %}{% else %}hide{% endif %}" >
+        {{ form_start(addForm)}}
+        <div style="display:inline-block;vertical-align:middle;width:30em;">
+            {{ form_widget(addForm.snowflake) }}
         </div>
-        <div class="col-md-11-12">
-            <div id="lg-add-form" class="row {% if app.request.cookies.get('lg-add-form-toggle') %}{% else %}hide{% endif %}">
-                {{ form_start(addForm)}}
-                <div class="col-md-8-12">
-                    {{ form_widget(addForm.snowflake) }}
-                </div>
-                <div class="col-md-4-12">
-                    {% block addFormSubmit %}
-                        {{ form_widget(addForm.submit) }}
-                    {% endblock addFormSubmit %}
-                </div>
-                {{ form_rest(addForm) }}
-                {{ form_end(addForm) }}
-            </div>
+        &nbsp;
+        <div style="display:inline-block;vertical-align:middle;">
+            {% block addFormSubmit %}
+                {{ form_widget(addForm.submit) }}
+            {% endblock addFormSubmit %}
         </div>
+        {{ form_rest(addForm) }}
+        {{ form_end(addForm) }}
     </div>
 {%- endif -%}
