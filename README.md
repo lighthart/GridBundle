@@ -359,7 +359,7 @@ button will be automatically rendered.  This can be controlled by overwriting th
 
     addForm:    A symfony form view to process adding things to the grid
 
-    addTitle:   Title for widget to open and close addForm
+    addTitle:   Title/label for widget to open and close addForm
 
 > **Note**: A lot of information is rendered with the table, including
 > class names and ids for other processing via javascript or other ajax.
