@@ -33,9 +33,12 @@ function gridResetReload(control) {
     gridReload(new Date().getTime(), true);
 }
 
+var KEYCODE_ENTER = 13;
+var KEYCODE_ESC = 27
+
 $(document).keyup(function(e){
     e.preventDefault();
-    if (e.keyCode == 27) {
+    if (e.keyCode == KEYCODE_ESC) {
         $('input.lg-filter').each(function() {
             $(this).val('');
         });
