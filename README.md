@@ -311,10 +311,13 @@ button will be automatically rendered.  This can be controlled by overwriting th
 ```php
     $gm->hydrateGrid($request);
     return $this->render('ApplicationBundle:Test:test3.html.twig', array(
-        'grid'    => $gm->getGrid() ,
-        'flags'   => $flags,
-        'newPath' => $url,
-        'export'  => 1000,
+        'grid'      => $gm->getGrid() ,
+        'flags'     => $flags,
+        'newPath'   => $url,
+        'export'    => 1000,
+        'noResults' => 'No Results'
+        'addForm'   => $addForm->createView(),
+        'addTitle'  => 'Label for AddForm',
     ));
 ```
 
@@ -350,6 +353,13 @@ button will be automatically rendered.  This can be controlled by overwriting th
 
     export:     Adds export limited to the number of lines specified by the value.  'all'
                 returns all results for export.
+
+    noResults:  String to display when there are no results.  Defaults to
+                'No Results'
+
+    addForm:    A symfony form view to process adding things to the grid
+
+    addTitle:   Title for widget to open and close addForm
 
 > **Note**: A lot of information is rendered with the table, including
 > class names and ids for other processing via javascript or other ajax.
