@@ -34,7 +34,7 @@ function gridResetReload(control) {
 }
 
 var KEYCODE_ENTER = 13;
-var KEYCODE_ESC = 27
+var KEYCODE_ESC = 27;
 
 $(document).keyup(function(e){
     e.preventDefault();
