@@ -1022,7 +1022,7 @@ class GridMaker
                         }
                         $action->setRoute($routeConfig);
                     } else {
-                        $this->addError('Action route improperly specified with more than one route.');
+                        $this->getGrid()->addError('Action route improperly specified with more than one route.');
                     }
                 }
             }

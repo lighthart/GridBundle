@@ -369,11 +369,13 @@ class Grid
         $thead   = $this->getTable()->getThead();
         $columns = $this->getColumns();
         $row     = new Row(['type' => 'tr']);
-        $row->addCell(new Cell(['title' => 'Grid Errors', 'html' => true, 'type' => 'th', 'attr' => ['class' => 'alert-danger alert']]));
+        $row->addCell(new Cell(['type' => 'th']));
+        $row->addCell(new Cell(['title' => 'Grid Errors', 'value' => 'Grid Errors', 'html' => true, 'type' => 'th', 'attr' => ['class' => 'alert-danger alert', 'colspan' => 100]]));
         $thead->addRow($row);
         foreach ($this->errors as $error) {
             $row = new Row(['type' => 'tr']);
-            $row->addCell(new Cell(['title' => $error, 'type' => 'th', 'attr' => []]));
+            $row->addCell(new Cell(['type' => 'th']));
+            $row->addCell(new Cell(['title' => $error, 'value' => $error, 'type' => 'th', 'attr' => ['class' => 'alert-danger alert', 'colspan' => 100]]));
             $thead->addRow($row);
         }
     }
@@ -716,13 +718,15 @@ class Grid
                                 $routeConfig = $newAction->getRoute();
                                 if ('array' == gettype($routeConfig)) {
                                     foreach ($routeConfig as $routeKey => $params) {
-                                        foreach ($params as $paramKey => $param) {
-                                            $routeConfig[$routeKey][$paramKey] = $this->tilde($param, $result);
-                                        }
-                                        try {
-                                            $newAction->setRoute($this->router->generate($routeKey, $routeConfig[$routeKey]));
-                                        } catch (\Exception $e) {
-                                            $newAction = null;
+                                        if ('array' == gettype($params)) {
+                                            foreach ($params as $paramKey => $param) {
+                                                $routeConfig[$routeKey][$paramKey] = $this->tilde($param, $result);
+                                            }
+                                            try {
+                                                $newAction->setRoute($this->router->generate($routeKey, $routeConfig[$routeKey]));
+                                            } catch (\Exception $e) {
+                                                $newAction = null;
+                                            }
                                         }
                                     }
                                 }
