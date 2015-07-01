@@ -6,17 +6,6 @@
         </span>
     </div>
     <div id="lg-add-form" class="lg-add-form {% if app.request.cookies.get('lg-add-form-toggle') %}{% else %}hide{% endif %}" >
-        {{ form_start(addForm)}}
-        <div style="display:inline-block;vertical-align:middle;width:30em;">
-            {{ form_widget(addForm.snowflake) }}
-        </div>
-        &nbsp;
-        <div style="display:inline-block;vertical-align:middle;">
-            {% block addFormSubmit %}
-                {{ form_widget(addForm.submit) }}
-            {% endblock addFormSubmit %}
-        </div>
-        {{ form_rest(addForm) }}
-        {{ form_end(addForm) }}
+     {{ form(addForm) }}
     </div>
 {%- endif -%}
