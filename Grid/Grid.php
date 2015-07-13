@@ -645,6 +645,7 @@ class Grid
         if ([] != $results) {
             foreach ($results as $tuple => $result) {
                 foreach ($headers as $headerKey => $headerValue) {
+                    // var_dump($headers);die;
                     if ($this->getColumn($headerKey)->getOption('value')) {
                         if ($columns[$headerKey]->getOption('value')) {
                             if ('array' == gettype($columns[$headerKey]->getOption('value'))) {
@@ -655,11 +656,19 @@ class Grid
 
                             // array filter strips out non-truthy values
 
+
+                            // not getting all of the tildes here... need to fix
                             $values = array_filter(array_map(function ($v) use ($result) {
                                 if (strpos($v, '~') !== false) {
-                                    return $result[str_replace('~', '', str_replace('.', '_', $v)) ];
+                                    $key = str_replace('~', '', str_replace('.', '_', $v));
+
+                                    if (isset($result[$key])) {
+                                        return $result[$key];
+                                    } else {
+                                        return "";
+                                    }
                                 } else {
-                                    return;
+                                    return "";
                                 }
                             }, $values));
 
