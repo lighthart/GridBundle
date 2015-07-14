@@ -8,8 +8,14 @@
 {% else %}
     {% set buttonNum = 4 %}
 {% endif %}
-{% set buttonWidth = 25 %}
-{% set buttonPadding = 6 %}
+{% if buttonWidth is defined %}
+{% else %}
+    {% set buttonWidth = 25 %}
+{% endif %}
+{% if buttonPadding is defined %}
+{% else %}
+    {% set buttonPadding = 6 %}
+{% endif %}
 {%- if cell.value.timestamp is defined -%}
     {% set value = cell.value|date('Y-m-d') %}
 {%- elseif cell.html is defined -%}

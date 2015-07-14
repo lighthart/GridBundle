@@ -397,3 +397,14 @@ actions.  Do this in the controller after or during the grid construction: eg:
     $gm->setDebugDump();
 ));
 ```
+
+#### Step 8:  Customizing twig
+
+There are some defaults controlling the display of buttons.  Num is the number
+displayed total, including the expander button if needed.
+
+```html
+    {% set buttonNum = 4 %}
+    {% set buttonWidth = 25 %}
+    {% set buttonPadding = 6 %}
+```
