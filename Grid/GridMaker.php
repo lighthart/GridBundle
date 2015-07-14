@@ -796,6 +796,9 @@ class GridMaker
         $root               = 'root___' . str_replace('\\', '_', $rootClassPath . '_');
         $aliases[$oldRoot]  = $root;
         $entities[$oldRoot] = $rootClassPath;
+
+        // this is crap... use doctrine's methods for this
+
         $rootSelect         = array_filter($qb->getDqlPart('select'), function ($s) {
             return $s->getParts()[0] == 'partial root.{id}';
         });
