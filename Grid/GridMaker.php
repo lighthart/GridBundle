@@ -788,6 +788,7 @@ class GridMaker
         $dql = $qb->getQuery()->getDQL();
 
         $aliases       = [];
+        $oldAliases       = [];
         $from          = $qb->getDqlPart('from') [0];
         $rootClassPath = $from->getFrom();
         $oldRoot       = $qb->getRootAlias();
