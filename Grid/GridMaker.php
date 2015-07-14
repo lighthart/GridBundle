@@ -535,6 +535,7 @@ class GridMaker
 
         $sorts = explode(';', $sort);
         foreach ($sorts as $key => $srt) {
+            // var_dump($srt);die;
             if (preg_match('/(.*?)\_\_\_(.*?)\_\_(.*?)\:(.*)/', $srt, $match)) {
                 if ($match[4]) {
                     $this->QB()->add('orderBy', $match[1] . '.' . $match[3] . ' ' . $match[4], true);
@@ -687,9 +688,9 @@ class GridMaker
             $this->mapColumns();
             $results = $this->mapResults($results);
             if ([] == $results) {
-                $root = 'root';
+                $root = $this->QB()->getRootAlias();
             } else {
-                $root = preg_grep('/^root\_\_\_(.*?)\_\_id$/', array_keys($results[0]));
+                $root = preg_grep('/^'.$this->QB()->getRootAlias().'\_\_\_(.*?)\_\_id$/', array_keys($results[0]));
 
                 $root = $root[array_keys($root) [0]];
             }
@@ -793,22 +794,20 @@ class GridMaker
         $rootClassPath = $from->getFrom();
         $oldRoot       = $qb->getRootAlias();
         // mark root
-        $root               = 'root___' . str_replace('\\', '_', $rootClassPath . '_');
+        $root               = $this->QB()->getRootAlias().'___' . str_replace('\\', '_', $rootClassPath . '_');
         $aliases[$oldRoot]  = $root;
         $entities[$oldRoot] = $rootClassPath;
 
-        // this is crap... use doctrine's methods for this
-
         $rootSelect         = array_filter($qb->getDqlPart('select'), function ($s) {
-            return $s->getParts()[0] == 'partial root.{id}';
+            return $s->getParts()[0] == 'partial '.$this->QB()->getRootAlias().'.{id}';
         });
-        // $qb->addGroupBy('root');
+        // $qb->addGroupBy($this->QB()->getRootAlias());
         if (isset($rootSelect[0]) && $rootSelect[0]) {
             // escaping the count query
             $rootSelectParts = explode(',', substr(stristr(stristr($rootSelect[0], '{'), '}', true), 1));
 
             foreach ($rootSelectParts as $k => $v) {
-                $oldAliases['root.' . $v] = $root . '_' . $v;
+                $oldAliases[$this->QB()->getRootAlias().'.' . $v] = $root . '_' . $v;
             }
         }
 
@@ -817,8 +816,8 @@ class GridMaker
         if (is_array($result)) {
             foreach ($result as $keyResult => $valueResult) {
                 foreach ($valueResult as $keySingle => $valueSingle) {
-                    if (strpos($keySingle, 'root_') !== false) {
-                        $valueResult[$root . substr(strstr($keySingle, 'root_'), 4) ] = $valueResult[$keySingle];
+                    if (strpos($keySingle, $this->QB()->getRootAlias().'_') !== false) {
+                        $valueResult[$root . substr(strstr($keySingle, $this->QB()->getRootAlias().'_'), 4) ] = $valueResult[$keySingle];
                         unset($valueResult[$keySingle]);
                     }
                 }
@@ -1155,7 +1154,7 @@ class GridMaker
                 $str = 'partial ' . $entity . '.{id,' . implode(',', $fields) . '}';
                 $qb->select($str);
                 if ([] != $groups) {
-                    $qb->addGroupBy('root');
+                    $qb->addGroupBy($this->QB()->getRootAlias());
                 }
             } else {
             }
