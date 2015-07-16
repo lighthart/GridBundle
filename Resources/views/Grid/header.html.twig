@@ -1,16 +1,21 @@
 {% block header %}
     {% block flags %}
-        {% include 'LighthartGridBundle:Grid:flags.html.twig' %}
+        {% include 'LighthartGridBundle:Control:flags.html.twig' %}
     {% endblock flags %}
     {% set place = 'header' %}
     <div id="lg-{{place}}" class="container lg-{{place}} lg-controls">
         <div class="row lg-grid-header">
-            <div class="col-md-1-2 lg-left">
-                {% include 'LighthartGridBundle:Grid:searchControl.html.twig' %}
-                {% include 'LighthartGridBundle:Grid:newButton.html.twig' %}
+            <div class="col-md-3-5 lg-left">
+                {% include 'LighthartGridBundle:Control:searchControl.html.twig' %}
+                {% block newButton %}
+                {% include 'LighthartGridBundle:Control:newButton.html.twig' %}
+                {% endblock newButton %}
+                {% block addButton %}
+                    {% include 'LighthartGridBundle:Control:addButton.html.twig' %}
+                {% endblock addButton %}
             </div>
-            <div class="col-md-1-2">
-                {% include 'LighthartGridBundle:Grid:pagingControls.html.twig' %}
+            <div class="col-md-2-5">
+                {% include 'LighthartGridBundle:Control:pagingControls.html.twig' %}
             </div>
         </div>
     </div>

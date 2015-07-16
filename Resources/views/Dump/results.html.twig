@@ -26,7 +26,11 @@
         <tbody>
             <tr>
                 <td>
-                    No Results
+                    {%- if noResults is defined -%}
+                        {{ noResults }}
+                    {%- else -%}
+                        No results
+                    {%- endif -%}
                 </td>
             </tr>
         </tbody>

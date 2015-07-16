@@ -1,10 +1,7 @@
 {% block javascripts %}
     {% include 'LighthartGridBundle:Grid:grid.js.twig' %}
-    <script type="text/javascript">
-    var assets = [];
-    {#
-    {%  javascripts
-        '@LighthartGridBundle/Resources/public/js/grid.js'
+    {% javascripts
+        '@LighthartGridBundle/Resources/public/js/gridLoad.js'
         '@LighthartGridBundle/Resources/public/js/gridHighlight.js'
         '@LighthartGridBundle/Resources/public/js/gridPaging.js'
         '@LighthartGridBundle/Resources/public/js/gridPageSize.js'
@@ -16,31 +13,10 @@
         '@LighthartGridBundle/Resources/public/js/gridReset.js'
         '@LighthartGridBundle/Resources/public/js/gridControls.js'
         '@LighthartGridBundle/Resources/public/js/tdEdit.js'
+        '@LighthartGridBundle/Resources/public/js/addButton.js'
+        '@LighthartGridBundle/Resources/public/js/gridReady.js'
+        output='bundles/lighthartgrid/js/grid.min.js'
     %}
-    #}
-    {%  javascripts
-        '@LighthartGridBundle/Resources/public/js/grid.js'
-    %}
-    assets.push("{{ asset_url }}");
+    <script type="text/javascript" src="{{ asset_url }}"></script>
     {% endjavascripts %}
-    window.onload = (function() {
-        assets.forEach(
-            function(asset) {
-                if (document.getElementById(asset) === null) {
-                // Append the script to the end of the dom
-                // Set the class name of the folders to that given from the config
-
-                var resourceListScript = document.createElement( "script" );
-                resourceListScript.type = "text/javascript";
-                resourceListScript.src = asset;
-                    //Give the script the asset url as id also
-                    resourceListScript.id = asset;
-                        //Add the script to the DOM at the end of the body tag
-                        document.getElementsByTagName("body")[0].appendChild(resourceListScript);
-                    }
-                }
-                )
-    });
-
-    </script>
 {% endblock javascripts %}

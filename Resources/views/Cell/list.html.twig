@@ -1,5 +1,5 @@
-{%- for item in list -%}
+{%- for item in list|csv2Array -%}
     {% if 'NULL' != item %}
-        {{- item|replace({"\"":""})|replace({";;":","}) -}}<br/>
+        {{- item|replace({"\"":""}) -}}<br/>
     {% endif %}
 {%- endfor -%}

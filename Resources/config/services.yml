@@ -12,7 +12,6 @@ services:
             class: Lighthart\GridBundle\Grid\GridDumper
             arguments: [ @templating ]
 
-
     lg.subcookie.extension:
         class: Lighthart\GridBundle\Twig\SubcookieExtension
         tags:
@@ -26,6 +25,12 @@ services:
 
     lg.money.extension:
         class: Lighthart\GridBundle\Twig\MoneyExtension
+        arguments: [ @twig ]
+        tags:
+            - { name: twig.extension }
+
+    lg.csvtoarray.extension:
+        class: Lighthart\GridBundle\Twig\CSVToArrayExtension
         arguments: [ @twig ]
         tags:
             - { name: twig.extension }

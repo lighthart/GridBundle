@@ -1,0 +1,10 @@
+{% block searchControl %}
+    <div class="btn-group">
+        <button class="btn btn-xs btn-default lg-toggle-filter {% if app.request.cookies.get('lg-filter-toggle') %}lg-filter-open{% else %}lg-filter-closed{% endif %}" id="lg-toggle-filter" title="Toggle filters">
+            <span class="fa {% if app.request.cookies.get('lg-filter-toggle') %}fa-chevron-up{% else %}fa-chevron-down{% endif %}"></span>
+        </button>
+    </div>
+    <div class="lg-search-input-margin">
+        <input type="text" id="lg-search-input"{% if grid.search %} class="lg-filtered lg-search" {% else %} class="lg-search" {% endif %}placeholder="Search" title="Search entire grid"/>
+    </div>
+{% endblock searchControl %}

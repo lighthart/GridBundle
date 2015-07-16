@@ -1,7 +1,7 @@
 {% block newButton -%}
-    {%- if newPath is defined -%}
+    {%- if newPath is defined and newPath -%}
         <a href="{{newPath}}" class="btn btn-xs btn-default" id="lg-new-button">
-            {%- if newIcon is defined -%}
+            {%- if newIcon is defined and newIcon -%}
                 <span class="fa {{newIcon}}"></span>
             {%- endif %} New
         </a>

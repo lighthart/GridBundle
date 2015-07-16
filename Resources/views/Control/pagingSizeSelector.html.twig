@@ -1,7 +1,13 @@
 {% block pageSizeSelector %}
+                    <ul class="dropdown-menu" role="menu">
+                    <li><a href="#" class="text-left lg-pagesize" data-role-lg-pagesize="10">10 per page</a></li>
+                    <li><a href="#" class="text-left lg-pagesize" data-role-lg-pagesize="25">25 per page</a></li>
+                    <li><a href="#" class="text-left lg-pagesize" data-role-lg-pagesize="50">50 per page</a></li>
+                    <li><a href="#" class="text-left lg-pagesize" data-role-lg-pagesize="100">100 per page</a></li>
+                </ul>
     {% if grid.table.attr['singlePage'] is defined %}
     {% else %}
-        <div class="lg-paging-widget">
+        <div class="lg-paging-widget lg-paging-widget-{{place}}">
             <div class={% if place == "footer" %}"dropup btn-group"{% else %}"btn-group"{% endif %}>
                 <button class="btn btn-xs btn-default lg-btn-top lg-results-per-page dropdown-toggle" id="lg-results-per-page" data-toggle="dropdown">
                     <span class="lg-pagesize-button" data-role-lg-pagesize="{{grid.pageSize}}">{{grid.pageSize}} per page</span>

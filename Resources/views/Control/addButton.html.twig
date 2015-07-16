@@ -1,0 +1,11 @@
+{%- if addForm is defined -%}
+    <div class="row lg-grid-header addFormToggle" style="display:inline-block;vertical-align:middle;">
+        <span id="lg-add-form-toggle" class="btn btn-default btn-xs {% if app.request.cookies.get('lg-add-form-toggle') %}lg-add-form-open{% else %}lg-add-form-closed{% endif %}" title="{% if addTitle is defined %}{{addTitle}}{% else %}Add{% endif %}">
+            {% if addTitle is defined %}{{addTitle}}{% else %}Add{% endif %}&nbsp;
+            <span id="lg-add-icon" class="fa {% if app.request.cookies.get('lg-add-form-toggle') %}fa-chevron-up{% else %}fa-chevron-down{% endif %}"></span>
+        </span>
+    </div>
+    <div id="lg-add-form" class="lg-add-form {% if app.request.cookies.get('lg-add-form-toggle') %}{% else %}hide{% endif %}" >
+     {{ form(addForm) }}
+    </div>
+{%- endif -%}

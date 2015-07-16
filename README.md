@@ -311,10 +311,13 @@ button will be automatically rendered.  This can be controlled by overwriting th
 ```php
     $gm->hydrateGrid($request);
     return $this->render('ApplicationBundle:Test:test3.html.twig', array(
-        'grid'    => $gm->getGrid() ,
-        'flags'   => $flags,
-        'newPath' => $url,
-        'export'  => 1000,
+        'grid'      => $gm->getGrid() ,
+        'flags'     => $flags,
+        'newPath'   => $url,
+        'export'    => 1000,
+        'noResults' => 'No Results'
+        'addForm'   => $addForm->createView(),
+        'addTitle'  => 'Label for AddForm',
     ));
 ```
 
@@ -351,6 +354,13 @@ button will be automatically rendered.  This can be controlled by overwriting th
     export:     Adds export limited to the number of lines specified by the value.  'all'
                 returns all results for export.
 
+    noResults:  String to display when there are no results.  Defaults to
+                'No Results'
+
+    addForm:    A symfony form view to process adding things to the grid
+
+    addTitle:   Title/label for widget to open and close addForm
+
 > **Note**: A lot of information is rendered with the table, including
 > class names and ids for other processing via javascript or other ajax.
 
@@ -386,4 +396,15 @@ actions.  Do this in the controller after or during the grid construction: eg:
     $gm = $this->get('lg.maker');
     $gm->setDebugDump();
 ));
+```
+
+#### Step 8:  Customizing twig
+
+There are some defaults controlling the display of buttons.  Num is the number
+displayed total, including the expander button if needed.
+
+```html
+    {% set buttonNum = 4 %}
+    {% set buttonWidth = 25 %}
+    {% set buttonPadding = 6 %}
 ```

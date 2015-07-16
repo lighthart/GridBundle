@@ -8,8 +8,14 @@
 {% else %}
     {% set buttonNum = 4 %}
 {% endif %}
-{% set buttonWidth = 24 %}
-{% set buttonPadding = 6 %}
+{% if buttonWidth is defined %}
+{% else %}
+    {% set buttonWidth = 25 %}
+{% endif %}
+{% if buttonPadding is defined %}
+{% else %}
+    {% set buttonPadding = 6 %}
+{% endif %}
 {%- if cell.value.timestamp is defined -%}
     {% set value = cell.value|date('Y-m-d') %}
 {%- elseif cell.html is defined -%}
@@ -21,7 +27,9 @@
 {%- else -%}
     {% set value = cell.value|trim %}
 {%- endif -%}
-<{{- cell.type }} {% for attrib, value in cell.attr -%}{{- attrib -}}="{{- value|trim -}}" {%- endfor -%} {% if width is defined %}style="width:{{width}};"{% endif %} {% if cell.attr['title'] is defined and 'td' == cell.type -%}{%- elseif boolean -%} title="{{cell.value|boolean(false)}}"{%- else -%} title="{{- value -}}"{%- endif %}{% if boolean %}width = "2em"{% endif %}{%- if cell.actions is defined -%}style="width:{% if cell.actions|length > buttonNum %}{{ buttonWidth * buttonNum + buttonPadding}}{% else %}{{ buttonWidth * cell.actions|length + buttonPadding}}{% endif %}px;"{% endif %}>{{-''-}}
+<{{- cell.type }} {% for attrib, value in cell.attr -%}{%- if attrib != "width" -%}{{- attrib -}}="{{- value|trim -}}" {%- endif -%}{%- endfor -%} {% if cell.attr['title'] is defined and 'td' == cell.type -%}{%- elseif boolean -%} title="{{cell.value|boolean(false)}}"{%- else -%} title="{{- value -}}"{%- endif -%}
+    {%- include 'LighthartGridBundle:Cell:cellWidth.html.twig' -%}
+    >{{-''-}}
 {%- if cell.actions is defined -%}
     {% include 'LighthartGridBundle:Action:actions.html.twig' with {'actions': cell.actions} %}
 {%- elseif cell.statuses is defined -%}
@@ -41,7 +49,7 @@
         <input type="text" class="lg-edit-field" value="{{- cell.value -}}"/>
     {% endif %}
 {%- elseif value[:1] == '{' -%}
-    {%- include 'LighthartGridBundle:Cell:list.html.twig' with {'list' : value[:(value|length - 1)][1:]|split(',')} %}
+    {%- include 'LighthartGridBundle:Cell:list.html.twig' with {'list' : value[1:(value|length - 2)] } %}
 {%- elseif cell.attr.checkbox is defined -%}
     <input type="checkbox"/>
 {%- elseif cell.value or ( boolean and 'th' != cell.type ) -%}
@@ -58,7 +66,7 @@
         {%- if cell.attr.emphasis is defined %}</{{cell.attr.emphasis}}>{% endif -%}
 {%- elseif 'th' == cell.type -%}
     {%- if cell.attr.filter is defined and cell.attr.filter %}
-        <input type="text" {% if cell.attr['data-role-lg-class'] is defined and cell.attr['data-role-lg-field'] is defined %}id="lg-filter-{{cell.attr['data-role-lg-class']}}__{{cell.attr['data-role-lg-field']}}"{% endif %} class="lg-filter-input"/>
+        <input type="text" {% if cell.attr['data-role-lg-class'] is defined and cell.attr['data-role-lg-field'] is defined %}id="lg-filter-{{cell.attr['data-role-lg-class']}}__{{cell.attr['data-role-lg-field']}}"{% endif %} class="lg-filter-input" title="Filter on this column"/>
     {%- elseif cell.header is defined and cell.header -%}
         {%- if cell.options.titleHtml is defined and cell.options.titleHtml -%}
             {{- cell.header|raw -}}

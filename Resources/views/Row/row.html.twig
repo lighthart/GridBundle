@@ -1,5 +1,9 @@
 <{{- row.type }} {% for attrib, value in row.attr -%}{{- attrib -}}="{{- value -}}"{%- endfor -%}>
-{% for cell in row.cell %}
-    {% include 'LighthartGridBundle:Cell:cell.html.twig' with {'cell': cell} %}
-{% endfor %}
+    {% for cell in row.cell %}
+        {% if cell.attr.noResults is defined %}
+            {% include 'LighthartGridBundle:Cell:noResultsCell.html.twig' with {'cell': cell} %}
+        {% else %}
+            {% include 'LighthartGridBundle:Cell:cell.html.twig' with {'cell': cell} %}
+        {% endif %}
+    {% endfor %}
 </{{- row.type -}}>

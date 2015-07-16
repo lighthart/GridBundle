@@ -449,7 +449,7 @@ class GridMaker
             return $this;
         } elseif (isset($options['otherGroup']) && $options['otherGroup']) {
             if (isset($options['filter']) && $options['filter']) {
-                $options['filterHidden'] = str_replace('\'; \'', '; ', str_replace(';;', ';', implode($options['otherGroup'], '')));
+                $options['filterHidden'] = $options['otherGroup'];
             }
             $this->getGrid()->addColumn(new Column($entity, $value, $options));
 
@@ -545,6 +545,7 @@ class GridMaker
 
         $sorts = explode(';', $sort);
         foreach ($sorts as $key => $srt) {
+            // var_dump($srt);die;
             if (preg_match('/(.*?)\_\_\_(.*?)\_\_(.*?)\:(.*)/', $srt, $match)) {
                 if ($match[4]) {
                     $this->QB()->add('orderBy', $match[1] . '.' . $match[3] . ' ' . $match[4], true);
@@ -697,9 +698,9 @@ class GridMaker
             $this->mapColumns();
             $results = $this->mapResults($results);
             if ([] == $results) {
-                $root = 'root';
+                $root = $this->QB()->getRootAlias();
             } else {
-                $root = preg_grep('/^root\_\_\_(.*?)\_\_id$/', array_keys($results[0]));
+                $root = preg_grep('/^'.$this->QB()->getRootAlias().'\_\_\_(.*?)\_\_id$/', array_keys($results[0]));
 
                 $root = $root[array_keys($root) [0]];
             }
@@ -805,23 +806,25 @@ class GridMaker
         $dql = $qb->getQuery()->getDQL();
 
         $aliases       = [];
+        $oldAliases       = [];
         $from          = $qb->getDqlPart('from') [0];
         $rootClassPath = $from->getFrom();
         $oldRoot       = $qb->getRootAlias();
         // mark root
-        $root               = 'root___' . str_replace('\\', '_', $rootClassPath . '_');
+        $root               = $this->QB()->getRootAlias().'___' . str_replace('\\', '_', $rootClassPath . '_');
         $aliases[$oldRoot]  = $root;
         $entities[$oldRoot] = $rootClassPath;
+
         $rootSelect         = array_filter($qb->getDqlPart('select'), function ($s) {
-            return $s->getParts()[0] == 'partial root.{id}';
+            return $s->getParts()[0] == 'partial '.$this->QB()->getRootAlias().'.{id}';
         });
-        // $qb->addGroupBy('root');
+        // $qb->addGroupBy($this->QB()->getRootAlias());
         if (isset($rootSelect[0]) && $rootSelect[0]) {
             // escaping the count query
             $rootSelectParts = explode(',', substr(stristr(stristr($rootSelect[0], '{'), '}', true), 1));
 
             foreach ($rootSelectParts as $k => $v) {
-                $oldAliases['root.' . $v] = $root . '_' . $v;
+                $oldAliases[$this->QB()->getRootAlias().'.' . $v] = $root . '_' . $v;
             }
         }
 
@@ -830,8 +833,8 @@ class GridMaker
         if (is_array($result)) {
             foreach ($result as $keyResult => $valueResult) {
                 foreach ($valueResult as $keySingle => $valueSingle) {
-                    if (strpos($keySingle, 'root_') !== false) {
-                        $valueResult[$root . substr(strstr($keySingle, 'root_'), 4) ] = $valueResult[$keySingle];
+                    if (strpos($keySingle, $this->QB()->getRootAlias().'_') !== false) {
+                        $valueResult[$root . substr(strstr($keySingle, $this->QB()->getRootAlias().'_'), 4) ] = $valueResult[$keySingle];
                         unset($valueResult[$keySingle]);
                     }
                 }
@@ -863,8 +866,8 @@ class GridMaker
                         if ($mappings[$field]['type'] <= 2) {
                             // $qb->addGroupBy($alias);
                         }
-                        $aliases[$join->getAlias() ]  = $alias . '___' . str_replace('\\', '_', $mappings[$field]['targetEntity'] . '_');
-                        $entities[$join->getAlias() ] = $mappings[$field]['targetEntity'];
+                        $aliases[$join->getAlias()]  = $alias . '___' . str_replace('\\', '_', $mappings[$field]['targetEntity'] . '_');
+                        $entities[$join->getAlias()] = $mappings[$field]['targetEntity'];
                     }
                 } else {
                     // for backside joins
@@ -873,13 +876,9 @@ class GridMaker
                     $field  = trim(substr(stristr($field, '.', false), 1));
                     $alias  = $join->getAlias();
                     if (!in_array($join->getAlias(), array_keys($aliases))) {
-                        $mappings                     = $em->getMetadataFactory()->getMetadataFor($entity)->getAssociationMappings();
-
-                        if ($mappings[$field]['type'] <= 2) {
-                            // $qb->addGroupBy($alias);
-                        }
-                        $aliases[$join->getAlias() ]  = $alias . '___' . str_replace('\\', '_', $entity . '_');
-                        $entities[$join->getAlias() ] = $entity;
+                        $mappings = $em->getMetadataFactory()->getMetadataFor($entity)->getAssociationMappings();
+                        $aliases[$join->getAlias()]  = $alias . '___' . str_replace('\\', '_', $entity . '_');
+                        $entities[$join->getAlias()] = $entity;
                     }
                 }
             };
@@ -999,9 +998,9 @@ class GridMaker
                 if (false === strpos($oldAlias, '_')) {
                     $newAlias = $oldAlias;
                 } else {
-                    $newAlias   = $g->getAliases()[str_replace('_', '.', $oldAlias)];
+                    $newAlias = $g->getAliases()[str_replace('_', '.', $oldAlias)];
                 }
-                $columns[]  = new Column($newAlias, $oldValue, $oldOptions);
+                $columns[] = new Column($newAlias, $oldValue, $oldOptions);
             }
         }
         $g->setColumns($columns);
@@ -1010,7 +1009,8 @@ class GridMaker
     public function mapResults(array $result)
     {
 
-        // if query is out of sync with columns this blows chunks.  Basically, the root entities aren't getting into getAliases()
+        // if query is out of sync with columns this blows chunks.
+        // Basically, the root entities aren't getting into getAliases()
         $newResult = [];
         $g         = $this->getGrid();
         foreach ($result as $key => $value) {
@@ -1042,7 +1042,7 @@ class GridMaker
                         }
                         $action->setRoute($routeConfig);
                     } else {
-                        $this->addError('Action route improperly specified with more than one route.');
+                        $this->getGrid()->addError('Action route improperly specified');
                     }
                 }
             }
@@ -1151,12 +1151,10 @@ class GridMaker
                     while ($g = array_pop($groupList)) {
                         $gString = 'concat(' . $g . ',' . $gString . ')';
                     }
-                    // $gString .= ' AS '.$column->getEntity().'Group';
                     $otherGroups[$column->getAlias()][]   = $gString;
-                    // $partials[$column->getEntity()][] = $column->getValue();
                 } else {
-                    $groups[$column->getEntity()][]   = $column->getEntity() . '.' . $column->getValue();
-                    $partials[$column->getEntity()][] = $column->getValue();
+                    $otherGroups[$column->getEntity()][]   = $column->getOption('otherGroup');
+                    $partials[$column->getEntity()][] = $column->getOption('otherGroup');
                 }
             } else {
                 $partials[$column->getEntity()][] = $column->getValue();
@@ -1173,7 +1171,7 @@ class GridMaker
                 $str = 'partial ' . $entity . '.{id,' . implode(',', $fields) . '}';
                 $qb->select($str);
                 if ([] != $groups) {
-                    $qb->addGroupBy('root');
+                    $qb->addGroupBy($this->QB()->getRootAlias());
                 }
             } else {
             }
@@ -1206,9 +1204,8 @@ class GridMaker
         foreach ($dqls as $key => $dql) {
             $qb->addSelect($dql);
         }
-
         foreach ($groups as $entity => $fields) {
-            $qb->addSelect('arrayAgg(' . $entity . ') AS ' . $entity . '_id');
+            $qb->addSelect('arrayAggDistinct(' . $entity . ') AS ' . $entity . '_id');
             foreach ($fields as $fieldKey => $field) {
                 $qb->addSelect('arrayAggDistinct(' . $field . ') AS ' . str_replace('.', '_', $field));
             }
@@ -1218,11 +1215,18 @@ class GridMaker
             $qb->addSelect('COUNT (DISTINCT ' . $field . ') AS ' . str_replace('.', '_', $field));
         }
 
+        // var_dump($otherGroups);die;
+
         // For composite fields in many-to-many relations
         foreach ($otherGroups as $entity => $fields) {
             // $qb->addSelect('arrayAggDistinct(' . $entity . ') AS ' . $entity . '_id');
             foreach ($fields as $fieldKey => $field) {
-                $qb->addSelect('arrayAggDistinct(' . $field . ') AS ' . str_replace('.', '_', $entity));
+                $chunks = explode(';', $field);
+                $chunkField="''";
+                foreach (array_reverse($chunks) as $chunkKey => $chunkValue) {
+                    $chunkField = "concat(".$chunkValue.','.$chunkField.')';
+                }
+                $qb->addSelect('arrayAggDistinct(' . $chunkField . ') AS ' . str_replace('.', '_', $entity));
             }
         }
     }
@@ -1372,10 +1376,6 @@ class GridMaker
         }));
 
         foreach ($hiddenFilters as $field => $hiddenType) {
-            if ('array' == gettype($hiddenType)) {
-            } else {
-                $hiddenType = explode(';', $hiddenType);
-            }
             $hiddenCombo = implode(';',
                     array_map(function ($h) {
                         return str_replace('_', '.', $h);
@@ -1399,8 +1399,9 @@ class GridMaker
         }
 
         $filter      = explode(';', $filter);
-        $multiFilter = [];
 
+        // the | come from the js ajax request
+        $multiFilter = [];
         foreach ($filter as $key => $filt) {
             if (strpos($filt, '|') === false) {
                 $flt = explode(':', $filt);
@@ -1428,6 +1429,7 @@ class GridMaker
             return $qb;
         }
 
+
         foreach ($filter as $key => $value) {
             $value = trim($value);
             $value = str_replace("'", "''", $value);
@@ -1446,7 +1448,8 @@ class GridMaker
         }
 
         foreach ($multiFilter as $key => $multi) {
-            $multiFilters = explode('|', $multi);
+            // 'otherGroup' is a keyword
+            $multiFilters = array_filter(explode('|', $multi), function($e){return strpos($e, 'otherGroup') === false;});
             $orF          = $qb->expr()->orx();
             foreach ($multiFilters as $mfKey => $mfValue) {
                 $multiFilterKey   = strstr($mfValue, ':', true);
