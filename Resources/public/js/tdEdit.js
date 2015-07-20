@@ -219,7 +219,7 @@ function focusEdit() {
 function updateCell(object, val) {
 
     if (val !== '') {
-        var isFloat = object.attr('data-role-lg-float');
+        var isMoney = object.hasClass('money');
         var td = object.parent();
         var tr = td.parent();
         var col = tr.children().index(td);
@@ -242,7 +242,7 @@ function updateCell(object, val) {
         // }
 
         //
-        if (isFloat) {
+        if (isMoney) {
             newValue = parseFloat(object.val().replace(/[^0-9\.\-]/g,''));
             oldValue = parseFloat(object.attr("value").replace(/[^0-9\.\-]/g,''));
         } else {
@@ -252,16 +252,16 @@ function updateCell(object, val) {
         object.attr("value",val);
         object.text(val);
 
-        if (isFloat) {
+        if (isMoney) {
             val = val.replace(/[^0-9\.\-]/g,'');
             difference = newValue - oldValue;
         } else {
+            difference = null;
         }
 
         if (object.parent().attr('data-role-lg-new') && !object.parent().attr('data-role-lg-entity-id')) {
             console.log('create');
             url = makeURLfromTD(object.parent(), 'create');
-            console.log(url);
             $.ajax({
                 type: 'POST',
                 url: url,
@@ -294,7 +294,7 @@ function updateCell(object, val) {
 
 function updateAggregate(td, difference) {
 
-        if (typeof difference === 'undefined') {
+        if (typeof difference === 'undefined'  || difference === null) {
         } else {
             var tr = td.parent();
             var col = tr.children().index(td);
