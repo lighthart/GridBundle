@@ -41,7 +41,7 @@ function getSelectorCookie(){
 }
 
 function setSelectorCookie() {
-    $.cookie("lg-" + getLgCurrentRoute() + "-selector", $('select.lg-grid-selector').val());
+    $.cookie("lg-" + getLgCurrentRoute() + "-selector", $('.lg-grid-selector').val());
 }
 
 
@@ -122,7 +122,7 @@ function gridReload(reset) {
             data[flagCookie] = value;
         }
     });
-    data['selector'] = $('select.lg-grid-selector').val();
+    data['selector'] = $('.lg-grid-selector').val();
     if (xhr) {
         xhr.abort();
     }

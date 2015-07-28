@@ -2,7 +2,7 @@
 
 // this stuff might need to be looped through if more than one selector
 function getSelected() {
-    return $('select.lg-grid-selector').val();
+    return $('.lg-grid-selector').val();
 }
 
 function getSelectorCookie(){
@@ -10,12 +10,12 @@ function getSelectorCookie(){
 }
 
 function setSelectorCookie() {
-    $.cookie("lg-" + getLgCurrentRoute() + "-selector", $('select.lg-grid-selector').val());
+    $.cookie("lg-" + getLgCurrentRoute() + "-selector", $('.lg-grid-selector').val());
 }
 
 
 function gridSelectorControl() {
-    $('select.lg-grid-selector').change(function(e) {
+    $('.lg-grid-selector').change(function(e) {
         control = $(this);
         // e.preventDefault();
         gridSelectorReload(control);
@@ -32,5 +32,5 @@ function gridSelectorReload(control) {
 
 function setSelector() {
     var selected = getSelectorCookie();
-    $('select.lg-grid-selector').val(selected);
+    $('.lg-grid-selector').val(selected);
 }
