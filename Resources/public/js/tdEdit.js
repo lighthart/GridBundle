@@ -219,6 +219,7 @@ function focusEdit() {
 function updateCell(object, val) {
 
     if (val !== '') {
+        var isMoney = object.hasClass('money');
         var td = object.parent();
         var tr = td.parent();
         var col = tr.children().index(td);
@@ -239,19 +240,28 @@ function updateCell(object, val) {
         //     object.removeClass("negative");
         //     object.addClass("positive");
         // }
-        newValue = parseFloat(object.val().replace(/[^0-9\.\-]/g,''));
-        oldValue = parseFloat(object.attr("value").replace(/[^0-9\.\-]/g,''));
+
+        //
+        if (isMoney) {
+            newValue = parseFloat(object.val().replace(/[^0-9\.\-]/g,''));
+            oldValue = parseFloat(object.attr("value").replace(/[^0-9\.\-]/g,''));
+        } else {
+        }
+
         object.val(val);
         object.attr("value",val);
         object.text(val);
-        difference = newValue - oldValue;
-        val = val.replace(/[^0-9\.\-]/g,'');
 
+        if (isMoney) {
+            val = val.replace(/[^0-9\.\-]/g,'');
+            difference = newValue - oldValue;
+        } else {
+            difference = null;
+        }
 
         if (object.parent().attr('data-role-lg-new') && !object.parent().attr('data-role-lg-entity-id')) {
             console.log('create');
             url = makeURLfromTD(object.parent(), 'create');
-            console.log(url);
             $.ajax({
                 type: 'POST',
                 url: url,
@@ -283,26 +293,29 @@ function updateCell(object, val) {
 }
 
 function updateAggregate(td, difference) {
-        var tr = td.parent();
-        var col = tr.children().index(td);
-        var row = tr.index();
-        var aggregateRow = tr.parent().children("tr.lg-aggregate-row");
-        var aggregateCell = aggregateRow.children("td").eq(col);
-        var oldAggregateHtml = aggregateCell.html();
-        var oldAggregateValue = aggregateCell.text();
-        var newAggregateValue = parseFloat(oldAggregateValue.replace(/[^0-9\.\-]/g,'')) + parseFloat(difference);
-        if (isNaN(newAggregateValue)) {
+
+        if (typeof difference === 'undefined'  || difference === null) {
         } else {
-            var newAggregateHtml = oldAggregateHtml.replace(oldAggregateValue,addCommas(newAggregateValue));
-            aggregateCell.html(newAggregateHtml);
-            aggregateCell.children("input").val(newAggregateValue);
+            var tr = td.parent();
+            var col = tr.children().index(td);
+            var row = tr.index();
+            var aggregateRow = tr.parent().children("tr.lg-aggregate-row");
+            var aggregateCell = aggregateRow.children("td").eq(col);
+            var oldAggregateHtml = aggregateCell.html();
+            var oldAggregateValue = aggregateCell.text();
+            var newAggregateValue = parseFloat(oldAggregateValue.replace(/[^0-9\.\-]/g,'')) + parseFloat(difference);
+            if (isNaN(newAggregateValue)) {
+            } else {
+                var newAggregateHtml = oldAggregateHtml.replace(oldAggregateValue,addCommas(newAggregateValue));
+                aggregateCell.html(newAggregateHtml);
+                aggregateCell.children("input").val(newAggregateValue);
+            }
+            updateSuper(td, difference);
+            gridReloadAggregates();
         }
-        updateSuper(td, difference);
-        gridReloadAggregates();
 }
 
 function updateSuper(td, difference) {
-    console.log(td.hasClass("super"));
         td.children("input").off('change');
         var tr = td.parent();
         var col = tr.children().index(td);
@@ -310,17 +323,19 @@ function updateSuper(td, difference) {
         var superCells = tr.children("td.lg-editable");
         var superCell = superCells.first();
         var superInput = superCell.children("input");
-        var oldSuperHtml = superCell.html();
-        var oldSuperValue = superInput.val().replace(/[^0-9\.\-]/g,'');
-        var newSuperValue = parseFloat(oldSuperValue) + parseFloat(difference);
-        if (isNaN(newSuperValue)) {
-        } else {
-            console.log('here');
-            superInput.val(addCommas(newSuperValue));
+        if (superInput.val()) {
+            var oldSuperHtml = superCell.html();
+            var oldSuperValue = superInput.val().replace(/[^0-9\.\-]/g,'');
+            var newSuperValue = parseFloat(oldSuperValue) + parseFloat(difference);
+            if (isNaN(newSuperValue)) {
+            } else {
+                console.log('here');
+                superInput.val(addCommas(newSuperValue));
+            }
+            td.children("input").on('change', function(event) {
+                updateCell($(this), $(this).val());
+            });
         }
-        td.children("input").on('change', function(event) {
-            updateCell($(this), $(this).val());
-        });
         // updateAggregate(td, difference);
 }
 
