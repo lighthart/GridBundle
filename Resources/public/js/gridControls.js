@@ -30,7 +30,9 @@ function activateControls() {
     gridExtraActionsControl();
     gridSortControl();
     gridFlagControl();
+    gridSelectorControl();
     gridResetControl();
-    addButtonToggleControl()
+    addButtonToggleControl();
     markFlags();
+    setSelector();
 }
