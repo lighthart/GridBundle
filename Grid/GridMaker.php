@@ -633,10 +633,11 @@ class GridMaker
             } else {
                 fputcsv($file, $this->getGrid()->exportTh());
                 $results = $this->QB()->getQuery()->getResult(Query::HYDRATE_SCALAR);
-                while (([] != $results) && ($offset <= $export)) {
+                while (([] != $results) && ($fetched < $export)) {
                     $this->QB()->setFirstResult($offset);
                     $results = $this->QB()->getQuery()->getResult(Query::HYDRATE_SCALAR);
                     $offset += $pageSize;
+                    $fetched += $pageSize;
 
                     // Write this next line to file
                     foreach ($this->getGrid()->exportTr($results) as $key => $line) {
