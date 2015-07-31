@@ -1,6 +1,14 @@
 {% block header %}
     {% block flags %}
+        <div style="display:inline-block;">
+        {% include 'LighthartGridBundle:Control:selector.html.twig' %}
+        </div>
+        <div style="display:inline-block;">
+            &nbsp;
+        </div>
+        <div style="display:inline-block;">
         {% include 'LighthartGridBundle:Control:flags.html.twig' %}
+        </div>
     {% endblock flags %}
     {% set place = 'header' %}
     <div id="lg-{{place}}" class="container lg-{{place}} lg-controls">

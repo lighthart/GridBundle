@@ -36,6 +36,15 @@ function getFlagCookies() {
     return cookies;
 }
 
+function getSelectorCookie(){
+    return $.cookie("lg-" + getLgCurrentRoute() + "-selector");
+}
+
+function setSelectorCookie() {
+    $.cookie("lg-" + getLgCurrentRoute() + "-selector", $('.lg-grid-selector').val());
+}
+
+
 function getCookies() {
     var ajaxVersionCookie = "lg-" + getLgCurrentRoute() + "-version";
     var numPerPagecookie = 'lg-results-per-page';
@@ -113,6 +122,7 @@ function gridReload(reset) {
             data[flagCookie] = value;
         }
     });
+    data['selector'] = $('.lg-grid-selector').val();
     if (xhr) {
         xhr.abort();
     }

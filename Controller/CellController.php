@@ -171,7 +171,6 @@ class CellController extends Controller
 
         // $logger = $this->get( 'logger' );
         // $logger->error( 'Gridcell Update: '.$class.' / '.$field.' / '.$id );
-
         $verity = $this->verifyAction($class);
         if ($verity) {
             $class  = str_replace('_', '\\', $class);
