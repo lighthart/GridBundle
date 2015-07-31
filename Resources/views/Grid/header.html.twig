@@ -13,7 +13,7 @@
     {% set place = 'header' %}
     <div id="lg-{{place}}" class="container lg-{{place}} lg-controls">
         <div class="row lg-grid-header">
-            <div class="col-md-3-5 lg-left">
+            <div class="col-md-3-10 lg-left">
                 {% include 'LighthartGridBundle:Control:searchControl.html.twig' %}
                 {% block newButton %}
                 {% include 'LighthartGridBundle:Control:newButton.html.twig' %}
@@ -22,7 +22,11 @@
                     {% include 'LighthartGridBundle:Control:addButton.html.twig' %}
                 {% endblock addButton %}
             </div>
-            <div class="col-md-2-5">
+            <div class="col-md-3-10">
+                {% include 'LighthartGridBundle:Control:exportControl.html.twig' %}
+                {% include 'LighthartGridBundle:Control:resetControl.html.twig' %}
+            </div>
+            <div class="col-md-4-10">
                 {% include 'LighthartGridBundle:Control:pagingControls.html.twig' %}
             </div>
         </div>
