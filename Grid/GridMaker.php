@@ -610,9 +610,9 @@ class GridMaker
         }
 
         // $this->QB()->distinct();
-
         if ($export) {
-            $offset   = $request->query->get('pageOffset') ?:0;
+            $fetched  = 0;
+            $offset   = intval($request->query->get('pageOffset') ?:0);
             $pageSize = 500 < $export ? 500 : $export;
 
             $this->QB()->setFirstResult($offset);
@@ -633,7 +633,7 @@ class GridMaker
             } else {
                 fputcsv($file, $this->getGrid()->exportTh());
                 $results = $this->QB()->getQuery()->getResult(Query::HYDRATE_SCALAR);
-                while (([] != $results) && ($offset < $export)) {
+                while (([] != $results) && ($offset <= $export)) {
                     $this->QB()->setFirstResult($offset);
                     $results = $this->QB()->getQuery()->getResult(Query::HYDRATE_SCALAR);
                     $offset += $pageSize;
