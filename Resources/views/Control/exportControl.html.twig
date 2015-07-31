@@ -1,9 +1,32 @@
 {% block exportControl %}
     {% if export is defined %}
-        <div class="btn-group export-control">
-            <a class="btn btn-xs btn-default" href="{{ path(app.request.attributes.get('_route'), app.request.attributes.get('_route_params')|merge({'export': export})) }}">
-                Export (CSV) <span class="fa fa-caret-down"></span>
-            </a>
-        </div>&nbsp;
+        {% if export == 'all' %}
+            {% set export = 1000 %}
+        {% endif %}
+        {% set lastPage = grid.total / export %}
+        {% if lastPage <= 1 %}
+            <div class="btn-group export-control">
+                <a class="btn btn-xs btn-default" href="{{ path(app.request.attributes.get('_route'), app.request.attributes.get('_route_params')|merge({'export': export})) }}">
+                    Export (CSV)
+                </a>
+                </div>&nbsp;
+            {% else %}
+                <div class="btn-group export-control dropup">
+                    <button class="btn btn-xs btn-default lg-btn-top lg-results-per-page dropdown-toggle dropup" id="lg-export-page" data-toggle="dropdown">
+                        <span class="">Export CSV</span>
+                        &nbsp;<span class="fa fa-caret-up"></span>
+                    </button>
+                    <ul class="dropdown-menu" role="menu">
+                        {% for pageNum in 0..lastPage %}
+                            <li>
+                                <a class="btn btn-xs btn-default" href="{{ path(app.request.attributes.get('_route'), app.request.attributes.get('_route_params')|merge({'export': export, 'pageOffset': loop.index0 * export})) }}">{{-''-}}
+                                Export Page {{ loop.index }} (CSV) <span class=""></span>
+                            </a>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+            &nbsp;
+        {% endif %}
     {% endif %}
 {% endblock exportControl %}

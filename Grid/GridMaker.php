@@ -603,7 +603,8 @@ class GridMaker
 
         $this->paginateGridFromCookies($request, $options);
         if ('all' == strtolower($export)) {
-            $export = strtolower($export);
+            // default value
+            $export = 5000;
         } else {
             $export = intval($export);
         }
@@ -611,12 +612,8 @@ class GridMaker
         // $this->QB()->distinct();
 
         if ($export) {
-            $offset   = 0;
-            if ('all' == $export) {
-                $pageSize = 500;
-            } else {
-                $pageSize = 500 < $export ? 500 : $export;
-            }
+            $offset   = $request->query->get('pageOffset') ?:0;
+            $pageSize = 500 < $export ? 500 : $export;
 
             $this->QB()->setFirstResult($offset);
             $this->QB()->setMaxResults($pageSize);
@@ -628,7 +625,6 @@ class GridMaker
             $fullfilename = '/tmp/' . $filename;
             $file         = fopen($fullfilename, 'w');
 
-            $this->QB()->setFirstResult($offset);
             if ($results) {
                 fputcsv($file, $this->getGrid()->exportTh());
                 foreach ($this->getGrid()->exportTr($results) as $key => $line) {
@@ -637,7 +633,7 @@ class GridMaker
             } else {
                 fputcsv($file, $this->getGrid()->exportTh());
                 $results = $this->QB()->getQuery()->getResult(Query::HYDRATE_SCALAR);
-                while (([] != $results) && ('all' == $export || $offset < $export)) {
+                while (([] != $results) && ($offset < $export)) {
                     $this->QB()->setFirstResult($offset);
                     $results = $this->QB()->getQuery()->getResult(Query::HYDRATE_SCALAR);
                     $offset += $pageSize;
