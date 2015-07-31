@@ -2,11 +2,13 @@
     {% set place = 'footer' %}
     <div id="lg-{{place}}" class="container lg-{{place}} lg-controls">
         <div class="row lg-grid-footer">
-            <div class="col-md-1-2 lg-left">
-                {% include 'LighthartGridBundle:Control:exportControl.html.twig' %}
-                {% include 'LighthartGridBundle:Control:resetControl.html.twig' %}
+            <div class="col-md-3-10">&nbsp;
             </div>
-            <div class="col-md-1-2">
+            <div class="col-md-3-10">
+                {% include 'LighthartGridBundle:Control:exportControl.html.twig' %}
+                {% include 'LighthartGridBundle:Control:resetControl.html.twig' with { place : 'footer' } %}
+            </div>
+            <div class="col-md-4-10">
                 {% include 'LighthartGridBundle:Control:pagingControls.html.twig' with { place : 'footer' } %}
             </div>
         </div>

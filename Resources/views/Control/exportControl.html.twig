@@ -11,10 +11,10 @@
                 </a>
                 </div>&nbsp;
             {% else %}
-                <div class="btn-group export-control dropup">
+                <div class={% if place == "footer" %}"dropup btn-group"{% else %}"btn-group"{% endif %}>
                     <button class="btn btn-xs btn-default lg-btn-top lg-results-per-page dropdown-toggle dropup" id="lg-export-page" data-toggle="dropdown">
                         <span class="">Export CSV</span>
-                        &nbsp;<span class="fa fa-caret-up"></span>
+                        &nbsp;<span class={% if place == "footer" %}"fa fa-caret-up"{% else %}"fa fa-caret-down"{% endif %}></span>
                     </button>
                     <ul class="dropdown-menu" role="menu">
                         {% for pageNum in 0..lastPage %}
