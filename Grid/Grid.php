@@ -641,6 +641,11 @@ class Grid
             return $col->getOption('boolean');
         }));
 
+
+        foreach ($this->aliases as $key => $value) {
+            $exportAliases[$key] = str_replace('.', '_', $key);
+        }
+
         //
         if ([] != $results) {
             foreach ($results as $tuple => $result) {
@@ -677,7 +682,13 @@ class Grid
 
                         $newResult[$headerKey] = $value;
                     } elseif (in_array($headerKey, $booleans)) {
-                        $newResult[$headerKey] = (($result[$headerKey] === null) ? '' : ($result ? "true" : "false"));
+                        $boolean = $this->getColumn($headerKey)->getOptions('boolean');
+                        if ('object' == gettype($boolean) && 'Closure' == get_class($boolean)) {
+                            $tmpResult = $boolean($result, $exportAliases);
+                            $newResult[$headerKey] = (($tmpResult === null) ? "null" : ($tmpResult ? "true" : "false"));
+                        } else {
+                            $newResult[$headerKey] = (($result[$headerKey] === null) ? "null" : ($result ? "true" : "false"));
+                        }
                     } else {
                         $newResult[$headerKey] = (($result[$headerKey] instanceof \DateTime) ? $result[$headerKey]->format('Y-m-d') : $result[$headerKey]);
                     }
@@ -686,7 +697,6 @@ class Grid
                 $newResults[] = $newResult;
             }
         }
-
         return $newResults;
     }
 
