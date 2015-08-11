@@ -271,7 +271,7 @@ function updateCell(object, val) {
                 success: function(responseText, textStatus, XMLHttpRequest) {
                     updateAggregate(td, difference);
                     // gridReloadCell(td);
-                },
+                }
             });
         } else {
             console.log('update');
@@ -286,7 +286,7 @@ function updateCell(object, val) {
                     updateAggregate(td, difference);
                     // updateSuper(td, difference);
                     // gridReloadCell(td);
-                },
+                }
             });
         }
     }

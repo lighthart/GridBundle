@@ -58,7 +58,7 @@ function getCookies() {
         pageSize: $.cookie(numPerPagecookie),
         search: $.cookie(searchCookie),
         sort: $.cookie(sortCookie),
-        version: $.cookie(ajaxVersionCookie),
+        version: $.cookie(ajaxVersionCookie)
     };
     // Setting Defaults
     if ('undefined' == typeof cookies.offset || isNaN(cookies.offset)) {
@@ -187,7 +187,7 @@ function gridReloadCell(td) {
         pageSize: cookies.pageSize,
         pageOffset: cookies.offset,
         filter: (cookies.filter ? cookies.filter : "").replace("'", "''"),
-        search: cookies.search,
+        search: cookies.search
     };
     $.map(getFlags(), function(value, flag) {
         var flagCookie = flag;
