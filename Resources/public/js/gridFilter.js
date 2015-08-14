@@ -37,7 +37,7 @@ function gridFilterToggleControl() {
         var filterToggleCookie = 'lg-filter-toggle';
         if ($('.lg-filter').parent().hasClass('hide') || $('.lg-filter').hasClass('hide')) {
             // Open
-            $.cookie(filterToggleCookie, 1);
+            $.cookie(filterToggleCookie, 1, { expires: 1 });
             $('#lg-toggle-filter > span').removeClass('fa-chevron-down');
             $('#lg-toggle-filter > span').addClass('fa-chevron-up');
             $('#lg-toggle-filter').removeClass('lg-filter-closed');
@@ -46,7 +46,7 @@ function gridFilterToggleControl() {
             $('.lg-filter').removeClass('hide');
         } else {
             // Closed
-            $.cookie(filterToggleCookie, 0);
+            $.cookie(filterToggleCookie, 0, { expires: 1 });
             $('#lg-toggle-filter > span').addClass('fa-chevron-down');
             $('#lg-toggle-filter > span').removeClass('fa-chevron-up');
             $('#lg-toggle-filter').addClass('lg-filter-closed');

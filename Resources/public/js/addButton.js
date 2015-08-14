@@ -5,7 +5,7 @@ function addButtonToggleControl() {
         var addFormToggleCookie = 'lg-add-form-toggle';
         if ($('#lg-add-form').hasClass('hide')) {
             // Open
-            $.cookie(addFormToggleCookie, 1);
+            $.cookie(addFormToggleCookie, 1, { expires: 1 });
             $('#lg-add-icon').removeClass('fa-chevron-down');
             $('#lg-add-icon').addClass('fa-chevron-up');
             $('#lg-add-form').removeClass('hide');
@@ -13,7 +13,7 @@ function addButtonToggleControl() {
             $('#lg-add-form-toggle').addClass('lg-add-form-open');
         } else {
             // Closed
-            $.cookie(addFormToggleCookie, 0);
+            $.cookie(addFormToggleCookie, 0, { expires: 1 });
             $('#lg-add-icon').addClass('fa-chevron-down');
             $('#lg-add-icon').removeClass('fa-chevron-up');
             $('#lg-add-form').addClass('hide');

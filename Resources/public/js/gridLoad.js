@@ -41,7 +41,7 @@ function getSelectorCookie(){
 }
 
 function setSelectorCookie() {
-    $.cookie("lg-" + getLgCurrentRoute() + "-selector", $('.lg-grid-selector').val());
+    $.cookie("lg-" + getLgCurrentRoute() + "-selector", $('.lg-grid-selector').val(), { expires: 1 });
 }
 
 
@@ -73,7 +73,7 @@ function getCookies() {
 function setFlagCookies() {
     $.map(getFlags(), function(value, flag) {
         var flagCookie = "lg-" + getLgCurrentRoute() + "-flag-" + flag;
-        $.cookie(flagCookie, value);
+        $.cookie(flagCookie, value, { expires: 1 });
     });
 }
 
@@ -85,12 +85,12 @@ function setCookies(cookies) {
     var searchCookie = "lg-" + getLgCurrentRoute() + "-search";
     var sortCookie = "lg-" + getLgCurrentRoute() + "-sort";
     // var flagCookie = "lg-" + getLgCurrentRoute() + "-flags";
-    $.cookie(filterCookie, cookies.filter);
-    $.cookie(offsetCookie, cookies.offset);
-    $.cookie(searchCookie, cookies.search);
-    $.cookie(sortCookie, cookies.sort);
-    $.cookie(numPerPagecookie, cookies.pageSize);
-    $.cookie(ajaxVersionCookie, cookies.version);
+    $.cookie(filterCookie, cookies.filter, { expires: 1 });
+    $.cookie(offsetCookie, cookies.offset, { expires: 1 });
+    $.cookie(searchCookie, cookies.search, { expires: 1 });
+    $.cookie(sortCookie, cookies.sort, { expires: 1 });
+    $.cookie(numPerPagecookie, cookies.pageSize, { expires: 1 });
+    $.cookie(ajaxVersionCookie, cookies.version, { expires: 1 });
     setFlagCookies();
 }
 

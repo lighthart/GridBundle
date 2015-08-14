@@ -22,7 +22,7 @@ function gridResetReload(control) {
     var searchCookie = "lg-" + getLgCurrentRoute() + "-search";
     var sortCookie = "lg-" + getLgCurrentRoute() + "-sort";
     var filterToggleCookie = 'lg-filter-toggle';
-    $.cookie(filterToggleCookie, 1);
+    $.cookie(filterToggleCookie, 1, { expires: 1 });
     $.removeCookie(searchCookie);
     $.removeCookie(filterCookie);
     $.removeCookie(offsetCookie);

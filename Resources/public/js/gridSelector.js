@@ -10,7 +10,7 @@ function getSelectorCookie(){
 }
 
 function setSelectorCookie() {
-    $.cookie("lg-" + getLgCurrentRoute() + "-selector", $('.lg-grid-selector').val());
+    $.cookie("lg-" + getLgCurrentRoute() + "-selector", $('.lg-grid-selector').val(), { expires: 1 });
 }
 
 
