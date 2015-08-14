@@ -20,7 +20,7 @@ function getAllFilters() {
 }
 
 function gridFilterControl() {
-    $('input.lg-filter-input').on('keyup change', function() {
+    $('input.lg-filter-input').on('keyup change', function(e) {
         if ([37, 38, 39, 40].indexOf(e.keyCode) > -1) {
         } else {
             var cookies = getCookies();
