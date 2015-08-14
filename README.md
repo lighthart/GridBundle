@@ -125,6 +125,8 @@ may use any alias you would like.
                     and string.  If filter is not set, it will default to false, and no
                     input box will be displayed.
 
+    sort:           true enables column sort.
+
     attr:           Sets the html attributes.
 
     html:           Indicates the title should be interpreted as html, i.e., the twig raw
