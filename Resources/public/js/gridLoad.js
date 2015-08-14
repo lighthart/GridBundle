@@ -166,9 +166,9 @@ function gridReload(reset) {
                 highlightFilters();
                 activateControls();
                 $('.lg-table').removeClass('text-muted');
-                if (oldFocus) {
-                    $(oldFocus).blur().focus().val($(oldFocus).val());
-                }
+                // if (oldFocus) {
+                //     $(oldFocus).blur().focus().val($(oldFocus).val());
+                // }
                 markFlags();
                 updates();
                 moveCursor();
