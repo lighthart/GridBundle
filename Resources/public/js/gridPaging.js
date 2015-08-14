@@ -2,21 +2,24 @@
 function pagingInputControl() {
     $('.lg-last-page').unbind('change');
     $('input.lg-page-input').on('change keyup', function(e) {
-        e.preventDefault();
-        cookies = getCookies();
-        cookies.offset = cookies.offset ? cookies.offset : 0;
-        var maxPages = Number($('#lg-max-pages').val());
-        var newPage = Number($('#lg-page-input').val());
-        if (newPage < 0) {
-            cookies.offset = 0;
-        } else if (newPage >= maxPages) {
-            var maxResults = Number($('#lg-max-results').val());
-            cookies.offset = maxResults - maxResults % Number(cookies.pageSize);
+        if ([37, 38, 39, 40].indexOf(e.keyCode) > -1) {
         } else {
-            cookies.offset = (newPage - 1) * cookies.pageSize;
+            e.preventDefault();
+            cookies = getCookies();
+            cookies.offset = cookies.offset ? cookies.offset : 0;
+            var maxPages = Number($('#lg-max-pages').val());
+            var newPage = Number($('#lg-page-input').val());
+            if (newPage < 0) {
+                cookies.offset = 0;
+            } else if (newPage >= maxPages) {
+                var maxResults = Number($('#lg-max-results').val());
+                cookies.offset = maxResults - maxResults % Number(cookies.pageSize);
+            } else {
+                cookies.offset = (newPage - 1) * cookies.pageSize;
+            }
+            setCookies(cookies);
+            pagingInputReload();
         }
-        setCookies(cookies);
-        pagingInputReload();
     });
 }
 
