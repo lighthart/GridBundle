@@ -5,7 +5,7 @@
         {% endif %}
         {% set lastPage = grid.total / export %}
         {% if lastPage <= 1 %}
-            <div class="btn-group export-control">
+            <div class="btn-group lg-export-control lg-export-control-{{place}}">
                 <a class="btn btn-xs btn-default" href="{{ path(app.request.attributes.get('_route'), app.request.attributes.get('_route_params')|merge({'export': export})) }}">
                     Export (CSV)
                 </a>
