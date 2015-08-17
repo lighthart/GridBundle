@@ -1,9 +1,12 @@
 {% block newButton -%}
     {%- if newPath is defined and newPath -%}
-        <a href="{{newPath}}" class="btn btn-xs btn-default" id="lg-new-button">
-            {%- if newIcon is defined and newIcon -%}
-                <span class="fa {{newIcon}}"></span>
-            {%- endif %} New
+        <a href="{{newPath}}" class="btn btn-xs {% if newStyle is defined and newStyle -%}{{newStyle}}{% else %} btn-default{% endif %}" id="lg-new-button">
+            <span class="fa {% if newIcon is defined and newIcon -%}{{newIcon}}{% else %} fa-plus{% endif %}"></span>
+            {%- if newTitle is defined and newTitle %}
+                {{newTitle}}
+            {%- else -%}
+                New
+            {% endif %}
         </a>
     {%- endif -%}
 {%- endblock newButton %}
