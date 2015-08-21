@@ -5,8 +5,11 @@
         {% endif %}
         {% set lastPage = grid.total / export %}
         {% if lastPage <= 1 %}
+            {% for getkey, getval in app.request.attributes.get('_route_params') %}
+            {{getkey}} - {{getval}}--
+        {% endfor %}
             <div class="btn-group lg-export-control lg-export-control-{{place}}">
-                <a class="btn btn-xs btn-default" href="{{ path(app.request.attributes.get('_route'), app.request.attributes.get('_route_params')|merge({'export': export})) }}">
+                <a class="btn btn-xs btn-default" href="{{ path(app.request.attributes.get('_route'), app.request.attributes.get('_route_params')|merge({'export': export})|merge(app.request.query.all)) }}">
                     Export (CSV)
                 </a>
                 </div>&nbsp;
@@ -19,7 +22,7 @@
                     <ul class="dropdown-menu" role="menu">
                         {% for pageNum in 0..lastPage %}
                             <li>
-                                <a class="btn btn-xs btn-default" href="{{ path(app.request.attributes.get('_route'), app.request.attributes.get('_route_params')|merge({'export': export, 'pageOffset': loop.index0 * export})) }}">{{-''-}}
+                                <a class="btn btn-xs btn-default" href="{{ path(app.request.attributes.get('_route'), app.request.attributes.get('_route_params')|merge({'export': export, 'pageOffset': loop.index0 * export})|merge(app.request.query.all)) }}">{{-''-}}
                                 Export Page {{ loop.index }} (CSV) <span class=""></span>
                             </a>
                         </li>
