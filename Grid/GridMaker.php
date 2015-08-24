@@ -1191,7 +1191,7 @@ class GridMaker
             $qb->addSelect($dql);
         }
         foreach ($groups as $entity => $fields) {
-            $qb->addSelect('arrayAggDistinct(' . $entity . ') AS ' . $entity . '_id');
+            // $qb->addSelect('arrayAggDistinct(' . $entity . ') AS ' . $entity . '_id');
             foreach ($fields as $fieldKey => $field) {
                 $qb->addSelect('arrayAggDistinct(' . $field . ') AS ' . str_replace('.', '_', $field));
             }
