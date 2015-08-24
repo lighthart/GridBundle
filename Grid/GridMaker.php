@@ -707,7 +707,6 @@ class GridMaker
                     // die;
                     $this->getGrid()->fillErrors($results, $filters);
                 }
-
                 $sums = array_filter($this->getGrid()->getColumns(), function ($c) {
                     return in_array('aggregate', array_keys($c->getOptions()));
                 });
@@ -1037,6 +1036,7 @@ class GridMaker
     {
         // we don't want to change the original query so we clone it.
         $qb = clone $this->queryBuilder;
+        print_r($qb->getQuery()->getDql());
         $qb->resetDQLPart('select');
         $qb->resetDQLPart('orderBy');
         foreach ($this->getGrid()->getColumns() as $key => $column) {
@@ -1052,6 +1052,8 @@ class GridMaker
                 }
             }
         }
+        print_r($qb->getQuery()->getDql());
+        die;
 
         return $qb;
     }
@@ -1148,10 +1150,12 @@ class GridMaker
                 if ($key = array_search('id', $fields)) {
                     unset($fields[$key]);
                 }
-                $str = 'partial ' . $entity . '.{id,' . implode(',', $fields) . '}';
+                $str = 'partial ' . $entity . '.{' . implode(',', $fields) . '}';
                 $qb->select($str);
                 if ([] != $groups) {
-                    $qb->addGroupBy($this->QB()->getRootAlias());
+                    foreach($fields as $fieldKey => $fieldValue) {
+                        $qb->addGroupBy($this->QB()->getRootAlias().'.'.$fieldValue);
+                    }
                 }
             } else {
             }
@@ -1171,7 +1175,9 @@ class GridMaker
 
                         if ([] == $fields) {
                         }
-                        $qb->addGroupBy($entity);
+                        foreach($fields as $fieldKey => $fieldValue) {
+                            $qb->addGroupBy($entity.'.'.$fieldValue);
+                        }
                     } else {
                     }
                 } else {
