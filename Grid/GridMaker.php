@@ -1120,7 +1120,7 @@ class GridMaker
         $columns       = $this->getGrid()->getColumns();
         foreach ($columns as $key => $column) {
             if ($column->getOption('dql')) {
-                $dqls[$column->getEntity()][] = $column->getOption('dql');
+                $dqls[$column->getAlias()][] = $column->getOption('dql');
             } elseif ($column->getOption('count')) {
                 $counts[$column->getEntity()] = $column->getEntity() . '.' . $column->getValue();
             } elseif ($column->getOption('group')) {
@@ -1190,6 +1190,7 @@ class GridMaker
         foreach ($dqls as $key => $dql) {
             $qb->addSelect($dql);
         }
+
         foreach ($groups as $entity => $fields) {
             // $qb->addSelect('arrayAggDistinct(' . $entity . ') AS ' . $entity . '_id');
             foreach ($fields as $fieldKey => $field) {
