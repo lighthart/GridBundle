@@ -3,7 +3,6 @@
 SELECT<br/>
 {{-qb.getDqlParts.distinct-}}
 {%- for part in qb.getDqlParts.select -%}
-    {{loop.index}}<br/>
     &nbsp;&nbsp;{{-part.__toString -}}{% if loop.last %}{% else %},{% endif %}<br/>
 {%- endfor -%}
 FROM<br/>
