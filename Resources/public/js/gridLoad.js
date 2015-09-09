@@ -30,6 +30,7 @@ function getMaxPages() {
 function getFlagCookies() {
     var cookies = {};
     $.map(getFlags(), function(value, flag) {
+        flag = flag.replace(" ","");
         var flagCookie = "lg-" + getLgCurrentRoute() + "-flag-" + flag;
         cookies[flag] = $.cookie(flagCookie);
     });
@@ -72,6 +73,7 @@ function getCookies() {
 
 function setFlagCookies() {
     $.map(getFlags(), function(value, flag) {
+        flag = flag.replace(" ","");
         var flagCookie = "lg-" + getLgCurrentRoute() + "-flag-" + flag;
         $.cookie(flagCookie, value, { expires: 1 });
     });
