@@ -815,6 +815,12 @@ class Grid
                                 $tildeAttr[$tildeKey] = $this->tilde($attrib, $result);
                             }
 
+                            if (false !== strpos($columns[$key]->getOption('value'), '~')) {
+                                $options = $columns[$key]->getOptions();
+                                $options['value'] = $this->tilde($options['value'], $result);
+                                $columns[$key]->setOptions($options);
+                            }
+
                             $attr = array_merge($attr, $tildeAttr);
 
                             if ($columns[$key]->getOption('value')) {
