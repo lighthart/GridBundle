@@ -52,7 +52,7 @@
 {%- elseif value[:1] == '{' -%}
     {%- include 'LighthartGridBundle:Cell:list.html.twig' with {'list' : value[1:(value|length - 2)] } %}
 {%- elseif cell.attr.checkbox is defined -%}
-    <input type="checkbox"/>
+    {% include 'LighthartGridBundle:Control:checkbox.html.twig' %}
 {%- elseif cell.value or ( boolean and 'th' != cell.type ) -%}
     {%- if cell.attr.emphasis is defined %}<{{- cell.attr.emphasis -}}>{% endif -%}
         {% if money %}
