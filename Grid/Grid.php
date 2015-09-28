@@ -596,7 +596,6 @@ class Grid
                                 )
                             )
                         );
-                        // var_dump($attr['data-role-lg-hidden']);
                     }
 
                     $attr['filter'] = $column->getOptions() ['filter'];
@@ -650,7 +649,6 @@ class Grid
         if ([] != $results) {
             foreach ($results as $tuple => $result) {
                 foreach ($headers as $headerKey => $headerValue) {
-                    // var_dump($headers);die;
                     if ($this->getColumn($headerKey)->getOption('value')) {
                         if ($columns[$headerKey]->getOption('value')) {
                             if ('array' == gettype($columns[$headerKey]->getOption('value'))) {
@@ -732,7 +730,11 @@ class Grid
                             $security = $security($result, $this->aliases);
                         }
 
+
                         if ($security){
+                            $actionTitle = $action->getTitle();
+                            $this->tildes([&$actionTitle], $result);
+                            $newAction->setTitle($actionTitle);
                             if ($newAction->getRoute()) {
                                 $routeConfig = $newAction->getRoute();
                                 if ('array' == gettype($routeConfig)) {
@@ -977,7 +979,6 @@ class Grid
 
     public function tilde($what, &$result)
     {
-
         // converts ~column.def~ into the value from the result
         if ('string' == gettype($what)) {
             while (preg_match('/^(.*?)(~.*?~)(.*?)$/', $what, $match)) {

@@ -111,4 +111,24 @@ class Action
 
         return $this;
     }
+
+    /**
+     * @var string
+     */
+
+    public function getTitle() {
+         return $this->title;
+    }
+
+    /**
+     * Set title
+     *
+     * @param
+     * @return $this
+     */
+    public function setTitle($title) {
+        $this->title = $title;
+        return $this;
+    }
+
 }
