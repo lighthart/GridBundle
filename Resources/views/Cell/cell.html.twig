@@ -51,6 +51,11 @@
     {% endif %}
 {%- elseif value[:1] == '{' -%}
     {%- include 'LighthartGridBundle:Cell:list.html.twig' with {'list' : value[1:(value|length - 2)] } %}
+{%- elseif value[:1] == '<' -%}
+    {# this is getting out of hand #}
+    {# type for list of lnks? #}
+    {# replacing {} is for postgres array agg functions #}
+    {%- include 'LighthartGridBundle:Cell:list.html.twig' with {'list' : value|replace({'{':'', '}':''}) } %}
 {%- elseif cell.attr.checkbox is defined -%}
     {% include 'LighthartGridBundle:Control:checkbox.html.twig' %}
 {%- elseif cell.value or ( boolean and 'th' != cell.type ) -%}
