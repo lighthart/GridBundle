@@ -869,6 +869,11 @@ class Grid
                                 $options['edit'] = true;
                             }
 
+                            $group = ($columns[$key]->getOption('group') ?: null);
+                            if ($group) {
+                                $options['group'] = true;
+                            }
+
                             if (!$security) {
                                 $value = null;
                             }

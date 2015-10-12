@@ -5,6 +5,7 @@
 {% set money = cell.options.money is defined %}
 {% set edit = cell.options.edit is defined %}
 {% set float = cell.options.float is defined %}
+{% set group = cell.options.group is defined %}
 {% if buttonNum is defined %}
 {% else %}
     {% set buttonNum = 4 %}
@@ -19,22 +20,26 @@
 {% endif %}
 {%- if cell.value.timestamp is defined -%}
     {% set value = cell.value|date('Y-m-d') %}
+{%- elseif cell.link is defined -%}
+    {% set value = cell.link|raw %}
 {%- elseif cell.html is defined -%}
-    {% set value = cell.value|raw %}
+    {% set value = cell.value|replace({'{':'', '}':''})|raw %}
 {%- elseif boolean -%}
     {% set value = cell.value|boolean %}
 {%- elseif money -%}
     {% set value = cell.value|number_format(0, '.', ',') %}
 {%- else -%}
-    {% set value = cell.value|trim %}
+    {% set value = cell.value|replace({'{':'', '}':''})|trim %}
 {%- endif -%}
-<{{- cell.type }} {% for attrib, value in cell.attr -%}{%- if attrib != "width" -%}{{- attrib -}}="{{- value|trim -}}" {%- endif -%}{%- endfor -%} {% if cell.attr['title'] is defined and 'td' == cell.type -%}{%- elseif boolean -%} title="{{cell.value|boolean(false)}}"{%- else -%} title="{{- value -}}"{%- endif -%}
+<{{- cell.type }} {% for attrib, value in cell.attr -%}{%- if attrib != "width" -%}{{- attrib -}}="{{- value|replace({'{':'', '}':''})|trim -}}" {%- endif -%}{%- endfor -%} {% if cell.attr['title'] is defined and 'td' == cell.type -%}{%- elseif boolean -%} title="{{cell.value|boolean(false)}}"{%- else -%} title="{{- value|replace({'{':'', '}':''}) -}}"{%- endif -%}
     {%- include 'LighthartGridBundle:Cell:cellWidth.html.twig' -%}
     >{{-''-}}
 {%- if cell.actions is defined -%}
     {% include 'LighthartGridBundle:Action:actions.html.twig' with {'actions': cell.actions} %}
 {%- elseif cell.statuses is defined -%}
     {% include 'LighthartGridBundle:Status:statuses.html.twig' with {'status': cell.statuses} %}
+{%- elseif group -%}
+    {%- include 'LighthartGridBundle:Cell:list.html.twig' with {'list' : value } %}
 {% elseif edit and cell.options.aggregate is not defined %}
     {% if money %}
         {% if cell.value is not null %}
@@ -49,13 +54,6 @@
         {% else %}
         <input type="text" class="lg-edit-field" value="{{- cell.value -}}"/>
     {% endif %}
-{%- elseif value[:1] == '{' -%}
-    {%- include 'LighthartGridBundle:Cell:list.html.twig' with {'list' : value[1:(value|length - 2)] } %}
-{%- elseif value[:1] == '<' -%}
-    {# this is getting out of hand #}
-    {# type for list of lnks? #}
-    {# replacing {} is for postgres array agg functions #}
-    {%- include 'LighthartGridBundle:Cell:list.html.twig' with {'list' : value|replace({'{':'', '}':''}) } %}
 {%- elseif cell.attr.checkbox is defined -%}
     {% include 'LighthartGridBundle:Control:checkbox.html.twig' %}
 {%- elseif cell.value or ( boolean and 'th' != cell.type ) -%}
@@ -80,7 +78,7 @@
             {{- cell.header -}}
         {%- endif -%}
     {%- endif -%}
-    {# {{dump(cell)}} #}
     {%- include 'LighthartGridBundle:Cell:sort.html.twig' %}
     {%- endif -%}{{-''-}}
+    {# {{dump(cell.options)}} #}
 </{{- cell.type -}}>
