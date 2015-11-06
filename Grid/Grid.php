@@ -654,28 +654,34 @@ class Grid
                             if ('array' == gettype($columns[$headerKey]->getOption('value'))) {
                                 $values = $columns[$headerKey]->getOption('value');
                             } else {
-                                $values = [$columns[$headerKey]->getOption('value') ];
+                                $values = [$columns[$headerKey]->getOption('value')] ;
                             }
 
-                            // array filter strips out non-truthy values
 
 
                             // not getting all of the tildes here... need to fix
-                            $values = array_filter(array_map(function ($v) use ($result) {
+                            $values = array_map(function ($v) use ($result) {
                                 if (strpos($v, '~') !== false) {
                                     $key = str_replace('~', '', str_replace('.', '_', $v));
 
                                     if (isset($result[$key])) {
                                         return $result[$key];
                                     } else {
-                                        return "";
+                                        return '';
                                     }
                                 } else {
-                                    return "";
+                                    return $v;
                                 }
-                            }, $values));
+                            }, $values);
 
+                            // array filter strips out non-truthy values
+                            $values = array_filter($values);
+
+                            $values = array_filter(array_map(function ($v) use ($result) {
+                                return $this->tilde($v, $result);
+                            }, $values));
                             $value = array_shift($values);
+
                         }
 
                         $newResult[$headerKey] = $value;
@@ -695,6 +701,7 @@ class Grid
                 $newResults[] = $newResult;
             }
         }
+
         return $newResults;
     }
 
