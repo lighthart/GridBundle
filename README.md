@@ -171,6 +171,7 @@ may use any alias you would like.
                     original alias and the new alias in the query is sent as the second
                     parameter, and the function should return the boolean value.  For
                     example:
+    trunc:          get first value of trunc characters
 ```php
     $gm->addField('consentStatus', 'shortName', [
         'filter'   => 'number',

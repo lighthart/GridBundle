@@ -875,12 +875,18 @@ class Grid
                                 $options['group'] = true;
                             }
 
+                            if ($columns[$key]->getOption('trunc')) {;
+                                $value = substr($value, 0, $columns[$key]->getOption('trunc'));
+                            }
+
                             if (!$security) {
                                 $value = null;
                             }
-                            $cell = new Cell(['value' => $value, 'title' => $title, 'type' => 'td', 'attr' => $attr, 'options' => $options]);
 
+
+                            $cell = new Cell(['value' => $value, 'title' => $title, 'type' => 'td', 'attr' => $attr, 'options' => $options]);
                             $row->addCell($cell);
+
                             $this->columnOptions($columns[$key]);
                         }
                     } else {
