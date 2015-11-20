@@ -38,7 +38,7 @@
     {% include 'LighthartGridBundle:Action:actions.html.twig' with {'actions': cell.actions} %}
 {%- elseif cell.statuses is defined -%}
     {% include 'LighthartGridBundle:Status:statuses.html.twig' with {'status': cell.statuses} %}
-{%- elseif group -%}
+{%- elseif group and not boolean -%}
     {%- include 'LighthartGridBundle:Cell:list.html.twig' with {'list' : value } %}
 {% elseif edit and cell.options.aggregate is not defined %}
     {% if money %}
