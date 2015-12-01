@@ -21,6 +21,7 @@ class Action
             'attr'     => null,
             'icon'     => null,
             'name'     => null,
+            'post'     => null,
             'route'    => null,
             'security' => true,
             'severity' => 'btn-default',
@@ -29,6 +30,7 @@ class Action
         $this->attr     = $options['attr'];
         $this->icon     = ($options['icon']);
         $this->name     = $options['name'];
+        $this->post     = $options['post'];
         $this->route    = $options['route'];
         $this->security = $options['security'];
         $this->severity = $options['severity'];

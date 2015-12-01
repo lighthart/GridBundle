@@ -124,6 +124,10 @@ input.lg-input-non-field {
     margin-left:16px;*/
 }
 
+.lg-form-action {
+    display:inline;
+}
+
 td.lg-editable {
     background-image: linear-gradient(to bottom, rgba(255, 255, 0, 0.2), rgba(255, 255, 0, 0.2))
 }

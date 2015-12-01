@@ -1,3 +1,9 @@
-<a {% for attrib, value in action.attr -%} {% if attrib == 'class' %}{% else %}{{- attrib -}}="{{- value -}}"{% endif %} {%- endfor %}title="{{action.title}}" class="btn btn-xs {{action.severity}}{% if xtra is defined %} lg-xtra-action hide{% endif %}" href="{{action.route}}">
-    {%- if action.icon is defined -%}<span class="fa {{action.icon}}"></span>{%- endif %} {{ action.name -}}
+
+{% if action.post is defined and action.post %}
+    <form method="post" action="{{action.route}}" class="lg-form-action">
+        <button type="submit" title="{{action.title}}" class="btn btn-xs {{action.severity}}{% if xtra is defined %} lg-xtra-action hide{% endif %}">{% include 'LighthartGridBundle:Action:icon.html.twig' with {'action': action} %} {{ action.name -}}</button>
+    </form>
+    {% else %}<a {% for attrib, value in action.attr -%} {% if attrib == 'class' %}{% else %}{{- attrib -}}="{{- value -}}"{% endif %} {%- endfor %}title="{{action.title}}" class="btn btn-xs {{action.severity}}{% if xtra is defined %} lg-xtra-action hide{% endif %}" href="{{action.route}}">
+    {% include 'LighthartGridBundle:Action:icon.html.twig' with {'action': action} %} {{ action.name -}}
 </a>
+{% endif %}
