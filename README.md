@@ -305,6 +305,8 @@ button will be automatically rendered.  This can be controlled by overwriting th
                 symfony alias for a route, and the value being an array of parameters for
                 said route.
 
+    post:       Buttons renders as submit inside a form and issues a post request.
+
 > **Warning**: Why is my button missing? If the router fails, the exception will be
 > caught and the button silently omitted.
 
