@@ -6,8 +6,10 @@
     {{
         qb.getQuery.sql|replace({
             ','        : ',<br/>&nbsp;&nbsp;',
-            'SELECT'   : 'SELECT<br/>&nbsp;&nbsp;',
+            'SELECT'   : '<br/>SELECT<br/>&nbsp;&nbsp;',
             'JOIN'     : 'JOIN<br/>&nbsp;&nbsp;',
+            'INNER'    : '<br/>INNER',
+            'LEFT'     : '<br/>LEFT',
             'FROM'     : '<br/>FROM<br/>&nbsp;&nbsp;',
             'WHERE'    : '<br/>WHERE<br/>&nbsp;&nbsp;',
             'OR'       : '<br/>OR<br/>&nbsp;&nbsp;',
