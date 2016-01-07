@@ -691,7 +691,7 @@ class Grid
                             $tmpResult = $boolean($result, $exportAliases);
                             $newResult[$headerKey] = (($tmpResult === null) ? "null" : ($tmpResult ? "true" : "false"));
                         } else {
-                            $newResult[$headerKey] = (($result[$headerKey] === null) ? "null" : ($result ? "true" : "false"));
+                            $newResult[$headerKey] = (($result[$headerKey] === null) ? "null" : ($result[$headerKey] ? "true" : "false"));
                         }
                     } else {
                         $newResult[$headerKey] = (($result[$headerKey] instanceof \DateTime) ? $result[$headerKey]->format('Y-m-d') : $result[$headerKey]);
