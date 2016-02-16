@@ -160,6 +160,13 @@ may use any alias you would like.
                     tildes (see below) function as columns forming indexes, to base the
                     appearance on portions of the tuple.
 
+    transform:      An anonymous function.  Yhe result tuple for the current row is sent
+                    as the first parameter, and an alias translation table for the original
+                    alias and the new alias in the query is sent as the second parameter.
+                    The tildes (see below) function as columns forming indexes, to base the
+                    appearance on portions of the tuple.  The function is applied to the
+                    value of the column.
+
     value:          Multiple fields may be added using tildes, as with example for title.
                     Passing an array (instead of a string) of values takes the first
                     truthy value, similar to a postgres concat operator.

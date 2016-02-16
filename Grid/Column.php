@@ -1,21 +1,19 @@
 <?php
 namespace Lighthart\GridBundle\Grid;
 
-use Doctrine\ORM\Query;
-
 class Column
 {
     private $alias;
-     // from the query
+    // from the query
     private $value;
-     // from the query
+    // from the query
     private $options;
 
     public function __construct($alias, $value = 'id', array $options = [])
     {
-        $this->alias   = $alias;
-        $this->value   = $value;
-        $options       = array_merge([
+        $this->alias = $alias;
+        $this->value = $value;
+        $options     = array_merge([
             'security' => true,
         ], $options);
         $this->options = $options;
@@ -57,7 +55,7 @@ class Column
 
     public function getOptions($option = null)
     {
-        if ($option === null) {
+        if (null === $option) {
             return $this->options;
         } else {
             return $this->getOption($option);
@@ -85,6 +83,18 @@ class Column
 
     public function getSecurity()
     {
-        return $this->options['security'];
+        return $this->getOptions('security');
+    }
+
+    public function setTransform($transform)
+    {
+        $this->options['transform'] = $transform;
+
+        return $this;
+    }
+
+    public function getTransform()
+    {
+        return $this->getOptions('transform');
     }
 }
