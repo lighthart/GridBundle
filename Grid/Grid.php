@@ -654,16 +654,16 @@ class Grid
                             } else {
                                 $values = [$columns[$headerKey]->getOption('value')];
                             }
-
                             // not getting all of the tildes here... need to fix
-                            $values = array_map(function ($v) use ($result) {
+                            $values = array_map(function ($v) use ($result, $headerKey) {
+
                                 if (strpos($v, '~') !== false) {
                                     $key = str_replace('~', '', str_replace('.', '_', $v));
 
                                     if (isset($result[$key])) {
                                         return $result[$key];
                                     } else {
-                                        return '';
+                                        return $result[$headerKey];
                                     }
                                 } else {
                                     return $v;
