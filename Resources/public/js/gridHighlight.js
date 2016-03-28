@@ -1,5 +1,5 @@
 function highlightSearches() {
-    if ($('input#lg-search-input') && undefined != $('input#lg-search-input').val()) {
+    if ($('input#lg-search-input') && 'undefined' !== typeof $('input#lg-search-input').val()) {
         $('td.lg-searchable').highlight($('input#lg-search-input').val().split(' '), {
             className: 'lg-highlight-searches'
         });
@@ -14,7 +14,7 @@ function highlightSearches() {
 function highlightFilters() {
     $('input.lg-filter-input').each(function(i) {
         var col = $(this).parent().index();
-        $(this).closest("table").find("tr td:nth-child(" + (col + 1) + ")").highlight($(this).val(), {
+        $(this).closest("table").find("tr td:nth-child(" + (col) + ")").highlight($(this).val(), {
             className: 'lg-highlight-filters'
         });
         if ( !! $(this).val().trim()) {

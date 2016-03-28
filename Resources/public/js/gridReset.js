@@ -30,7 +30,7 @@ function gridResetReload(control) {
         var flagCookie = "lg-" + getLgCurrentRoute() + "-flag-" + flag;
         $.removeCookie(flagCookie);
     });
-    gridReload(new Date().getTime(), true);
+    gridReload({reset:true});
 }
 
 var KEYCODE_ENTER = 13;

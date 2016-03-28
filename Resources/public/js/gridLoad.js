@@ -107,8 +107,8 @@ function gridFocus() {
     return focus;
 }
 
-function gridReload(reset) {
-    reset = typeof reset !== 'undefined' ? reset : false;
+function gridReload(options) {
+    var reset = typeof optionst !== 'undefined'&& typeof options.reset !== 'undefined' ? options.reset : false;
     var oldFocus = null;
     var oldVersion = null;
     cookies = getCookies();
@@ -128,7 +128,7 @@ function gridReload(reset) {
     if (xhr) {
         xhr.abort();
     }
-    if (timer != null) {
+    if (timer !== null) {
         clearTimeout(timer);
     }
     timer = setTimeout(function() {
@@ -139,12 +139,12 @@ function gridReload(reset) {
             type: 'GET',
             cache: false,
             beforeSend: function(xhr) {
+                oldFocus = gridFocus() ? '#' + gridFocus().attr('id') : 0;
                 $('.lg-table').addClass('text-muted');
                 cookies = getCookies();
                 oldVersion = typeof cookies.version == 'undefined' ? 0 : cookies.version;
                 cookies.version = new Date().getTime();
                 setCookies(cookies);
-                oldFocus = gridFocus() ? '#' + gridFocus().attr('id') : 0;
             },
             success: function(responseText, textStatus, XMLHttpRequest) {
                 if (reset) {
@@ -169,9 +169,9 @@ function gridReload(reset) {
                 highlightFilters();
                 activateControls();
                 $('.lg-table').removeClass('text-muted');
-                // if (oldFocus) {
-                //     $(oldFocus).blur().focus().val($(oldFocus).val());
-                // }
+                if (oldFocus) {
+                    $(oldFocus).blur().focus().val($(oldFocus).val());
+                }
                 markFlags();
                 updates();
                 moveCursor();

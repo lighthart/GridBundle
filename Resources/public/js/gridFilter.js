@@ -3,7 +3,7 @@ function getAllFilters() {
     var filter = '';
     $('.lg-filter-input').each(function(i, e) {
         var value = $(this).val();
-        parent = $(this).parent();
+        var parent = $(this).parent();
         if ('otherGroup' != parent.attr('data-role-lg-field')) {
         }
         filter += parent.attr('data-role-lg-class') + '__' + parent.attr('data-role-lg-field') + ':' + value;
