@@ -1,6 +1,6 @@
 /// '@LighthartGridBundle/Resources/public/js/gridPaging.js'
 function pagingInputControl() {
-    $('.lg-last-page').unbind('change');
+    $('input.lg-page-input').unbind('change keyup');
     $('input.lg-page-input').on('change keyup', function(e) {
         if ([37, 38, 39, 40].indexOf(e.keyCode) > -1) {
         } else {
@@ -8,7 +8,7 @@ function pagingInputControl() {
             cookies = getCookies();
             cookies.offset = cookies.offset ? cookies.offset : 0;
             var maxPages = Number($('#lg-max-pages').val());
-            var newPage = Number($('#lg-page-input').val());
+            var newPage = Number($(this).val());
             if (newPage < 0) {
                 cookies.offset = 0;
             } else if (newPage >= maxPages) {
@@ -18,7 +18,7 @@ function pagingInputControl() {
                 cookies.offset = (newPage - 1) * cookies.pageSize;
             }
             setCookies(cookies);
-            pagingInputReload();
+            pagingInputReload($(this));
         }
     });
 }
@@ -77,9 +77,9 @@ function lastPageControl() {
     });
 }
 
-function pagingInputReload() {
+function pagingInputReload(control) {
     var cookies = getCookies();
-    var pageVal = Number($('input.lg-page-input').val());
+    var pageVal = Number(control.val());
     var maxPages = Number(getMaxPages());
     var numPerPage = cookies.pageSize;
     offset = cookies.offset;

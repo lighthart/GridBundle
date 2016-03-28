@@ -108,7 +108,7 @@ function gridFocus() {
 }
 
 function gridReload(options) {
-    var reset = typeof optionst !== 'undefined'&& typeof options.reset !== 'undefined' ? options.reset : false;
+    var reset = typeof options !== 'undefined' && typeof options.reset !== 'undefined' ? options.reset : false;
     var oldFocus = null;
     var oldVersion = null;
     cookies = getCookies();
@@ -140,6 +140,7 @@ function gridReload(options) {
             cache: false,
             beforeSend: function(xhr) {
                 oldFocus = gridFocus() ? '#' + gridFocus().attr('id') : 0;
+                console.log(oldFocus);
                 $('.lg-table').addClass('text-muted');
                 cookies = getCookies();
                 oldVersion = typeof cookies.version == 'undefined' ? 0 : cookies.version;
