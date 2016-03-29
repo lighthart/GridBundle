@@ -14,7 +14,7 @@ function highlightSearches() {
 function highlightFilters() {
     $('input.lg-filter-input').each(function(i) {
         var col = $(this).parent().index();
-        $(this).closest("table").find("tr td:nth-child(" + (col) + ")").highlight($(this).val(), {
+        $(this).closest("table").find("tr td:nth-child(" + (col+1) + ")").highlight($(this).val(), {
             className: 'lg-highlight-filters'
         });
         if ( !! $(this).val().trim()) {
