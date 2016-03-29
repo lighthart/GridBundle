@@ -1062,8 +1062,8 @@ class GridMaker
                 }
             }
         }
-        print_r($qb->getQuery()->getDql());
-        die;
+        // print_r($qb->getQuery()->getDql());
+        // die;
 
         return $qb;
     }
