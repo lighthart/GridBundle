@@ -139,7 +139,6 @@ function gridReload(options) {
             type: 'GET',
             cache: false,
             beforeSend: function(xhr) {
-                oldFocus = gridFocus() ? '#' + gridFocus().attr('id') : 0;
                 console.log(oldFocus);
                 $('.lg-table').addClass('text-muted');
                 cookies = getCookies();

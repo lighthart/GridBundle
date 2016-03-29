@@ -5,6 +5,6 @@
         </button>
     </div>
     <div class="lg-search-input-margin">
-        <input type="text" id="lg-search-input"{% if grid.search %} class="lg-filtered lg-search" {% else %} class="lg-search" {% endif %}placeholder="Search" title="Search entire grid"/>
+        <input type="text" id="lg-search-input"{% if grid.search %} class="lg-filtered lg-search" {% else %} class="lg-search" {% endif %}placeholder="Search" title="Search entire grid" value="{{grid.getSearch ?: ''}}"/>
     </div>
 {% endblock searchControl %}

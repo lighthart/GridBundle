@@ -2,24 +2,24 @@
 // $(document).ready moved to below
 function activateControls() {
     var cookies = getCookies();
-    $('input#lg-search-input').val(cookies.search);
+    // $('input#lg-search-input').val(cookies.search);
     filter = cookies.filter;
-    console.log(filter);
-    if (filter) {
-        filters = filter.split(';');
-        var index;
-        for (index = 0; index < filters.length; ++index) {
-            f = filters[index].split('|')[0];
-            console.log(f);
-            var filterId = f.split(':')[0];
-            var filterVal = f.split(':')[1];
-            if (!!filterVal) {
-                console.log(filterId);
-                console.log(filterVal);
-                $('#lg-filter-' + filterId).val(filterVal);
-            }
-        }
-    }
+    // console.log(filter);
+    // if (filter) {
+    //     filters = filter.split(';');
+    //     var index;
+    //     for (index = 0; index < filters.length; ++index) {
+    //         f = filters[index].split('|')[0];
+    //         console.log(f);
+    //         var filterId = f.split(':')[0];
+    //         var filterVal = f.split(':')[1];
+    //         if (!!filterVal) {
+    //             console.log(filterId);
+    //             console.log(filterVal);
+    //             $('#lg-filter-' + filterId).val(filterVal);
+    //         }
+    //     }
+    // }
     pageSizeControl();
     pagingInputControl();
     prevPageControl();

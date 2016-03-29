@@ -379,7 +379,7 @@ class Grid
         }
     }
 
-    public function fillTh(array $result = [], $filters = true)
+    public function fillTh(array $result = [], $filters = true, $filterValues = [])
     {
         $thead   = $this->getTable()->getThead();
         $columns = $this->getColumns();
@@ -481,17 +481,17 @@ class Grid
                 // no column!
             }
         }
-        $thead->addRow($row);
 
+        $thead->addRow($row);
         if (([] == array_filter($columns, function ($c) {
             return $c->getOption('filter');
         })) || $this->export) {
         } else {
-            $this->fillFilters($filters);
+            $this->fillFilters($filters, $filterValues);
         }
     }
 
-    public function fillFilters($filters)
+    public function fillFilters($filters, $filterValues = [])
     {
         $thead   = $this->getTable()->getThead();
         $columns = $this->getColumns();
@@ -543,6 +543,13 @@ class Grid
             }
         }
 
+        foreach ($filterValues as $filterValue) {
+            $fv  = substr(strstr($filterValue, ':'), 1);
+            $col = strstr($filterValue, ':', true);
+
+            $filterFields[$col] = $fv;
+        }
+
         foreach ($columns as $key => $column) {
             if (isset($columns[$key]->getOptions()['hidden'])) {
             } else {
@@ -570,9 +577,9 @@ class Grid
                         }
                     }
 
-// This is some pretty cantekerous bullshit.
+                    // This is some pretty cantekerous bullshit.
                     //
-                    // Need to go to an array merging approach/combinign tuples
+                    // Need to go to an array merging approach/combining tuples
 
                     if ($columns[$key]->getOption('otherGroup') && $columns[$key]->getOption('filterHidden')) {
                         $attr['data-role-lg-class'] = stristr($columns[$key]->getAlias(), '__otherGroup', true);
@@ -601,9 +608,13 @@ class Grid
                     $attr['class']  = (isset($attr['class']) ? $attr['class'] : "");
                     $attr['class'] .= ' lg-filterable lg-filter';
                     $entityId = ($columns[$key]->getOption('entityId') ?: null);
-
                     if (!$filters) {
                         $attr['class'] .= ' hide';
+                    } else {
+                        if (isset($filterFields[$key])) {
+                            $attr = array_merge($attr, ['filterValue' => $filterFields[$key]]);
+                        }
+
                     }
                     $cell = new Cell(['type' => 'th', 'attr' => $attr]);
                 } else {
