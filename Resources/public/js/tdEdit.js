@@ -260,7 +260,7 @@ function updateCell(object, val) {
         }
 
         if (object.parent().attr('data-role-lg-new') && !object.parent().attr('data-role-lg-entity-id')) {
-            console.log('create');
+            // console.log('create');
             url = makeURLfromTD(object.parent(), 'create');
             $.ajax({
                 type: 'POST',
@@ -274,7 +274,7 @@ function updateCell(object, val) {
                 }
             });
         } else {
-            console.log('update');
+            // console.log('update');
             url = makeURLfromTD(object.parent(), 'update');
             $.ajax({
                 type: 'POST',
@@ -329,7 +329,6 @@ function updateSuper(td, difference) {
             var newSuperValue = parseFloat(oldSuperValue) + parseFloat(difference);
             if (isNaN(newSuperValue)) {
             } else {
-                console.log('here');
                 superInput.val(addCommas(newSuperValue));
             }
             td.children("input").on('change', function(event) {
