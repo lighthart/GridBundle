@@ -5,24 +5,6 @@ function pagingInputControl() {
         if ([37, 38, 39, 40].indexOf(e.keyCode) > -1) {
         } else {
             e.preventDefault();
-            cookies = getCookies();
-            cookies.offset = cookies.offset ? cookies.offset : 0;
-            var maxPages = Number($('#lg-max-pages').val());
-            var newPage = Number($(this).val());
-            var maxResults = Number($('#lg-max-results').val());
-            if (newPage < 0) {
-                cookies.offset = 0;
-                newPage = 1;
-            } else if (newPage >= maxPages) {
-                cookies.offset = maxResults - maxResults % Number(cookies.pageSize);
-                newPage = maxPages;
-            } else {
-                cookies.offset = (newPage - 1) * cookies.pageSize;
-            }
-            if (cookies.offset >= maxResults) {
-                cookies.offset -= maxResults % cookies.pageSize;
-            }
-            setCookies(cookies);
             pagingInputReload($(this).val());
         }
     });
