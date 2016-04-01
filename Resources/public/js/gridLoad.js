@@ -12,7 +12,7 @@ function getOffset() {
     cookies = getCookies();
     var pageVal = Number($('input.lg-page-input').val());
     var maxPages = Number($('#lg-max-pages').val());
-    if (pageVal > maxPages) {
+    if (pageVal >= maxPages) {
         pageVal = maxPages;
     }
     var numPerPage = Number(cookies.pageSize);

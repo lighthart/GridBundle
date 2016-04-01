@@ -9,16 +9,21 @@ function pagingInputControl() {
             cookies.offset = cookies.offset ? cookies.offset : 0;
             var maxPages = Number($('#lg-max-pages').val());
             var newPage = Number($(this).val());
+            var maxResults = Number($('#lg-max-results').val());
             if (newPage < 0) {
                 cookies.offset = 0;
+                newPage = 1;
             } else if (newPage >= maxPages) {
-                var maxResults = Number($('#lg-max-results').val());
                 cookies.offset = maxResults - maxResults % Number(cookies.pageSize);
+                newPage = maxPages;
             } else {
                 cookies.offset = (newPage - 1) * cookies.pageSize;
             }
+            if (cookies.offset >= maxResults) {
+                cookies.offset -= maxResults % cookies.pageSize;
+            }
             setCookies(cookies);
-            pagingInputReload($(this));
+            pagingInputReload($(this).val());
         }
     });
 }
@@ -27,31 +32,28 @@ function prevPageControl() {
     $('.lg-prev-page').unbind('click');
     $('.lg-prev-page').on('click', function(e) {
         e.preventDefault();
-        cookies = getCookies();
-        cookies.offset = cookies.offset ? cookies.offset : 0;
-        cookies.offset = Number(cookies.offset) - Number(cookies.pageSize);
-        if (cookies.offset < 0) {
-            cookies.offset = 0;
+        var nextPage = $('input.lg-page-input').val();
+        if (1 == nextPage) {
+        } else {
+            nextPage -= 1;
         }
-        setCookies(cookies);
-        pagingInputReload($('input.lg-page-input'));
+        pagingInputReload(nextPage);
     });
 }
 
 function nextPageControl() {
     $('.lg-next-page').unbind('click');
     $('.lg-next-page').on('click', function(e) {
-        console.log('click');
         e.preventDefault();
         cookies = getCookies();
         cookies.offset = cookies.offset ? cookies.offset : 0;
-        var maxResults = $('#lg-max-results').val();
-        cookies.offset = Number(cookies.pageSize) + Number(cookies.offset);
-        if (cookies.offset >= maxResults) {
-            cookies.offset -= maxResults % cookies.pageSize;
+        var maxPages = Number($('#lg-max-pages').val());
+        var nextPage = $('input.lg-page-input').val();
+        if (nextPage < maxPages) {
+            nextPage += 1;
+        } else {
         }
-        setCookies(cookies);
-        pagingInputReload($('input.lg-page-input'));
+        pagingInputReload(nextPage);
     });
 }
 
@@ -62,7 +64,7 @@ function firstPageControl() {
         cookies = getCookies();
         cookies.offset = 0;
         setCookies(cookies);
-        pagingInputReload($('input.lg-page-input'));
+        pagingInputReload(1);
     });
 }
 
@@ -70,17 +72,13 @@ function lastPageControl() {
     $('.lg-last-page').unbind('click');
     $('.lg-last-page').on('click', function(e) {
         e.preventDefault();
-        cookies = getCookies();
-        var maxResults = Number($('#lg-max-results').val());
-        cookies.offset = maxResults - maxResults % Number(cookies.pageSize);
-        setCookies(cookies);
-        pagingInputReload($('input.lg-page-input'));
+        pagingInputReload($('#lg-max-pages').val());
     });
 }
 
-function pagingInputReload(control) {
+function pagingInputReload(page) {
     var cookies = getCookies();
-    var pageVal = Number(control.val());
+    var pageVal = Number(page);
     var maxPages = Number(getMaxPages());
     var numPerPage = cookies.pageSize;
     offset = cookies.offset;
@@ -94,9 +92,9 @@ function pagingInputReload(control) {
             pageVal = maxPages;
         }
     } else {
-        offset = numPerPage * (pageVal - 1);
-        $('input.lg-page-input').val(pageVal);
-        setCookies(cookies);
-        gridReload();
     }
+    cookies.offset = numPerPage * (pageVal - 1);
+    $('input.lg-page-input').val(pageVal);
+    setCookies(cookies);
+    gridReload();
 }
