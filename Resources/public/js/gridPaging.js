@@ -34,23 +34,24 @@ function prevPageControl() {
             cookies.offset = 0;
         }
         setCookies(cookies);
-        pagingInputReload();
+        pagingInputReload($('input.lg-page-input'));
     });
 }
 
 function nextPageControl() {
     $('.lg-next-page').unbind('click');
     $('.lg-next-page').on('click', function(e) {
+        console.log('click');
         e.preventDefault();
         cookies = getCookies();
         cookies.offset = cookies.offset ? cookies.offset : 0;
         var maxResults = $('#lg-max-results').val();
         cookies.offset = Number(cookies.pageSize) + Number(cookies.offset);
-        if (cookies.offset > maxResults) {
+        if (cookies.offset >= maxResults) {
             cookies.offset -= maxResults % cookies.pageSize;
         }
         setCookies(cookies);
-        pagingInputReload();
+        pagingInputReload($('input.lg-page-input'));
     });
 }
 
@@ -61,7 +62,7 @@ function firstPageControl() {
         cookies = getCookies();
         cookies.offset = 0;
         setCookies(cookies);
-        pagingInputReload();
+        pagingInputReload($('input.lg-page-input'));
     });
 }
 
@@ -73,7 +74,7 @@ function lastPageControl() {
         var maxResults = Number($('#lg-max-results').val());
         cookies.offset = maxResults - maxResults % Number(cookies.pageSize);
         setCookies(cookies);
-        pagingInputReload();
+        pagingInputReload($('input.lg-page-input'));
     });
 }
 
