@@ -14,7 +14,7 @@ function prevPageControl() {
     $('.lg-prev-page').unbind('click');
     $('.lg-prev-page').on('click', function(e) {
         e.preventDefault();
-        var nextPage = $('input.lg-page-input').val();
+        var nextPage = Number($('input.lg-page-input').val());
         if (1 == nextPage) {
         } else {
             nextPage -= 1;
@@ -30,7 +30,7 @@ function nextPageControl() {
         cookies = getCookies();
         cookies.offset = cookies.offset ? cookies.offset : 0;
         var maxPages = Number($('#lg-max-pages').val());
-        var nextPage = $('input.lg-page-input').val();
+        var nextPage = Number($('input.lg-page-input').val());
         if (nextPage < maxPages) {
             nextPage += 1;
         } else {

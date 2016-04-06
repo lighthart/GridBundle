@@ -1,6 +1,6 @@
 // '@LighthartGridBundle/Resources/public/js/grid.js'
 // inhibits recurring callback for duration of quiet before executing
-var quiet = 300; // 300 ms
+var quiet = 250; // quiet in milliseconds
 var timer = 0;
 var xhr = 0;
 
@@ -109,7 +109,6 @@ function gridFocus() {
 
 function gridReload(options) {
     var reset = typeof options !== 'undefined' && typeof options.reset !== 'undefined' ? options.reset : false;
-    var oldFocus = null;
     var oldVersion = null;
     cookies = getCookies();
     data = {
@@ -139,7 +138,7 @@ function gridReload(options) {
             type: 'GET',
             cache: false,
             beforeSend: function(xhr) {
-                oldFocus = gridFocus() ? '#' + gridFocus().attr('id') : 0;
+                oldFocus = gridFocus() ? '#' + gridFocus().attr('id') : null;
                 $('.lg-table').addClass('text-muted');
                 cookies = getCookies();
                 oldVersion = typeof cookies.version == 'undefined' ? 0 : cookies.version;
