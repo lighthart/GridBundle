@@ -703,8 +703,19 @@ class GridMaker
 
             $filterValues = explode(';', $request->cookies->get("lg-" . $request->attributes->get('_route') . "-filter") ?: "");
             // var_dump($this->getGrid()->getColumns());
-            $filterValues = array_filter($filterValues, function ($f) {return !!substr(strstr($f, ':'), 1);});
-
+            $filterValues = array_filter(
+                array_map(
+                    function ($v) {
+                        return explode('|', $v)[0];
+                    },
+                    $filterValues
+                ), function ($f) {
+                    return (strlen($f) != (strpos($f, ':') + 1));
+                }
+            );
+            $filterValues = array_filter($filterValues, function ($f) {
+                return false === strpos($f, ':|');
+            });
             if ($html) {
                 if ($this->getGrid()->getOption('aggregateOnly')) {
                     // aggregate only

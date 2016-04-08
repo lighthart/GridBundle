@@ -1,22 +1,25 @@
 // '@LighthartGridBundle/Resources/public/js/gridFilter.js'
 function getAllFilters() {
-    var filter = '';
+    var filters = [];
     $('.lg-filter-input').each(function(i, e) {
         var value = $(this).val();
         var parent = $(this).parent();
+        // console.log(e);
         if ('otherGroup' != parent.attr('data-role-lg-field')) {
         }
-        filter += parent.attr('data-role-lg-class') + '__' + parent.attr('data-role-lg-field') + ':' + value;
+        var filter = parent.attr('data-role-lg-class') + '__' + parent.attr('data-role-lg-field') + ':' + value;
         if (parent.attr('data-role-lg-hidden')) {
             parent.attr('data-role-lg-hidden').split(';').forEach(function(f) {
+                // console.log(f);
+                // console.log(value);
                 filter += '|'+ f + ':' + value;
                 // Older below.  A little concerned about no reference to column's original field
                 // filter += '|' + parent.attr('data-role-lg-class') + '__' + f + ':' + value;
             });
         }
-        filter += ";";
+        filters.push(filter);
     });
-    return filter;
+    return filters.join(';');
 }
 
 function gridFilterControl() {
