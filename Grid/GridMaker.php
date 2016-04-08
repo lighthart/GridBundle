@@ -701,21 +701,45 @@ class GridMaker
 
             $html = $this->getGrid()->getOption('html');
 
+            // filterValues are written into the value attribute of the
+            // input fields in the grid
+
             $filterValues = explode(';', $request->cookies->get("lg-" . $request->attributes->get('_route') . "-filter") ?: "");
-            // var_dump($this->getGrid()->getColumns());
-            $filterValues = array_filter(
-                array_map(
-                    function ($v) {
-                        return explode('|', $v)[0];
-                    },
-                    $filterValues
-                ), function ($f) {
+
+            //  some fo the fields filter on multiple and/or hidden columns
+            //  these are pipe delimited  These are added to the list
+
+            array_walk(
+                $filterValues,
+                function ($v) use (&$filterValues) {
+                    $fv = explode('|', $v);
+                    if (count($fv) > 1) {
+                        foreach ($fv as $f) {
+                            $filterValues[] = $f;
+                        }
+                    }
+                }
+            );
+
+            // get rid of the comobo field since it is now flattened into the
+            // list as singles.
+            //
+            // The fields are filled based on column key so we don't need to
+            // remove extraneous here.
+            $filterValues = array_filter($filterValues,
+                function ($f) {
+                    return false === strpos($f, '|');
+                }
+            );
+
+            // the colon delimits field value from field name.
+            // If there is nothing after the colon, there is no value
+            $filterValues = array_filter($filterValues,
+                function ($f) {
                     return (strlen($f) != (strpos($f, ':') + 1));
                 }
             );
-            $filterValues = array_filter($filterValues, function ($f) {
-                return false === strpos($f, ':|');
-            });
+
             if ($html) {
                 if ($this->getGrid()->getOption('aggregateOnly')) {
                     // aggregate only
