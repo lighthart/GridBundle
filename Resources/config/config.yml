@@ -3,8 +3,9 @@ doctrine:
         # ...
         dql:
             string_functions:
-                test_string: GridBundle\DQL\ArrayAggDistinctFunction
-                test_string: GridBundle\DQL\ArrayAggFunction
-                test_string: GridBundle\DQL\ReplaceFunction
+                # Put these in application config.yml
+                # ARRAYAGG         : Lighthart\GridBundle\DQL\Postgres\ArrayAgg
+                # ARRAYAGGDISTINCT : Lighthart\GridBundle\DQL\Postgres\ArrayAggDistinct
+                # REPLACE          : Lighthart\GridBundle\DQL\Postgres\ReplaceFunction
             numeric_functions:
             datetime_functions:
