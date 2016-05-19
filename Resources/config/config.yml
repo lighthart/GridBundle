@@ -5,5 +5,6 @@ doctrine:
             string_functions:
                 test_string: GridBundle\DQL\ArrayAggDistinctFunction
                 test_string: GridBundle\DQL\ArrayAggFunction
+                test_string: GridBundle\DQL\ReplaceFunction
             numeric_functions:
             datetime_functions:
