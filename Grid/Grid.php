@@ -186,7 +186,6 @@ class Grid
 
     public function removeColumn(Column $column)
     {
-
         // not sure how to implement yet
         // $this->columns[] = $columns;
         // return $this;
@@ -194,7 +193,6 @@ class Grid
 
     public function setColumns(array $columns)
     {
-
         // columns should obviously be of type Column
         foreach ($this->columns as $k => $col) {
             unset($this->columns[$k]);
@@ -223,7 +221,6 @@ class Grid
 
     public function newColumns()
     {
-
         // clear them out to rerun
         $this->columns = [];
 
@@ -241,10 +238,7 @@ class Grid
         $thead->addTr($tr);
     }
 
-    public function columnOptions(Column $column)
-    {
-    }
-
+    public function columnOptions(Column $column) {}
     public function getOptions()
     {
         return $this->options;
@@ -262,8 +256,10 @@ class Grid
         return $this;
     }
 
-    public function setOption($option, $value)
-    {
+    public function setOption(
+        $option,
+        $value
+    ) {
         $this->options[$option] = $value;
 
         return $this;
@@ -327,9 +323,10 @@ class Grid
         return $this;
     }
 
-    public function verifyClass(String $class, $slash = null)
-    {
-
+    public function verifyClass(
+        String $class,
+               $slash = null
+    ) {
         // Default is class name is sent with backslashes
         // if another delimiter is used, for example '/' or '_'
         // Send as parameter
@@ -379,8 +376,11 @@ class Grid
         }
     }
 
-    public function fillTh(array $result = [], $filters = true, $filterValues = [])
-    {
+    public function fillTh(
+        array $result = [],
+              $filters = true,
+              $filterValues = []
+    ) {
         $thead   = $this->getTable()->getThead();
         $columns = $this->getColumns();
         $row     = new Row(['type' => 'tr', 'attr' => ['class' => 'lg-headers']]);
@@ -426,7 +426,6 @@ class Grid
 
                 if (isset($columns[$key]->getOptions()['hidden']) && $columns[$key]->getOptions()['hidden']) {
                 } else {
-
                     // tilde mapping
                     // putting a tilde in front of the title causes grid to interpret this as
                     // a result from another column in the query
@@ -437,7 +436,6 @@ class Grid
                     $parentId = ($columns[$key]->getOption('parentId') ?: null);
 
                     if ($parentId) {
-
                         // $attr['data-role-lg-parent-entity-id'] = $result[substr($parentId, 1) ];
                     }
 
@@ -477,7 +475,6 @@ class Grid
                     $row->addCell($cell);
                 }
             } else {
-
                 // no column!
             }
         }
@@ -491,8 +488,10 @@ class Grid
         }
     }
 
-    public function fillFilters($filters, $filterValues = [])
-    {
+    public function fillFilters(
+        $filters,
+        $filterValues = []
+    ) {
         $thead   = $this->getTable()->getThead();
         $columns = $this->getColumns();
         $row     = new Row(['type' => 'tr', 'attr' => ['class' => 'lg-filters' . ($filters ? '' : ' hide')]]);
@@ -641,8 +640,10 @@ class Grid
         }, $columns);
     }
 
-    public function exportTr(array $results = [], $root = null)
-    {
+    public function exportTr(
+        array $results = [],
+              $root = null
+    ) {
         $newResults = [];
         $headers    = $this->exportTh();
         $columns    = $this->getColumns();
@@ -667,7 +668,6 @@ class Grid
                             }
                             // not getting all of the tildes here... need to fix
                             $values = array_map(function ($v) use ($result, $headerKey) {
-
                                 if (strpos($v, '~') !== false) {
                                     $key = str_replace('~', '', str_replace('.', '_', $v));
 
@@ -712,8 +712,10 @@ class Grid
         return $newResults;
     }
 
-    public function fillTr(array $results = [], $root = null)
-    {
+    public function fillTr(
+        array $results = [],
+              $root = null
+    ) {
         $tbody   = $this->getTable()->getTbody();
         $columns = $this->getColumns();
         if ([] != $results) {
@@ -738,7 +740,6 @@ class Grid
                         $newAction = clone $action;
                         $security  = $action->getSecurity();
                         if (is_bool($security)) {
-
                             // default is true, set in the Action constructor
                         } else {
                             $security = $security($result, $this->aliases);
@@ -806,14 +807,12 @@ class Grid
 
                         $security = $columns[$key]->getSecurity();
                         if (is_bool($security)) {
-
                             // default is true, set in the Action constructor
                         } else {
                             $security = $security($result, $this->aliases);
                         }
                         if ($columns[$key]->getOption('hidden')) {
                         } else {
-
                             // tilde mapping
                             // putting a tilde in front of the title causes grid to interpret this as
                             // a result from another column in the query
@@ -903,7 +902,6 @@ class Grid
                             $this->columnOptions($columns[$key]);
                         }
                     } else {
-
                         // no column!
                     }
                 }
@@ -931,7 +929,6 @@ class Grid
 
     public function fillAggregate($qb)
     {
-
         // this is handled positionally, not by reference.
         // that might have to change later
         $tbody   = $this->getTable()->getTbody();
@@ -1002,8 +999,10 @@ class Grid
         return $this;
     }
 
-    public function tilde($what, &$result)
-    {
+    public function tilde(
+         $what,
+        &$result
+    ) {
         // converts ~column.def~ into the value from the result
         if ('string' == gettype($what)) {
             while (preg_match('/^(.*?)(~.*?~)(.*?)$/', $what, $match)) {
@@ -1013,7 +1012,6 @@ class Grid
                 } else {
                     $what = $match[1] . implode('', array_map(function ($m) use (&$result) {
                         if (false !== strpos($m, '|')) {
-
                             // grab the first truthy value
                             $m = array_shift(array_filter(explode('|', $m), function ($v) use ($result) {
                                 return $result[$v];
@@ -1022,12 +1020,10 @@ class Grid
                         if (array_key_exists($m, $result)) {
                             return $result[$m];
                         } else {
-
                             // mark them different so we don't recurse forever
                             if (false === strpos($m, '___')) {
                                 return '%' . $m . '%';
                             } else {
-
                                 // in this case no match was found-- remove the tilde tag
                                 return '';
                             }
@@ -1042,8 +1038,10 @@ class Grid
         return $what;
     }
 
-    public function tildes(array $tildes, &$result)
-    {
+    public function tildes(
+        array $tildes,
+        &     $result
+    ) {
         foreach ($tildes as $tildeKey => $what) {
             $tildes[$tildeKey] = $this->tilde($what, $result);
         }
