@@ -7,8 +7,10 @@
         $.fn.findScrollBar = function() {
             element = this;
             while (!(element.get(0) ? element.get(0).scrollHeight > element.innerHeight() : false) && !element.is("body")) {
+                console.log(element);
                 element = element.parent();
             }
-            return element.is("body") ? null : element;
+            console.log(element);
+            return element;
         }
     })(jQuery);
