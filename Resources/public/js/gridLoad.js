@@ -145,9 +145,10 @@ function gridReload(options) {
     if (timer !== null) {
         clearTimeout(timer);
     }
+    nextUrl = getLgCurrentURI();
     timer = setTimeout(function() {
         xhr = $.ajax({
-            url: getLgCurrentURI(),
+            url: nextUrl,
             data: data,
             dataType: 'html',
             type: 'GET',
@@ -193,6 +194,7 @@ function gridReload(options) {
                 // makeClicks();
                 // make latest timer
                 clearTimeout(timer);
+                $('#lg-grid-div').findScrollBar().scrollTop(options.cscroll);
             }
         });
     }, quiet);

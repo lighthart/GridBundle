@@ -2,10 +2,10 @@
 function pagingInputControl() {
     $('input.lg-page-input').unbind('change keyup');
     $('input.lg-page-input').on('change keyup', function(e) {
-        if ([37, 38, 39, 40].indexOf(e.keyCode) > -1) {
-        } else {
+        if ([37, 38, 39, 40].indexOf(e.keyCode) > -1) {}
+        else {
             e.preventDefault();
-            pagingInputReload($(this).val());
+            pagingInputReload($(this).val(), $('#lg-grid-div').findScrollBar().scrollTop());
         }
     });
 }
@@ -15,11 +15,11 @@ function prevPageControl() {
     $('.lg-prev-page').on('click', function(e) {
         e.preventDefault();
         var nextPage = Number($('input.lg-page-input').val());
-        if (1 == nextPage) {
-        } else {
+        if (1 == nextPage) {}
+        else {
             nextPage -= 1;
         }
-        pagingInputReload(nextPage);
+        pagingInputReload(nextPage, $('#lg-grid-div').findScrollBar().scrollTop());
     });
 }
 
@@ -33,9 +33,9 @@ function nextPageControl() {
         var nextPage = Number($('input.lg-page-input').val());
         if (nextPage < maxPages) {
             nextPage += 1;
-        } else {
         }
-        pagingInputReload(nextPage);
+        else {}
+        pagingInputReload(nextPage, 0);
     });
 }
 
@@ -46,7 +46,7 @@ function firstPageControl() {
         cookies = getCookies();
         cookies.offset = 0;
         setCookies(cookies);
-        pagingInputReload(1);
+        pagingInputReload(1, 0);
     });
 }
 
@@ -54,11 +54,12 @@ function lastPageControl() {
     $('.lg-last-page').unbind('click');
     $('.lg-last-page').on('click', function(e) {
         e.preventDefault();
-        pagingInputReload($('#lg-max-pages').val());
+        pagingInputReload($('#lg-max-pages').val(), 0);
     });
 }
 
-function pagingInputReload(page) {
+function pagingInputReload(page, top) {
+    top = typeof top !== 'undefined' ? top : false;
     var cookies = getCookies();
     var pageVal = Number(page);
     var maxPages = Number(getMaxPages());
@@ -73,10 +74,12 @@ function pagingInputReload(page) {
         if (pageVal > maxPages) {
             pageVal = maxPages;
         }
-    } else {
     }
+    else {}
     cookies.offset = numPerPage * (pageVal - 1);
     $('input.lg-page-input').val(pageVal);
     setCookies(cookies);
-    gridReload();
+    gridReload({
+        cscroll: top
+    });
 }
