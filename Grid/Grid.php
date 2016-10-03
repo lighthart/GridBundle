@@ -88,7 +88,7 @@ class Grid
 
     public function getPageSize()
     {
-        return $this->pageSize ?: 10;
+        return $this->pageSize ?: 100;
     }
 
     public function setPageSize($pageSize)
