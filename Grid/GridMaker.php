@@ -38,8 +38,11 @@ class GridMaker
      * @param Doctrine Service
      * @param Router Service
      */
-    public function __construct($doctrine, $router, $dumper)
-    {
+    public function __construct(
+        $doctrine,
+        $router,
+        $dumper
+    ) {
         $this->doctrine = $doctrine;
         $this->router   = $router;
         $this->dumper   = $dumper;
@@ -352,7 +355,10 @@ class GridMaker
             $flagKeys = array_filter($cookieKeys, function ($c) {return false !== strpos($c, '-flag-');});
             $cookieFlags = [];
             array_map(
-                function ($c, $k) use ($flagKeys, &$cookieFlags) {
+                function (
+                    $c,
+                    $k
+                ) use ($flagKeys, &$cookieFlags) {
                     if (in_array($k, $flagKeys)) {
                         $cookieFlags[strrev(strstr(strrev($k), '-', true))] = $c;
                     }
@@ -379,8 +385,10 @@ class GridMaker
      *
      * @return Array
      */
-    public function verifyClass(String $class, $slash = null)
-    {
+    public function verifyClass(
+        String $class,
+               $slash = null
+    ) {
         // Default is class name is sent with backslashes
         // if another delimiter is used, for example '/' or '_'
         // Send as parameter
@@ -428,8 +436,11 @@ class GridMaker
      *
      * @param self
      */
-    public function addField($entity, $value, array $options = [])
-    {
+    public function addField(
+              $entity,
+              $value,
+        array $options = []
+    ) {
         if (null === $value) {
             if (in_array($entity . '_' . 'id', array_keys($this->getGrid()->getColumns()))) {
                 return $this;
@@ -469,8 +480,11 @@ class GridMaker
      * @param [type]
      * @param array
      */
-    public function addMethod($entity, $method, array $options = [])
-    {
+    public function addMethod(
+              $entity,
+              $method,
+        array $options = []
+    ) {
         if (method_exists($entity, $method)) {
             $this->getGrid()->addMethod(new Column($entity, $method, $options));
         }
@@ -505,10 +519,12 @@ class GridMaker
     /**
      * Some of hydrate Grid excised here.
      */
-    public function paginateGridFromCookies(Request $request, $options = [])
-    {
+    public function paginateGridFromCookies(
+        Request $request,
+                $options = []
+    ) {
         $cookies    = $request->cookies;
-        $pageSize   = $request->cookies->get('lg-results-per-page') ?: 10;
+        $pageSize   = $request->cookies->get('lg-results-per-page') ?: 100;
         $pageOffset = $request->cookies->get("lg-" . $request->attributes->get('_route') . "-offset");
         $search     = $request->cookies->get("lg-" . $request->attributes->get('_route') . "-search");
         $filter     = $request->cookies->get("lg-" . $request->attributes->get('_route') . "-filter");
@@ -577,8 +593,10 @@ class GridMaker
      *
      * @return self of response
      */
-    public function hydrateGrid(Request $request, $options = [])
-    {
+    public function hydrateGrid(
+        Request $request,
+                $options = []
+    ) {
         set_time_limit(0);
         $defaultOptions = [
             'fromQB' => false,
@@ -766,8 +784,10 @@ class GridMaker
         return $this;
     }
 
-    public function pregAlias($alias, $aliases)
-    {
+    public function pregAlias(
+        $alias,
+        $aliases
+    ) {
         if ('array' == gettype($alias)) {
             $arrayed = true;
         } else {
@@ -878,7 +898,6 @@ class GridMaker
         // }
 
         if (isset($qb->getDqlPart('join')[$oldRoot])) {
-
             $joins = $qb->getDqlPart('join')[$oldRoot];
             foreach ($joins as $k => $join) {
                 if (false === strpos($join->getJoin(), '\\')) {
@@ -905,7 +924,7 @@ class GridMaker
                         $entities[$join->getAlias()] = $entity;
                     }
                 }
-            };
+            }
         }
         foreach ($aliases as $k => $v) {
             // mark root
@@ -1032,7 +1051,6 @@ class GridMaker
 
     public function mapResults(array $result)
     {
-
         // if query is out of sync with columns this blows chunks.
         // Basically, the root entities aren't getting into getAliases()
         $newResult = [];
@@ -1073,10 +1091,7 @@ class GridMaker
         }
     }
 
-    public function mapStatuses()
-    {
-    }
-
+    public function mapStatuses() {}
     public function aggregateQuery()
     {
         // we don't want to change the original query so we clone it.
