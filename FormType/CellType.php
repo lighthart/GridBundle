@@ -14,18 +14,22 @@ class CellType extends AbstractType
     private $em;
     private $user;
 
-    public function __construct($em, $sc)
-    {
-        $this->em   = $em;
-        if ($sc->getToken()) {
-            $this->user = $sc->getToken()->getUser();
+    public function __construct(
+        $em,
+        $tokenStorage
+    ) {
+        $this->em = $em;
+        if ($tokenStorage->getToken()) {
+            $this->user = $tokenStorage->getToken()->getUser();
         } else {
             $this->user = null;
         }
     }
 
-    public function buildForm(FormBuilderInterface $builder, array $options)
-    {
+    public function buildForm(
+        FormBuilderInterface $builder,
+        array                $options
+    ) {
         if (isset($options['class'])) {
             $this->class = $options['class'];
         } else {
@@ -45,10 +49,7 @@ class CellType extends AbstractType
         }
     }
 
-    public function setDefaultOptions(OptionsResolverInterface $resolver)
-    {
-    }
-
+    public function setDefaultOptions(OptionsResolverInterface $resolver) {}
     public function getParent()
     {
         return 'text';
