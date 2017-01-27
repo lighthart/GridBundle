@@ -14,6 +14,4 @@ function gridCheckboxControl() {
 function gridCheckboxes(status) {
     $('.lg-row-checkbox')
         .prop('checked', status);
-    $('.lg-row-checkbox')
-        .trigger('click');
 };
