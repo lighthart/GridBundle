@@ -1,1 +1,5 @@
-<input type="checkbox" class="lg-grid-edit-checkbox" {% if value is defined and value %}checked{% endif %}/>
+{% if 'th' == cell.type %}
+<input type="checkbox" class="lg-grid-checkbox" {% if value is defined and value %}checked{% endif %}/>
+{% else %}
+<input type="checkbox" class="lg-row-checkbox" {% if value is defined and value %}checked{% endif %}/>
+{% endif %}

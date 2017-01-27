@@ -20,4 +20,5 @@ function activateControls() {
     addButtonToggleControl();
     markFlags();
     setSelector();
+    gridCheckboxControl();
 }
