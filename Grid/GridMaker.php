@@ -1509,6 +1509,18 @@ class GridMaker
                         }
                     }
 
+                    if (isset($range['month'])) {
+                        try {
+                            $range['month'] = str_replace('%', '', $range['month']);
+                            $month          = new \DateTime($range['month']);
+                            $begin          = new \DateTime($range['month']);
+                            $begin->modify('first day of this month');
+                            $end = new \DateTime($range['month']);
+                            $end->modify('last day of this month');
+                        } catch (\Exception $e) {
+                        }
+                    }
+
                     if ($begin && $end) {
                         $qb->andWhere($qb->expr()->between($field, ':' . $key . "_begin", ':' . $key . "_end"));
                         $qb->setParameter($key . "_begin", $begin);
@@ -1555,7 +1567,9 @@ class GridMaker
 
     private function parseDateRange($date)
     {
-        if (strpos($date, '~') !== false) {
+        if (strpos($date, '%') !== false) {
+            $range['month'] = $date;
+        } elseif (strpos($date, '~') !== false) {
             $items = array_filter(explode('~', $date));
             if (count($items) == 1) {
                 if (isset($items[0])) {
