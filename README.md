@@ -123,7 +123,9 @@ may use any alias you would like.
                     only searches on this field. Optionally, you can also specify the kind
                     of search filter to use on this filed. Valid types are: date, number,
                     and string.  If filter is not set, it will default to false, and no
-                    input box will be displayed.
+                    input box will be displayed. 
+
+                    ~ is for date ranges ~Date ends at Date. Date~ begins from Date.
 
     sort:           true enables column sort.
 
