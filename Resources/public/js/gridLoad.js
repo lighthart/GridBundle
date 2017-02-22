@@ -5,13 +5,16 @@ var timer = 0;
 var xhr = 0;
 
 function addCommas(value) {
-    return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    return value.toString()
+        .replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
 
 function getOffset() {
     cookies = getCookies();
-    var pageVal = Number($('input.lg-page-input').val());
-    var maxPages = Number($('#lg-max-pages').val());
+    var pageVal = Number($('input.lg-page-input')
+        .val());
+    var maxPages = Number($('#lg-max-pages')
+        .val());
     if (pageVal >= maxPages) {
         pageVal = maxPages;
     }
@@ -23,7 +26,8 @@ function getOffset() {
 }
 
 function getMaxPages() {
-    var maxPages = Number($('#lg-max-pages').val());
+    var maxPages = Number($('#lg-max-pages')
+        .val());
     return maxPages;
 }
 
@@ -42,9 +46,10 @@ function getSelectorCookie() {
 }
 
 function setSelectorCookie() {
-    $.cookie("lg-" + getLgCurrentRoute() + "-selector", $('.lg-grid-selector').val(), {
-        expires: 1
-    });
+    $.cookie("lg-" + getLgCurrentRoute() + "-selector", $('.lg-grid-selector')
+        .val(), {
+            expires: 1
+        });
 }
 
 function getCookies() {
@@ -113,12 +118,14 @@ function setCookies(cookies) {
 
 function gridFocus() {
     var focus = null;
-    $('input').each(function() {
-        // o for dom 'o'bject
-        if ($(this).is(':focus')) {
-            focus = $(this);
-        }
-    });
+    $('input')
+        .each(function() {
+            // o for dom 'o'bject
+            if ($(this)
+                .is(':focus')) {
+                focus = $(this);
+            }
+        });
     return focus;
 }
 
@@ -129,7 +136,8 @@ function gridReload(options) {
     data = {
         pageSize: cookies.pageSize,
         pageOffset: cookies.offset,
-        filter: (cookies.filter ? cookies.filter : "").replace("'", "''"),
+        filter: (cookies.filter ? cookies.filter : "")
+            .replace("'", "''"),
         search: cookies.search,
     };
     $.map(getFlags(), function(value, flag) {
@@ -138,7 +146,8 @@ function gridReload(options) {
             data[flagCookie] = value;
         }
     });
-    data['selector'] = $('.lg-grid-selector').val();
+    data['selector'] = $('.lg-grid-selector')
+        .val();
     if (xhr) {
         xhr.abort();
     }
@@ -155,27 +164,61 @@ function gridReload(options) {
             cache: false,
             beforeSend: function(xhr) {
                 // oldFocus = gridFocus() ? '#' + gridFocus().attr('id') : null;
-                $('.lg-table').addClass('text-muted');
+                $('.lg-table')
+                    .addClass('text-muted');
                 cookies = getCookies();
                 oldVersion = typeof cookies.version == 'undefined' ? 0 : cookies.version;
-                cookies.version = new Date().getTime();
+                cookies.version = new Date()
+                    .getTime();
                 setCookies(cookies);
             },
             success: function(responseText, textStatus, XMLHttpRequest) {
                 if (reset) {
-                    $('table.lg-table').html($(responseText).find('table.lg-table').html());
-                    $('div#lg-header').html($(responseText).find('div#lg-header').html());
-                    $('div#lg-footer').html($(responseText).find('div#lg-footer').html());
-                    $('div.lg-flags').html($(responseText).find('div.lg-flags').html());
-                }
-                else {
-                    $('tbody.lg-tbody').html($(responseText).find('tbody.lg-tbody').html());
-                    $('div.lg-flags').html($(responseText).find('div.lg-flags').html());
-                    $('form.navbar-right').html($(responseText).find('form.navbar-right').html());
-                    $('div.lg-paging-controls-header').html($(responseText).find('div.lg-paging-controls-header').html());
-                    $('div.lg-middle-controls-header').html($(responseText).find('div.lg-middle-controls-header').html());
-                    $('div#lg-footer').html($(responseText).find('div#lg-footer').html());
-                    $('tr.lg-headers').html($(responseText).find('tr.lg-headers').html());
+                    $('table.lg-table')
+                        .html($(responseText)
+                            .find('table.lg-table')
+                            .html());
+                    $('div#lg-header')
+                        .html($(responseText)
+                            .find('div#lg-header')
+                            .html());
+                    $('div#lg-footer')
+                        .html($(responseText)
+                            .find('div#lg-footer')
+                            .html());
+                    $('div.lg-flags')
+                        .html($(responseText)
+                            .find('div.lg-flags')
+                            .html());
+                } else {
+                    $('tbody.lg-tbody')
+                        .html($(responseText)
+                            .find('tbody.lg-tbody')
+                            .html());
+                    $('div.lg-flags')
+                        .html($(responseText)
+                            .find('div.lg-flags')
+                            .html());
+                    $('form.navbar-right')
+                        .html($(responseText)
+                            .find('form.navbar-right')
+                            .html());
+                    $('div.lg-paging-controls-header')
+                        .html($(responseText)
+                            .find('div.lg-paging-controls-header')
+                            .html());
+                    $('div.lg-middle-controls-header')
+                        .html($(responseText)
+                            .find('div.lg-middle-controls-header')
+                            .html());
+                    $('div#lg-footer')
+                        .html($(responseText)
+                            .find('div#lg-footer')
+                            .html());
+                    $('tr.lg-headers')
+                        .html($(responseText)
+                            .find('tr.lg-headers')
+                            .html());
                     // $('tr.lg-filters').html($(responseText).find('tr.lg-filters').html());
                 }
             },
@@ -183,7 +226,8 @@ function gridReload(options) {
                 highlightSearches();
                 highlightFilters();
                 activateControls();
-                $('.lg-table').removeClass('text-muted');
+                $('.lg-table')
+                    .removeClass('text-muted');
                 // if (oldFocus) {
                 //     $(oldFocus).blur().focus().val($(oldFocus).val());
                 // }
@@ -194,7 +238,12 @@ function gridReload(options) {
                 // makeClicks();
                 // make latest timer
                 clearTimeout(timer);
-                $('#lg-grid-div').findScrollBar().scrollTop(options.cscroll);
+                if (options && options.cscroll) {
+                    $('#lg-grid-div')
+                        .findScrollBar()
+                        .scrollTop(options.cscroll);
+
+                }
             }
         });
     }, quiet);
@@ -205,7 +254,8 @@ function gridReloadCell(td) {
     data = {
         pageSize: cookies.pageSize,
         pageOffset: cookies.offset,
-        filter: (cookies.filter ? cookies.filter : "").replace("'", "''"),
+        filter: (cookies.filter ? cookies.filter : "")
+            .replace("'", "''"),
         search: cookies.search
     };
     $.map(getFlags(), function(value, flag) {
@@ -223,17 +273,31 @@ function gridReloadCell(td) {
         beforeSend: function(xhr) {},
         success: function(responseText, textStatus, XMLHttpRequest) {
             var tr = td.parent();
-            var col = tr.children("td").index(td);
-            var row = tr.parent().children("tr").index(tr);
+            var col = tr.children("td")
+                .index(td);
+            var row = tr.parent()
+                .children("tr")
+                .index(tr);
             var tbody = tr.closest("tbody.lg-tbody");
             var table = tbody.closest("table.lg-table");
-            var whichTbody = table.children("tbody.lg-tbody").index(tbody);
-            var whichTable = table.parent().children("table.lg-table").index(table);
-            newTable = $(responseText).find("table.lg-table").eq(whichTable);
-            newTbody = newTable.children("tbody.lg-tbody").eq(whichTbody);
-            newTr = newTbody.children("tr").eq(row);
-            newTd = newTr.children("td").eq(col);
-            $('tr.lg-filters').html($(responseText).find('tr.lg-filters').html());
+            var whichTbody = table.children("tbody.lg-tbody")
+                .index(tbody);
+            var whichTable = table.parent()
+                .children("table.lg-table")
+                .index(table);
+            newTable = $(responseText)
+                .find("table.lg-table")
+                .eq(whichTable);
+            newTbody = newTable.children("tbody.lg-tbody")
+                .eq(whichTbody);
+            newTr = newTbody.children("tr")
+                .eq(row);
+            newTd = newTr.children("td")
+                .eq(col);
+            $('tr.lg-filters')
+                .html($(responseText)
+                    .find('tr.lg-filters')
+                    .html());
             td.html(newTd.html());
         },
         complete: function() {
@@ -241,9 +305,11 @@ function gridReloadCell(td) {
             highlightFilters();
             activateControls();
             markFlags();
-            td.children("input.lg-edit-field").on('change', function(event) {
-                updateCell($(this), $(this).val());
-            });
+            td.children("input.lg-edit-field")
+                .on('change', function(event) {
+                    updateCell($(this), $(this)
+                        .val());
+                });
             moveCursor();
             // makeClicks();
         }
