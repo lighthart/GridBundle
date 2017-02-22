@@ -6,11 +6,11 @@ imports:
 services:
     lg.maker:
         class: Lighthart\GridBundle\Grid\GridMaker
-        arguments: [ @doctrine, @router, @lg.dumper ]
+        arguments: [ "@doctrine", "@router", "@lg.dumper" ]
 
     lg.dumper:
             class: Lighthart\GridBundle\Grid\GridDumper
-            arguments: [ @templating ]
+            arguments: [ "@templating" ]
 
     lg.subcookie.extension:
         class: Lighthart\GridBundle\Twig\SubcookieExtension
@@ -19,18 +19,18 @@ services:
 
     lg.boolean.extension:
         class: Lighthart\GridBundle\Twig\BooleanExtension
-        arguments: [ @twig ]
+        arguments: [ "@twig" ]
         tags:
             - { name: twig.extension }
 
     lg.money.extension:
         class: Lighthart\GridBundle\Twig\MoneyExtension
-        arguments: [ @twig ]
+        arguments: [ "@twig" ]
         tags:
             - { name: twig.extension }
 
     lg.csvtoarray.extension:
         class: Lighthart\GridBundle\Twig\CSVToArrayExtension
-        arguments: [ @twig ]
+        arguments: [ "@twig" ]
         tags:
             - { name: twig.extension }

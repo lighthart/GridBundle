@@ -156,96 +156,95 @@ function gridReload(options) {
     }
     nextUrl = getLgCurrentURI();
     timer = setTimeout(function() {
-        xhr = $.ajax({
-            url: nextUrl,
-            data: data,
-            dataType: 'html',
-            type: 'GET',
-            cache: false,
-            beforeSend: function(xhr) {
-                // oldFocus = gridFocus() ? '#' + gridFocus().attr('id') : null;
-                $('.lg-table')
-                    .addClass('text-muted');
-                cookies = getCookies();
-                oldVersion = typeof cookies.version == 'undefined' ? 0 : cookies.version;
-                cookies.version = new Date()
-                    .getTime();
-                setCookies(cookies);
-            },
-            success: function(responseText, textStatus, XMLHttpRequest) {
-                if (reset) {
-                    $('table.lg-table')
-                        .html($(responseText)
-                            .find('table.lg-table')
-                            .html());
-                    $('div#lg-header')
-                        .html($(responseText)
-                            .find('div#lg-header')
-                            .html());
-                    $('div#lg-footer')
-                        .html($(responseText)
-                            .find('div#lg-footer')
-                            .html());
-                    $('div.lg-flags')
-                        .html($(responseText)
-                            .find('div.lg-flags')
-                            .html());
-                } else {
-                    $('tbody.lg-tbody')
-                        .html($(responseText)
-                            .find('tbody.lg-tbody')
-                            .html());
-                    $('div.lg-flags')
-                        .html($(responseText)
-                            .find('div.lg-flags')
-                            .html());
-                    $('form.navbar-right')
-                        .html($(responseText)
-                            .find('form.navbar-right')
-                            .html());
-                    $('div.lg-paging-controls-header')
-                        .html($(responseText)
-                            .find('div.lg-paging-controls-header')
-                            .html());
-                    $('div.lg-middle-controls-header')
-                        .html($(responseText)
-                            .find('div.lg-middle-controls-header')
-                            .html());
-                    $('div#lg-footer')
-                        .html($(responseText)
-                            .find('div#lg-footer')
-                            .html());
-                    $('tr.lg-headers')
-                        .html($(responseText)
-                            .find('tr.lg-headers')
-                            .html());
-                    // $('tr.lg-filters').html($(responseText).find('tr.lg-filters').html());
-                }
-            },
-            complete: function() {
-                highlightSearches();
-                highlightFilters();
-                activateControls();
-                $('.lg-table')
-                    .removeClass('text-muted');
-                // if (oldFocus) {
-                //     $(oldFocus).blur().focus().val($(oldFocus).val());
-                // }
-                markFlags();
-                updates();
-                moveCursor();
-                // focusEdit();
-                // makeClicks();
-                // make latest timer
-                clearTimeout(timer);
-                if (options && options.cscroll) {
-                    $('#lg-grid-div')
-                        .findScrollBar()
-                        .scrollTop(options.cscroll);
+            xhr = $.ajax({
+                    url: nextUrl,
+                    data: data,
+                    dataType: 'html',
+                    type: 'GET',
+                    cache: false,
+                    beforeSend: function(xhr) {
+                        // oldFocus = gridFocus() ? '#' + gridFocus().attr('id') : null;
+                        $('.lg-table')
+                            .addClass('text-muted');
+                        cookies = getCookies();
+                        oldVersion = typeof cookies.version == 'undefined' ? 0 : cookies.version;
+                        cookies.version = new Date()
+                            .getTime();
+                        setCookies(cookies);
+                    },
+                    success: function(responseText, textStatus, XMLHttpRequest) {
+                        if (reset) {
+                            $('table.lg-table')
+                                .html($(responseText)
+                                    .find('table.lg-table')
+                                    .html());
+                            $('div#lg-header')
+                                .html($(responseText)
+                                    .find('div#lg-header')
+                                    .html());
+                            $('div#lg-footer')
+                                .html($(responseText)
+                                    .find('div#lg-footer')
+                                    .html());
+                            $('div.lg-flags')
+                                .html($(responseText)
+                                    .find('div.lg-flags')
+                                    .html());
+                        } else {
+                            $('tbody.lg-tbody')
+                                .html($(responseText)
+                                    .find('tbody.lg-tbody')
+                                    .html());
+                            $('div.lg-flags')
+                                .html($(responseText)
+                                    .find('div.lg-flags')
+                                    .html());
+                            $('form.navbar-right')
+                                .html($(responseText)
+                                    .find('form.navbar-right')
+                                    .html());
+                            $('div.lg-paging-controls-header')
+                                .html($(responseText)
+                                    .find('div.lg-paging-controls-header')
+                                    .html());
+                            $('div.lg-middle-controls-header')
+                                .html($(responseText)
+                                    .find('div.lg-middle-controls-header')
+                                    .html());
+                            $('div#lg-footer')
+                                .html($(responseText)
+                                    .find('div#lg-footer')
+                                    .html());
+                            $('tr.lg-headers')
+                                .html($(responseText)
+                                    .find('tr.lg-headers')
+                                    .html());
+                            // $('tr.lg-filters').html($(responseText).find('tr.lg-filters').html());
+                        }
+                    },
+                    complete: function() {
+                        highlightSearches();
+                        highlightFilters();
+                        activateControls();
+                        $('.lg-table')
+                            .removeClass('text-muted');
+                        // if (oldFocus) {
+                        //     $(oldFocus).blur().focus().val($(oldFocus).val());
+                        // }
+                        markFlags();
+                        updates();
+                        moveCursor();
+                        // focusEdit();
+                        // makeClicks();
+                        // make latest timer
+                        clearTimeout(timer);
+                        $('#lg-grid-div')
+                            .findScrollBar()
+                            .scrollTop(options.cscroll);
 
+                    }
                 }
-            }
-        });
+            });
     }, quiet);
 }
 

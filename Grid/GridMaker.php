@@ -524,7 +524,7 @@ class GridMaker
                 $options = []
     ) {
         $cookies    = $request->cookies;
-        $pageSize   = $request->cookies->get('lg-results-per-page') ?: 10;
+        $pageSize   = $request->cookies->get('lg-results-per-page') ?: 100;
         $pageOffset = $request->cookies->get("lg-" . $request->attributes->get('_route') . "-offset");
         $search     = $request->cookies->get("lg-" . $request->attributes->get('_route') . "-search");
         $filter     = $request->cookies->get("lg-" . $request->attributes->get('_route') . "-filter");
@@ -1522,16 +1522,9 @@ class GridMaker
                     } else {
                         $qb->andWhere($qb->expr()->like("LOWER(CONCAT($field, ''))", "'%" . strtolower($value) . "%'"));
                     }
-                    // var_dump($value);
-                    // var_dump($key);
-                    // var_dump($field);
-                    // var_dump($filter);
-                    // var_dump($this->parseDateRange($value));
                 }
             }
         }
-        // print_R($qb->getDql());
-        // die;
 
         foreach ($multiFilter as $key => $multi) {
             // 'otherGroup' is a keyword
