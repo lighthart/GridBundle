@@ -1490,16 +1490,26 @@ class GridMaker
                     $qb->andWhere($qb->expr()->like("CONCAT($field, '')", "'%" . strtolower($value) . "%'"));
                 } else {
                     $range = $this->parseDateRange($value);
-                    try {
-                        $begin = new \DateTime($range['begin']);
-                    } catch (\Exception $e) {
+                    if (isset($range['begin'])) {
+                        try {
+                            $begin = new \DateTime($range['begin']);
+                        } catch (\Exception $e) {
+                        }
+                    } else {
                         $begin = null;
+
                     }
-                    try {
-                        $end = new \DateTime($range['end']);
-                    } catch (\Exception $e) {
+
+                    if (isset($range['end'])) {
+                        try {
+                            $end = new \DateTime($range['end']);
+                        } catch (\Exception $e) {
+                        }
+                    } else {
                         $end = null;
+
                     }
+
                     if (isset($range['exact'])) {
                         try {
                             $exact = new \DateTime($range['exact']);
