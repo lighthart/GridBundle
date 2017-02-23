@@ -1577,7 +1577,9 @@ class GridMaker
 
     private function parseDateRange($date)
     {
-        if (strpos($date, '%') !== false) {
+        if (preg_match('/\d\d\d\d-\d\d/', $date)) {
+            $range['string'] = $date;
+        } elseif (strpos($date, '%') !== false) {
             $range['month'] = $date;
         } elseif (strpos($date, '~') !== false) {
             $items = array_filter(explode('~', $date));
