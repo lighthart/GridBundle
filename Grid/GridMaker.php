@@ -1486,8 +1486,8 @@ class GridMaker
             if ('null' == $value) {
                 $qb->andWhere($qb->expr()->isNull($key));
             } else {
-                if (in_array($key, $numbers)) {
-                    $qb->andWhere($qb->expr()->like("CONCAT($field, '')", "'%" . strtolower($value) . "%'"));
+                if (in_array($field, $numbers) || in_array($field, $strings)) {
+                    $qb->andWhere($qb->expr()->like("LOWER(CONCAT($field, ''))", "'%" . strtolower(strval($value)) . "%'"));
                 } else {
                     $range = $this->parseDateRange($value);
                     if (isset($range['begin'])) {
