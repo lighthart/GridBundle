@@ -653,7 +653,7 @@ class GridMaker
             if ($results) {
                 fputcsv($file, $this->getGrid()->exportTh());
                 foreach ($this->getGrid()->exportTr($results) as $key => $line) {
-                    fputcsv($file, $line);
+                    fputcsv($file, array_map(function ($f) {return htmlspecialchars($f);}, $line));
                 }
             } else {
                 fputcsv($file, $this->getGrid()->exportTh());
@@ -666,7 +666,7 @@ class GridMaker
 
                     // Write this next line to file
                     foreach ($this->getGrid()->exportTr($results) as $key => $line) {
-                        fputcsv($file, $line);
+                        fputcsv($file, array_map(function ($f) {return htmlspecialchars($f);}, $line));
                     }
                 }
             }
