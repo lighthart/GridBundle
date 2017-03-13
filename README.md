@@ -234,7 +234,7 @@ may use any alias you would like.
     otherGroup:     Column displays a group of composite fields.  Field must be an array
                     of fields which will me recursively mapped through a DQL concat
                     function.  To display a , use a double semicolon as a display element.
-                    If the field is alsoa  filter, the otherGroup display elements will
+                    If the field is also a filter, the otherGroup display elements will
                     be automatically added.
 
 ```php
