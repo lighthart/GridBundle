@@ -812,7 +812,7 @@ class GridMaker
                                     // why is this needed? something is not getting mapped properly
                                     $fields[$fieldKey] = $aliases[$field];
                                 } else {
-                                    throw new \Exception('Column alias does not match query alias: ' . $oldSubAlias . ' is in error');
+                                    throw new \Exception('Column alias does not match query alias: ' . $oldSubAlias . ' is in error; you might need to add a hidden column for tidle substittuion');
                                 }
                                 // . '_' . $oldField;
                             }
