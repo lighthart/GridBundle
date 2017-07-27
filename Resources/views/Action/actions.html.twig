@@ -19,7 +19,7 @@
             {% include 'LighthartGridBundle:Action:action.html.twig' with {'action': action} %}
         {% endfor %}
     {% endif %}
-    {% if loop.length > buttonNum - 2 %}
+    {% if cell.actions|length > buttonNum %}
         <a class="btn btn-xs btn-default lg-xtra-actions pull-right" name="Extra Actions">
             <span class="fa fa-caret-right fa-fw"></span>
         </a>
