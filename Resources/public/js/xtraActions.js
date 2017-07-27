@@ -21,15 +21,21 @@ function showHiddenActions(control) {
         .removeClass('fa-caret-right');
     control.children('span')
         .addClass('fa-caret-left');
+    control.siblings('.lg-form-action')
+        .each(function() {
+            $(this).children('button.lg-xtra-action').each(
+                function() {
+                $(this).removeClass('hide');                    
+                }
+        )});
     control.siblings('.lg-xtra-action')
         .each(function() {
             $(this)
                 .removeClass('hide');
         });
+        var size=parseInt(control.parent().children().length * 23) - 5;
     control.parent()
-        .attr('style', 'width:' + control.parent()
-            .children()
-            .length * 24 + 'px;');
+        .attr('style', 'width:' + size + 'px;');
 }
 
 function hideVisibleActions(control) {
@@ -38,6 +44,13 @@ function hideVisibleActions(control) {
         .addClass('fa-caret-right');
     control.children('span')
         .removeClass('fa-caret-left');
+    control.siblings('.lg-form-action')
+        .each(function() {
+            $(this).children('button.lg-xtra-action').each(
+                function() {
+                $(this).addClass('hide');                    
+                }
+        )});
     control.siblings('.lg-xtra-action')
         .each(function() {
             $(this)
@@ -45,6 +58,8 @@ function hideVisibleActions(control) {
         });
     // This is related to padding set in cell.html.twig. 
     // Bad coupling here
+    // Why 3? Why 5 above.  It works and I'm sick of chasing a pixel
+    var size=parseInt(control.parent().attr('data-button-num')) * 23 - 3;
     control.parent()
-        .attr('style', 'width:' + 6 * 24 + 'px;');
+        .attr('style', 'width:' + size + 'px;');
 }

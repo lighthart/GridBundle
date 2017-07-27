@@ -4,9 +4,11 @@
         {% set widthVal = width %}
     {%- elseif cell.actions is defined -%}
         {%- if cell.actions|length > buttonNum -%}
-            {% set widthVal = buttonWidth * buttonNum + buttonPadding + 4 %}
+            {{buttonNum}}
+            {{cell.actions|length}}
+            {% set widthVal = buttonWidth * buttonNum + buttonPadding %}
         {%- else -%}
-            {% set widthVal = buttonWidth * cell.actions|length + buttonPadding + 4 %}
+            {% set widthVal = buttonWidth * cell.actions|length + buttonPadding %}
         {%- endif -%}
         {% set widthVal = widthVal~"px" %}
     {%- endif -%}

@@ -1,4 +1,4 @@
-<div class="btn-group">
+<div class="btn-group" data-button-num="{{buttonNum}}" >
     {% if cell.actions|length > buttonNum %}
         {% for action in cell.actions %}
             {% if loop.index0 <= buttonNum - 2 %}
@@ -13,13 +13,15 @@
                 {% else %}
                 {% endif %}
             {% endfor %}
-            <button class="btn btn-xs btn-default dropdown-toggle lg-xtra-actions" data-toggle="dropdown" name="Extra Actions">
-                <span class="fa fa-caret-right"></span>
-            </button>
         {% endif %}
     {% else %}
         {% for action in cell.actions %}
             {% include 'LighthartGridBundle:Action:action.html.twig' with {'action': action} %}
         {% endfor %}
+    {% endif %}
+    {% if loop.length > buttonNum - 2 %}
+        <a class="btn btn-xs btn-default lg-xtra-actions pull-right" name="Extra Actions">
+            <span class="fa fa-caret-right fa-fw"></span>
+        </a>
     {% endif %}
 </div>
