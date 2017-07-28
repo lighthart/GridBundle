@@ -42,10 +42,14 @@ function showHiddenActions(control) {
     var forms = parseInt(control.parent()
         .children("form")
         .length);
-    size = size * 23 - (size - 2) + forms;
+    size = size * 23 - (size - 2) + forms + 2;
     // (size - 2) is to deal with button group
-    control.parent()
-        .attr('style', 'width:' + size + 'px;');
+    // 23 is default button width
+    // control.parent()
+    //     .attr('style', 'width:' + size + 'px;');
+    // control.parent()
+    //     .parent()
+    //     .attr('style', 'width:' + size + 'px;');
 }
 
 function hideVisibleActions(control) {
@@ -61,7 +65,7 @@ function hideVisibleActions(control) {
                 .each(
                     function() {
                         $(this)
-                            .addClass('hide');
+                            .removeClass('hide');
                     }
                 )
         });
@@ -70,18 +74,25 @@ function hideVisibleActions(control) {
             $(this)
                 .addClass('hide');
         });
-    // This is related to padding set in cell.html.twig. 
-    // Bad coupling here
-    // Why 3? Why 5 above.  It works and I'm sick of chasing a pixel
+
     var size = parseInt(control.parent()
         .attr(
             "data-button-num"));
     var forms = parseInt(control.parent()
         .children("form")
-        .length);
+        .length -
+        control.parent()
+        .children("form.lg-xtra-action")
+        .length
+    );
     // (size - 2) is to deal with button group
-    size = size * 23 - (size - 2);
+    // 23 is default button width
+    // size = size * 23 - (size - 2) + forms + 2;
 
-    control.parent()
-        .attr('style', 'width:' + size + 'px;');
+    // control.parent()
+    //     .attr('style', 'width:' + size + 'px;');
+
+    // control.parent()
+    //     .parent()
+    //     .attr('style', 'width:' + size + 'px;');
 }
