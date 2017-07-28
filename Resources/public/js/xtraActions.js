@@ -42,7 +42,7 @@ function showHiddenActions(control) {
     var forms = parseInt(control.parent()
         .children("form")
         .length);
-    size = size * 23 - (size - 2) + forms + 2;
+    // size = size * 23 - (size - 2) + forms + 2;
     // (size - 2) is to deal with button group
     // 23 is default button width
     // control.parent()
@@ -75,16 +75,16 @@ function hideVisibleActions(control) {
                 .addClass('hide');
         });
 
-    var size = parseInt(control.parent()
-        .attr(
-            "data-button-num"));
-    var forms = parseInt(control.parent()
-        .children("form")
-        .length -
-        control.parent()
-        .children("form.lg-xtra-action")
-        .length
-    );
+    // var size = parseInt(control.parent()
+    //     .attr(
+    //         "data-button-num"));
+    // var forms = parseInt(control.parent()
+    //     .children("form")
+    //     .length -
+    //     control.parent()
+    //     .children("form.lg-xtra-action")
+    //     .length
+    // );
     // (size - 2) is to deal with button group
     // 23 is default button width
     // size = size * 23 - (size - 2) + forms + 2;
