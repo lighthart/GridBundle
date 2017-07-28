@@ -8,8 +8,7 @@ function gridExtraActionsControl() {
                 .siblings('.lg-xtra-action.hide')
                 .length) {
                 showHiddenActions($(this));
-            }
-            else {
+            } else {
                 hideVisibleActions($(this));
             }
         });
@@ -23,17 +22,28 @@ function showHiddenActions(control) {
         .addClass('fa-caret-left');
     control.siblings('.lg-form-action')
         .each(function() {
-            $(this).children('button.lg-xtra-action').each(
-                function() {
-                $(this).removeClass('hide');                    
-                }
-        )});
+            $(this)
+                .children('button.lg-xtra-action')
+                .each(
+                    function() {
+                        $(this)
+                            .removeClass('hide');
+                    }
+                )
+        });
     control.siblings('.lg-xtra-action')
         .each(function() {
             $(this)
                 .removeClass('hide');
         });
-        var size=parseInt(control.parent().children().length * 23) - 5;
+    var size = parseInt(control.parent()
+        .children()
+        .length);
+    var forms = parseInt(control.parent()
+        .children("form")
+        .length);
+    size = size * 23 - (size - 2) + forms;
+    // (size - 2) is to deal with button group
     control.parent()
         .attr('style', 'width:' + size + 'px;');
 }
@@ -46,11 +56,15 @@ function hideVisibleActions(control) {
         .removeClass('fa-caret-left');
     control.siblings('.lg-form-action')
         .each(function() {
-            $(this).children('button.lg-xtra-action').each(
-                function() {
-                $(this).addClass('hide');                    
-                }
-        )});
+            $(this)
+                .children('button.lg-xtra-action')
+                .each(
+                    function() {
+                        $(this)
+                            .addClass('hide');
+                    }
+                )
+        });
     control.siblings('.lg-xtra-action')
         .each(function() {
             $(this)
@@ -59,7 +73,15 @@ function hideVisibleActions(control) {
     // This is related to padding set in cell.html.twig. 
     // Bad coupling here
     // Why 3? Why 5 above.  It works and I'm sick of chasing a pixel
-    var size=parseInt(control.parent().attr('data-button-num')) * 23 - 3;
+    var size = parseInt(control.parent()
+        .attr(
+            "data-button-num"));
+    var forms = parseInt(control.parent()
+        .children("form")
+        .length);
+    // (size - 2) is to deal with button group
+    size = size * 23 - (size - 2);
+
     control.parent()
         .attr('style', 'width:' + size + 'px;');
 }
