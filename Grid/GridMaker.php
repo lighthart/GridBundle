@@ -1259,7 +1259,7 @@ class GridMaker
         }
 
         foreach ($counts as $entity => $field) {
-            $qb->addSelect('COUNT (DISTINCT ' . $field . ') AS count_' . str_replace('.', '_', $field));
+            $qb->addSelect('COUNT (DISTINCT ' . $field . ') AS ' . str_replace('.', '_', $field));
         }
 
         // var_dump($otherGroups);die;

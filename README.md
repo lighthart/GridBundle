@@ -180,7 +180,6 @@ may use any alias you would like.
                     original alias and the new alias in the query is sent as the second
                     parameter, and the function should return the boolean value.  For
                     example:
-    trunc:          get first value of trunc characters
 ```php
     $gm->addField('consentStatus', 'shortName', [
         'filter'   => 'number',
@@ -204,6 +203,7 @@ may use any alias you would like.
         'value' => ['~consentStatus.shortName~', null]
     ]);
 ```
+    trunc:          get first value of trunc characters
 
     dql:            Adds a pseudo column which returns the result of the DQL indicated.
                     The second parameter should be an empty string.  This allows the use
@@ -409,7 +409,6 @@ actions.  Do this in the controller after or during the grid construction: eg:
 ```php
     $gm = $this->get('lg.maker');
     $gm->setDebugDump();
-));
 ```
 
 #### Step 8:  Customizing twig
