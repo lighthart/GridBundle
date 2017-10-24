@@ -900,7 +900,7 @@ class GridMaker
         if (isset($qb->getDqlPart('join')[$oldRoot])) {
             $joins = $qb->getDqlPart('join')[$oldRoot];
             foreach ($joins as $k => $join) {
-                if (false === strpos($join->getJoin(), '\\')) {
+                if (false === strpos($join->getJoin(), '\\') && false === strpos($join->getJoin(), ':')) {
                     $entity = stristr($join->getJoin(), '.', true);
                     $field  = substr(stristr($join->getJoin(), '.', false), 1);
                     $alias  = $join->getAlias();
@@ -1259,7 +1259,7 @@ class GridMaker
         }
 
         foreach ($counts as $entity => $field) {
-            $qb->addSelect('COUNT (DISTINCT ' . $field . ') AS ' . str_replace('.', '_', $field));
+            $qb->addSelect('COUNT (DISTINCT ' . $field . ') AS count_' . str_replace('.', '_', $field));
         }
 
         // var_dump($otherGroups);die;
