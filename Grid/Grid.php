@@ -395,6 +395,7 @@ class Grid
             $row->addCell($actionCell);
         }
 
+        //Not ready to implement this
         if (([] != $this->getStatuses()) && !$this->export) {
             $statusCell = new Cell(['title' => 'Status', 'type' => 'th', 'attr' => ['class' => 'lg-filterable lg-filter']]);
             $row->addCell($statusCell);
@@ -783,6 +784,7 @@ class Grid
                     $statusCell = new StatusCell(['title' => 'Status', 'type' => 'td', 'statuses' => $this->getStatuses()]);
                     $row->addCell($statusCell);
                 }
+
                 foreach ($result as $key => $value) {
                     if (isset($columns[$key])) {
                         $title = ($columns[$key]->getOption('title') ?: $key);
@@ -852,6 +854,10 @@ class Grid
 
                             if ($transform) {
                                 $value = $transform($result, $this->aliases);
+                            }
+
+                            if ($title != $key) {
+                                $attr['title'] = $title;
                             }
 
                             if (array_key_exists('title', $attr) && $attr['title']) {
