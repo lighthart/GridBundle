@@ -31,7 +31,7 @@
 {%- else -%}
     {% set value = cell.value|replace({'{':'', '}':''})|trim %}
 {%- endif -%}
-<{{- cell.type }} {% for attrib, value in cell.attr -%}{%- if attrib != "width" -%}{{- attrib -}}="{{- value|replace({'{':'', '}':''})|trim -}}" {%- endif -%}{%- endfor -%} {% if cell.attr['title'] is defined and 'td' == cell.type -%}{%- elseif boolean -%} title="{{cell.value|boolean(false)}}"{%- else -%} title="{{- value|replace({'{':'', '}':''}) -}}"{%- endif -%}
+<{{- cell.type }} {% for attrib, value in cell.attr -%}{%- if attrib != "width" and attrib !="title" -%}{{- attrib -}}="{{- value|replace({'{':'', '}':''})|trim -}}" {%- endif -%}{%- endfor -%} {% if cell.attr['title'] is defined and 'th' == cell.type -%}title="{{cell.attr['title']}}"{% elseif cell.attr['title'] is defined and 'td' == cell.type -%}title="{{value}}"{%- elseif boolean -%} title="{{cell.value|boolean(false)}}"{%- else -%} title="{{- value|replace({'{':'', '}':''}) -}}"{%- endif -%}
     {%- include 'LighthartGridBundle:Cell:cellWidth.html.twig' -%}
     >{{-''-}}
 {%- if cell.actions is defined -%}
